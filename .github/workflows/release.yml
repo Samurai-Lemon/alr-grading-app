@@ -1,0 +1,63 @@
+# Builds ALR Grading for Mac (Apple Silicon + Intel) and Windows and publishes a GitHub
+# Release. Runs when a version tag like v0.1.0 is pushed, or by hand from the Actions tab.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            args: --target aarch64-apple-darwin
+            rust_targets: aarch64-apple-darwin
+          - platform: macos-latest
+            args: --target x86_64-apple-darwin
+            rust_targets: x86_64-apple-darwin
+          - platform: windows-latest
+            args: ''
+            rust_targets: ''
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_targets }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - run: npm ci
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_type == 'tag' && github.ref_name || format('v{0}', github.run_number) }}
+          releaseName: 'ALR Grading ${{ github.ref_type == ''tag'' && github.ref_name || github.run_number }}'
+          releaseBody: |
+            Download the file for your computer:
+            - Mac (Apple Silicon, M1 and later): ALR.Grading_*_aarch64.dmg
+            - Mac (Intel): ALR.Grading_*_x64.dmg
+            - Windows: ALR.Grading_*_x64-setup.exe
+
+            This build is not code-signed yet. First launch on Mac: right-click the app > Open.
+            On Windows: More info > Run anyway.
+          releaseDraft: false
+          prerelease: false
+          args: ${{ matrix.args }}

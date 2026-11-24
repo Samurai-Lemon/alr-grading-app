@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ALR Grading</title>
+<style>
+@font-face{font-family:Inter;src:url(fonts/inter-latin.woff2) format("woff2");font-weight:100 900}
+@font-face{font-family:"JetBrains Mono";src:url(fonts/jetbrains-mono-latin.woff2) format("woff2");font-weight:400}
+:root{
+  --bodyFont:Inter,-apple-system,"Segoe UI",sans-serif;--codeFont:"JetBrains Mono",ui-monospace,monospace;
+  --alr-bg:#121110;--alr-surface:#1a1917;--alr-surface-2:#221f1c;--alr-hover:#24221f;--alr-border:#262420;--alr-border-strong:#34312c;
+  --alr-text:#ede8de;--alr-text-2:#b3ada2;--alr-muted:#9a9488;--alr-accent:#cc785c;--alr-accent-text:#e09a7e;--alr-on-accent:#1a1210;
+  --alr-r-lg:16px;--alr-r-md:14px;--alr-r-sm:10px;--alr-r-xs:8px;--dark:var(--alr-text);--gray:var(--alr-muted);
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root{
+  --alr-bg:#f6f3ec;--alr-surface:#fffdf8;--alr-surface-2:#efeae0;--alr-hover:#ece6da;--alr-border:#e3ddd1;--alr-border-strong:#d4ccbd;
+  --alr-text:#1f1b17;--alr-text-2:#4f4740;--alr-muted:#6b6258;--alr-accent:#a85c42;--alr-accent-text:#96503a;--alr-on-accent:#ffffff;color-scheme:light;
+}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--alr-bg);color:var(--alr-text);font-family:var(--bodyFont);-webkit-font-smoothing:antialiased}
+body{display:flex;flex-direction:column;overflow:hidden}
+button,input{font:inherit}
+/* Save To bar */
+.app-save{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--alr-border);background:var(--alr-surface)}
+.app-save-lab{font:600 11px var(--codeFont);letter-spacing:1px;color:var(--alr-muted)}
+.app-save-path{flex:1;min-width:0;background:var(--alr-bg);border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-xs);padding:7px 10px;font:12px var(--codeFont);color:var(--alr-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:rtl;text-align:left}
+.app-save-btn{border:1px solid var(--alr-accent);color:var(--alr-accent-text);background:transparent;border-radius:var(--alr-r-xs);padding:6px 14px;font-weight:600;font-size:13px;cursor:pointer}
+.app-save-btn:hover{background:var(--alr-hover)}
+/* The tool fills the window: settings scroll on their own, preview and buttons stay in view. */
+.app-main{flex:1;min-height:0;padding:16px;display:flex;flex-direction:column}
+.app-main #alr-lc-tool{flex:1;min-height:0;display:flex}
+.app-main .alr-lc-wrap{flex:1;min-height:0;display:flex;flex-direction:column;margin:0 auto!important;width:100%;max-width:1240px}
+.app-main .alr-lc-body{flex:1;min-height:0}
+.app-main .alr-lc-left{max-height:none;overflow:auto}
+.app-main .alr-lc-right{min-height:0}
+.app-main .alr-lc-preview{flex:1;min-height:0;overflow:auto}
+/*TOOLCSS*/
+</style>
+</head>
+<body>
+  <div class="app-save">
+    <span class="app-save-lab">SAVE TO</span>
+    <span class="app-save-path" id="app-save-path" title="">…</span>
+    <button class="app-save-btn" id="app-save-change" type="button">Change…</button>
+  </div>
+  <main class="app-main"><!--TOOL--></main>
+  <script src="vendor/opentype.min.js"></script>
+  <script src="app.js"></script>
+  <script src="label.js"></script>
+</body>
+</html>

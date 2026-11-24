@@ -1,0 +1,15 @@
+{
+  "name": "alr-grading-app",
+  "private": true,
+  "version": "0.1.0",
+  "description": "ALR Grading: the Grading Terminal from alrinitiative.com as a desktop app",
+  "scripts": {
+    "sync": "node scripts/sync.mjs",
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  }
+}
