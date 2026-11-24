@@ -22,3 +22,8 @@ npm run build    # make ALR Grading.app / .dmg (or the Windows installer on Wind
 ```
 
 Releases: push a tag like `v0.1.0` and GitHub Actions builds the Mac (Apple Silicon and Intel) and Windows downloads and publishes them as a GitHub Release.
+
+## First launch (unsigned builds)
+
+- **Mac:** open the app once, click **Done** on the warning, then System Settings › Privacy & Security › **Open Anyway**. Builds are ad-hoc signed (`signingIdentity: "-"`); without that, macOS reports a downloaded app as "damaged".
+- **Windows:** More info › Run anyway.
