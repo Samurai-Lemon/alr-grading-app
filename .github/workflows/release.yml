@@ -63,3 +63,19 @@ jobs:
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
+
+      # Fixed-name copies, so alrinitiative.com can link to
+      # releases/latest/download/<name> without asking GitHub's API which file is newest.
+      - name: Fixed-name copy for the website's download buttons
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_type == 'tag' && github.ref_name || format('v{0}', github.run_number) }}
+        run: |
+          case "${{ matrix.rust_targets }}" in
+            aarch64-apple-darwin) SRC=$(ls src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg); NAME=ALR-Grading-mac-apple-silicon.dmg ;;
+            x86_64-apple-darwin)  SRC=$(ls src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg);  NAME=ALR-Grading-mac-intel.dmg ;;
+            *)                    SRC=$(ls src-tauri/target/release/bundle/nsis/*-setup.exe);              NAME=ALR-Grading-windows-setup.exe ;;
+          esac
+          cp "$SRC" "$NAME"
+          gh release upload "$TAG" "$NAME" --clobber
