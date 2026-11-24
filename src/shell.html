@@ -44,6 +44,92 @@ button,input{font:inherit}
 .app-cards-list .alr-reg-empty{padding:40px 20px;text-align:center;color:var(--alr-muted);font-size:14px}
 .app-cards-list .alr-reg-empty button{margin-top:12px}
 /*CARDSCSS*/
+/* Pre-grade (app only) — built from the Editor's look: same surfaces, type and accent */
+.app-pg{overflow:hidden}
+.pg-wrap{flex:1;min-height:0;display:flex;flex-direction:column;max-width:1400px;width:100%;margin:0 auto;border:1px solid var(--alr-border);border-radius:var(--alr-r-lg);background:var(--alr-surface);overflow:hidden}
+.pg-top{display:flex;align-items:center;gap:14px}
+.pg-stamp{display:inline-block;margin-left:9px;border:1.5px solid var(--alr-accent);color:var(--alr-accent-text);border-radius:3px;padding:1px 6px;font-size:10.5px;font-weight:800;letter-spacing:.8px;vertical-align:1px}
+.pg-cert{margin-left:auto;font-family:var(--codeFont)}
+.pg-newbtn{min-height:32px!important;padding:0 14px!important;font-size:13px!important}
+.pg-grid{flex:1;min-height:0;display:grid;grid-template-columns:minmax(250px,.85fr) minmax(300px,1fr) minmax(300px,1fr)}
+.pg-col{padding:20px;border-right:1px solid var(--alr-border);overflow:auto;min-height:0;display:flex;flex-direction:column;gap:10px}
+.pg-col:last-child{border-right:0}
+.pg-gap{margin-top:12px}
+.pg-sub{font-size:12px;color:var(--alr-muted);margin-top:-4px}
+.pg-msg{font-size:12px;color:var(--alr-muted)}
+.pg-msg:empty{display:none}
+#pg-picked .alr-lc-field{margin:0}
+#pg-picked .alr-lc-picked{margin-top:8px}
+#pg-picked select{margin-top:6px;width:100%}
+.pg-photos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pg-ph{aspect-ratio:63/88;border:1.5px dashed var(--alr-border-strong);border-radius:var(--alr-r-xs);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12.5px;color:var(--alr-text-2);cursor:pointer;position:relative;overflow:hidden;background:var(--alr-bg)}
+.pg-ph.drag,.pg-ph:hover{border-color:var(--alr-accent);background:var(--alr-hover)}
+.pg-ph.has{border-style:solid;background:var(--alr-surface-2)}
+.pg-ph-in{display:contents}
+.pg-ph img{width:100%;height:100%;object-fit:contain}
+.pg-ph-plus{font-size:20px;color:var(--alr-accent-text);line-height:1}
+.pg-ph-rm{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-family:var(--bodyFont);font-size:11px;border:0;border-radius:6px;padding:4px 9px;background:rgba(18,17,16,.82);color:#ede8de;cursor:pointer}
+.pg-tools{display:flex;gap:6px;align-items:center}
+.pg-seg{display:flex;border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-xs);padding:3px;gap:2px}
+.pg-seg button{font-family:var(--bodyFont);font-size:12.5px;font-weight:600;border:0;border-radius:6px;padding:6px 13px;background:transparent;color:var(--alr-muted);cursor:pointer}
+.pg-seg button.on{background:var(--alr-hover);color:var(--alr-text)}
+.pg-tool{min-height:34px!important;padding:0 12px!important;font-size:12.5px!important;width:auto!important}
+.pg-tool.on{background:color-mix(in srgb,var(--alr-accent) 14%,transparent)!important;color:var(--alr-accent-text)!important}
+.pg-stage{position:relative;height:440px;flex:none;background:var(--alr-surface-2);border:1px solid var(--alr-border);border-radius:var(--alr-r-sm);overflow:hidden;touch-action:none;user-select:none}
+.pg-stage img{position:absolute;pointer-events:none;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.pg-stage-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--alr-text-2);font-size:13px;padding:20px}
+.pg-stage-empty small{font-size:12px;color:var(--alr-muted);margin-top:6px}
+.pg-g{position:absolute;z-index:2}
+.pg-g.v{top:0;bottom:0;width:14px;margin-left:-7px;cursor:ew-resize}
+.pg-g.h{left:0;right:0;height:14px;margin-top:-7px;cursor:ns-resize}
+.pg-g.v::after{content:"";position:absolute;left:6px;top:0;bottom:0;border-left:1.5px dashed}
+.pg-g.h::after{content:"";position:absolute;top:6px;left:0;right:0;border-top:1.5px dashed}
+.pg-g.outer::after{border-color:var(--alr-text-2)}
+.pg-g.inner::after{border-color:var(--alr-accent)}
+.pg-g:hover::after{border-style:solid}
+.pg-dim{position:absolute;z-index:3;font:700 10.5px var(--codeFont);color:var(--alr-text);background:var(--alr-surface);border:1px solid var(--alr-border-strong);padding:1px 5px;border-radius:5px;pointer-events:none}
+#pg-lens{position:absolute;z-index:4;width:130px;height:130px;border-radius:50%;border:2px solid var(--alr-accent);box-shadow:0 8px 24px rgba(0,0,0,.45);pointer-events:none;background-repeat:no-repeat}
+.pg-legend{display:flex;gap:14px;align-items:center;font-size:11.5px;color:var(--alr-muted);flex-wrap:wrap}
+.pg-legend i{display:inline-block;width:16px;border-top:2px dashed;vertical-align:middle;margin-right:6px}
+.pg-legend i.o{border-color:var(--alr-text-2)}.pg-legend i.n{border-color:var(--alr-accent)}
+.pg-ratios{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pg-rb{border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-xs);padding:9px 12px;background:var(--alr-bg)}
+.pg-rb span{display:block;font-size:11px;color:var(--alr-muted)}
+.pg-rb b{font-size:20px;color:var(--alr-text)}
+.pg-cap{font-size:12.5px;color:var(--alr-text-2);line-height:1.5}
+.pg-cap b{color:var(--alr-text)}
+.pg-cap small{color:var(--alr-muted)}
+.pg-st{font-size:12px;font-weight:500;color:var(--alr-text-2);margin:8px 0 0}
+.pg-rw{display:grid;grid-template-columns:92px 1fr;gap:8px;align-items:center;font-size:12.5px;color:var(--alr-text-2)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.seg button{font-family:var(--bodyFont);font-size:12px;padding:7px 2px;border-radius:var(--alr-r-xs);border:1px solid var(--alr-border-strong);background:transparent;color:var(--alr-muted);cursor:pointer}
+.seg button:hover{color:var(--alr-text)}
+.seg button.on{border-color:var(--alr-accent);color:var(--alr-accent-text);background:color-mix(in srgb,var(--alr-accent) 12%,transparent)}
+.pg-chips{display:flex;flex-wrap:wrap;gap:5px}
+.pg-chips button{font-family:var(--bodyFont);font-size:12px;padding:6px 11px;border-radius:999px;border:1px solid var(--alr-border-strong);background:transparent;color:var(--alr-muted);cursor:pointer}
+.pg-chips button:hover{color:var(--alr-text)}
+.pg-chips button.on{border-color:var(--alr-accent);color:var(--alr-accent-text);background:color-mix(in srgb,var(--alr-accent) 12%,transparent)}
+.pg-notes{width:100%;min-height:60px;resize:vertical;font-family:var(--bodyFont)}
+.pg-subs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.pg-sg{border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-xs);padding:8px 6px;text-align:center;background:var(--alr-bg);cursor:text}
+.pg-sg span{display:block;font-size:11px;color:var(--alr-muted)}
+.pg-sg input{width:100%;border:0;background:transparent;color:var(--alr-text);font:800 21px var(--bodyFont);text-align:center;padding:0;outline:none;-moz-appearance:textfield}
+.pg-sg input::-webkit-inner-spin-button{display:none}
+.pg-sg.low{border-color:var(--alr-accent)}.pg-sg.low input{color:var(--alr-accent-text)}
+.pg-sg.set{border-style:dashed}
+.pg-est{border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-sm);overflow:hidden;background:var(--alr-bg)}
+.pg-er{display:grid;grid-template-columns:92px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--alr-border)}
+.pg-er:last-child{border-bottom:0}
+.pg-co{font-weight:700;font-size:13px;color:var(--alr-text)}.pg-co small{display:block;font-weight:400;font-size:11px;color:var(--alr-muted)}
+.pg-bar{height:6px;border-radius:999px;background:var(--alr-hover);position:relative}
+.pg-bar i{position:absolute;top:0;bottom:0;border-radius:999px;background:var(--alr-accent)}
+.pg-gv{font-size:19px;font-weight:800;color:var(--alr-accent);text-align:right;white-space:nowrap}
+.pg-gv small{display:block;font-size:11px;font-weight:500;color:var(--alr-muted)}
+.pg-weak{border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-sm);background:var(--alr-bg);padding:10px 12px;font-size:12.5px;color:var(--alr-text-2);line-height:1.5}
+.pg-weak b{color:var(--alr-text)}
+.pg-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.pg-actions button{width:100%;white-space:nowrap}
+.pg-disc{font-size:11px;color:var(--alr-muted);line-height:1.5}
 /* account chip + sign-in */
 .app-who:empty{display:none}
 .app-who{display:flex;align-items:center;gap:7px;border:1px solid var(--alr-border-strong);border-radius:999px;padding:3px 10px 3px 3px;font-size:12px;white-space:nowrap}
@@ -77,6 +163,7 @@ button,input{font:inherit}
   <div class="app-save">
     <nav class="app-tabs" role="tablist">
       <button type="button" role="tab" class="on" id="app-tab-editor" data-view="editor">Editor</button>
+      <button type="button" role="tab" id="app-tab-pregrade" data-view="pregrade">Pre-grade</button>
       <button type="button" role="tab" id="app-tab-cards" data-view="cards">My Cards</button>
     </nav>
     <span class="app-save-lab">SAVE TO</span>
@@ -85,6 +172,60 @@ button,input{font:inherit}
     <span class="app-who" id="app-who"></span>
   </div>
   <main class="app-main" id="app-editor"><!--TOOL--></main>
+  <main class="app-main app-pg" id="app-pregrade" hidden>
+    <div class="pg-wrap">
+      <div class="alr-lc-topbar pg-top">
+        <span class="alr-lc-topbar-title">ALR INITIATIVE PRE-GRADE<span class="pg-stamp">ESTIMATE</span></span>
+        <span class="alr-lc-topbar-sub pg-cert" id="pg-cert"></span>
+        <button type="button" class="alr-lc-btn-ghost pg-newbtn" id="pg-new">New pre-grade</button>
+      </div>
+      <div class="pg-grid">
+        <section class="pg-col">
+          <div class="alr-lc-section-label">Card</div>
+          <div class="alr-lc-games" id="pg-games">
+            <button type="button" data-game="one-piece" class="on">One Piece</button><button type="button" data-game="pokemon">Pokémon</button><button type="button" data-game="yugioh">Yu-Gi-Oh!</button>
+          </div>
+          <div class="alr-lc-findrow"><input class="alr-lc-input" id="pg-q" type="search" placeholder="Name or card number" autocomplete="off" /><button type="button" class="alr-lc-qbtn" id="pg-qbtn">Search</button></div>
+          <div id="pg-results"></div>
+          <div id="pg-picked"></div>
+          <div class="alr-lc-section-label pg-gap">Photos <span class="alr-lc-opt">front and back</span></div>
+          <div class="pg-sub">Flat, even light, straight on.</div>
+          <div class="pg-photos">
+            <label class="pg-ph" id="pg-ph-front"><input type="file" id="pg-file-front" accept="image/*" hidden /><span class="pg-ph-in" id="pg-phin-front"></span></label>
+            <label class="pg-ph" id="pg-ph-back"><input type="file" id="pg-file-back" accept="image/*" hidden /><span class="pg-ph-in" id="pg-phin-back"></span></label>
+          </div>
+          <div class="pg-msg" id="pg-ph-msg"></div>
+        </section>
+        <section class="pg-col">
+          <div class="alr-lc-section-label">Centering</div>
+          <div class="pg-sub">Grey lines go on the card edge, orange lines on the inner border. Drag any line to adjust.</div>
+          <div class="pg-tools">
+            <div class="pg-seg" id="pg-sides"><button type="button" data-side="front" class="on">Front</button><button type="button" data-side="back">Back</button></div>
+            <button type="button" class="alr-lc-btn-ghost pg-tool" id="pg-auto">Auto-detect</button>
+            <button type="button" class="alr-lc-btn-ghost pg-tool" id="pg-loupe">Loupe</button>
+          </div>
+          <div class="pg-stage" id="pg-stage"></div>
+          <div class="pg-legend"><span><i class="o"></i>card edge</span><span><i class="n"></i>inner border</span><span class="pg-msg" id="pg-auto-msg"></span></div>
+          <div class="pg-ratios" id="pg-ratios"></div>
+          <div class="pg-cap" id="pg-cap"></div>
+        </section>
+        <section class="pg-col">
+          <div class="alr-lc-section-label">Inspection</div>
+          <div id="pg-inspect"></div>
+          <div class="alr-lc-section-label pg-gap">Estimate</div>
+          <div id="pg-result"></div>
+          <div class="pg-actions">
+            <button type="button" class="alr-lc-btn-primary" id="pg-save">Save Pre-grade</button>
+            <button type="button" class="alr-lc-btn-ghost" id="pg-report">Report</button>
+            <button type="button" class="alr-lc-btn-ghost" id="pg-labels">Labels</button>
+            <button type="button" class="alr-lc-btn-ghost" id="pg-editor">Send to Editor</button>
+          </div>
+          <div class="pg-msg" id="pg-status"></div>
+          <div class="pg-disc">Estimates only, based on each company’s published standards as we understand them. ALR Initiative is not affiliated with PSA, TAG, Beckett or CGC, and their grades can differ.</div>
+        </section>
+      </div>
+    </div>
+  </main>
   <main class="app-main app-cards" id="app-cards" hidden>
     <div class="app-cards-wrap">
       <div class="app-cards-head">
@@ -114,5 +255,6 @@ button,input{font:inherit}
   <script src="app.js"></script>
   <script src="label.js"></script>
   <script src="alr-graded.js"></script>
+  <script src="pregrade.js"></script>
 </body>
 </html>

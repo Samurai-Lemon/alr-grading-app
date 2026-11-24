@@ -118,14 +118,21 @@
   }
   function showView(v) {
     view = v;
-    $('app-editor').hidden = v !== 'editor';
-    $('app-cards').hidden = v !== 'cards';
-    $('app-tab-editor').classList.toggle('on', v === 'editor');
-    $('app-tab-cards').classList.toggle('on', v === 'cards');
+    ['editor', 'pregrade', 'cards'].forEach(function (n) {
+      $('app-' + n).hidden = v !== n;
+      $('app-tab-' + n).classList.toggle('on', v === n);
+    });
     if (v === 'cards') loadCards();
+    if (v === 'pregrade' && window.ALRPregrade) window.ALRPregrade.refresh();
   }
-  // From My Cards: open a saved card in the editor.
-  window.ALR_openEdit = function (id) {
+  window.ALR_showView = showView;
+  // From My Cards: open a saved card in the editor, or a pre-grade in the Pre-grade tab.
+  window.ALR_openEdit = function (id, kind) {
+    if (kind === 'pregrade') {
+      showView('pregrade');
+      if (window.ALRPregrade) window.ALRPregrade.load(id);
+      return;
+    }
     showView('editor');
     if (window.ALRLabel && window.ALRLabel.editCard) window.ALRLabel.editCard(id);
   };

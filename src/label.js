@@ -578,7 +578,7 @@
     f.name = row.card_name; f.set = lab.set != null ? lab.set : (row.set_name || ''); f.variant = lab.variant != null ? lab.variant : (row.printing || '');
     f.cert = row.cert; f.grade = String(row.grade); f.gl = row.grade_label;
     var vf = fullFront(f);
-    vf.qr = window.ALRGraded && window.qrcode ? window.ALRGraded.certUrl(row.cert_no) : null;
+    vf.qr = window.ALRGraded && window.qrcode && row.cert_no != null ? window.ALRGraded.certUrl(row.cert_no, row.kind) : null;
     Object.keys(d).forEach(function(k) { b[k] = (lab.back && lab.back[k]) || d[k]; });
     var snap = { vf: vf, vb: b };
     return loadOutliner().then(function() {
@@ -589,6 +589,7 @@
   window.ALRLabel = {
     markDirty: function() { markDirty(); },
     saveLabels: saveLabels,
+    currentColours: function() { return { front: pick(getF(), FRONT_KEYS), back: pick(getB(), BACK_KEYS) }; },
     editCard: function(id) { if (acct.sb && acct.session) loadForEdit(id); },
     frontPng: function(v) { return labelPng(fullFront(v)); },
     frontSvg: function(v) {

@@ -60,7 +60,109 @@ button,input{font:inherit}
 .alr-gc-actions a, .alr-gc-actions button { font-size: 12px; padding: 5px 9px; border-radius: 8px; background: var(--alr-hover); color: var(--alr-text) !important; border: 0; cursor: pointer; text-decoration: none !important; font-family: inherit; }
 .alr-gc-actions .alr-gc-del { color: #e27a5e !important; }
 .alr-gc-status { font-size: 11.5px; color: var(--alr-muted); min-height: 1em; }
+.alr-gc-img { position: relative; }
+.alr-gc-tag { position: absolute; top: 8px; left: 8px; font-size: 9px; font-weight: 800; letter-spacing: .6px; padding: 2px 6px; border-radius: 4px; }
+.alr-gc-tag.pre { background: #3a2a10; color: #d9a441; border: 1px solid #5a4318; }
+.alr-gc-tag.fin { background: #1f2a1f; color: #9fd18f; border: 1px solid #2f4a2f; }
+.alr-gc-grade.pre span { border-color: #d9a441; color: #d9a441; }
+.alr-gc-grade em { font-style: normal; font-size: 11px; color: var(--alr-muted); }
+.alr-gc-filters { display: flex; gap: 6px; padding: 14px 14px 0; }
+.alr-gc-filters button { font-family: inherit; font-size: 12px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--alr-border-strong); background: transparent; color: var(--alr-muted); cursor: pointer; }
+.alr-gc-filters button.on { background: var(--alr-text); color: var(--alr-bg); border-color: var(--alr-text); }
+/* pre-grade cert page */
+.alr-cert-pre { color: #8a5a12 !important; background: #fbefd6 !important; border-color: #eacb8a !important; }
+[saved-theme="dark"] .alr-cert-pre { color: #e5c26e !important; background: #2a2210 !important; border-color: #5a4318 !important; }
+.alr-cert-estline { margin-top: 6px; font-size: 13px; font-weight: 700; color: var(--alr-accent-text); }
+.alr-cert-est div { text-align: center; }
+.alr-cert-est small { display: block; font-size: 11px; color: var(--alr-muted); }
+.alr-cert-app { margin-top: 14px; font-size: 12.5px; color: var(--alr-text-2); background: var(--alr-surface-2); border: 1px dashed var(--alr-border-strong); border-radius: 10px; padding: 10px 12px; line-height: 1.5; }
 
+/* Pre-grade (app only) — built from the Editor's look: same surfaces, type and accent */
+.app-pg{overflow:hidden}
+.pg-wrap{flex:1;min-height:0;display:flex;flex-direction:column;max-width:1400px;width:100%;margin:0 auto;border:1px solid var(--alr-border);border-radius:var(--alr-r-lg);background:var(--alr-surface);overflow:hidden}
+.pg-top{display:flex;align-items:center;gap:14px}
+.pg-stamp{display:inline-block;margin-left:9px;border:1.5px solid var(--alr-accent);color:var(--alr-accent-text);border-radius:3px;padding:1px 6px;font-size:10.5px;font-weight:800;letter-spacing:.8px;vertical-align:1px}
+.pg-cert{margin-left:auto;font-family:var(--codeFont)}
+.pg-newbtn{min-height:32px!important;padding:0 14px!important;font-size:13px!important}
+.pg-grid{flex:1;min-height:0;display:grid;grid-template-columns:minmax(250px,.85fr) minmax(300px,1fr) minmax(300px,1fr)}
+.pg-col{padding:20px;border-right:1px solid var(--alr-border);overflow:auto;min-height:0;display:flex;flex-direction:column;gap:10px}
+.pg-col:last-child{border-right:0}
+.pg-gap{margin-top:12px}
+.pg-sub{font-size:12px;color:var(--alr-muted);margin-top:-4px}
+.pg-msg{font-size:12px;color:var(--alr-muted)}
+.pg-msg:empty{display:none}
+#pg-picked .alr-lc-field{margin:0}
+#pg-picked .alr-lc-picked{margin-top:8px}
+#pg-picked select{margin-top:6px;width:100%}
+.pg-photos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pg-ph{aspect-ratio:63/88;border:1.5px dashed var(--alr-border-strong);border-radius:var(--alr-r-xs);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12.5px;color:var(--alr-text-2);cursor:pointer;position:relative;overflow:hidden;background:var(--alr-bg)}
+.pg-ph.drag,.pg-ph:hover{border-color:var(--alr-accent);background:var(--alr-hover)}
+.pg-ph.has{border-style:solid;background:var(--alr-surface-2)}
+.pg-ph-in{display:contents}
+.pg-ph img{width:100%;height:100%;object-fit:contain}
+.pg-ph-plus{font-size:20px;color:var(--alr-accent-text);line-height:1}
+.pg-ph-rm{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-family:var(--bodyFont);font-size:11px;border:0;border-radius:6px;padding:4px 9px;background:rgba(18,17,16,.82);color:#ede8de;cursor:pointer}
+.pg-tools{display:flex;gap:6px;align-items:center}
+.pg-seg{display:flex;border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-xs);padding:3px;gap:2px}
+.pg-seg button{font-family:var(--bodyFont);font-size:12.5px;font-weight:600;border:0;border-radius:6px;padding:6px 13px;background:transparent;color:var(--alr-muted);cursor:pointer}
+.pg-seg button.on{background:var(--alr-hover);color:var(--alr-text)}
+.pg-tool{min-height:34px!important;padding:0 12px!important;font-size:12.5px!important;width:auto!important}
+.pg-tool.on{background:color-mix(in srgb,var(--alr-accent) 14%,transparent)!important;color:var(--alr-accent-text)!important}
+.pg-stage{position:relative;height:440px;flex:none;background:var(--alr-surface-2);border:1px solid var(--alr-border);border-radius:var(--alr-r-sm);overflow:hidden;touch-action:none;user-select:none}
+.pg-stage img{position:absolute;pointer-events:none;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.pg-stage-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--alr-text-2);font-size:13px;padding:20px}
+.pg-stage-empty small{font-size:12px;color:var(--alr-muted);margin-top:6px}
+.pg-g{position:absolute;z-index:2}
+.pg-g.v{top:0;bottom:0;width:14px;margin-left:-7px;cursor:ew-resize}
+.pg-g.h{left:0;right:0;height:14px;margin-top:-7px;cursor:ns-resize}
+.pg-g.v::after{content:"";position:absolute;left:6px;top:0;bottom:0;border-left:1.5px dashed}
+.pg-g.h::after{content:"";position:absolute;top:6px;left:0;right:0;border-top:1.5px dashed}
+.pg-g.outer::after{border-color:var(--alr-text-2)}
+.pg-g.inner::after{border-color:var(--alr-accent)}
+.pg-g:hover::after{border-style:solid}
+.pg-dim{position:absolute;z-index:3;font:700 10.5px var(--codeFont);color:var(--alr-text);background:var(--alr-surface);border:1px solid var(--alr-border-strong);padding:1px 5px;border-radius:5px;pointer-events:none}
+#pg-lens{position:absolute;z-index:4;width:130px;height:130px;border-radius:50%;border:2px solid var(--alr-accent);box-shadow:0 8px 24px rgba(0,0,0,.45);pointer-events:none;background-repeat:no-repeat}
+.pg-legend{display:flex;gap:14px;align-items:center;font-size:11.5px;color:var(--alr-muted);flex-wrap:wrap}
+.pg-legend i{display:inline-block;width:16px;border-top:2px dashed;vertical-align:middle;margin-right:6px}
+.pg-legend i.o{border-color:var(--alr-text-2)}.pg-legend i.n{border-color:var(--alr-accent)}
+.pg-ratios{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pg-rb{border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-xs);padding:9px 12px;background:var(--alr-bg)}
+.pg-rb span{display:block;font-size:11px;color:var(--alr-muted)}
+.pg-rb b{font-size:20px;color:var(--alr-text)}
+.pg-cap{font-size:12.5px;color:var(--alr-text-2);line-height:1.5}
+.pg-cap b{color:var(--alr-text)}
+.pg-cap small{color:var(--alr-muted)}
+.pg-st{font-size:12px;font-weight:500;color:var(--alr-text-2);margin:8px 0 0}
+.pg-rw{display:grid;grid-template-columns:92px 1fr;gap:8px;align-items:center;font-size:12.5px;color:var(--alr-text-2)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.seg button{font-family:var(--bodyFont);font-size:12px;padding:7px 2px;border-radius:var(--alr-r-xs);border:1px solid var(--alr-border-strong);background:transparent;color:var(--alr-muted);cursor:pointer}
+.seg button:hover{color:var(--alr-text)}
+.seg button.on{border-color:var(--alr-accent);color:var(--alr-accent-text);background:color-mix(in srgb,var(--alr-accent) 12%,transparent)}
+.pg-chips{display:flex;flex-wrap:wrap;gap:5px}
+.pg-chips button{font-family:var(--bodyFont);font-size:12px;padding:6px 11px;border-radius:999px;border:1px solid var(--alr-border-strong);background:transparent;color:var(--alr-muted);cursor:pointer}
+.pg-chips button:hover{color:var(--alr-text)}
+.pg-chips button.on{border-color:var(--alr-accent);color:var(--alr-accent-text);background:color-mix(in srgb,var(--alr-accent) 12%,transparent)}
+.pg-notes{width:100%;min-height:60px;resize:vertical;font-family:var(--bodyFont)}
+.pg-subs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.pg-sg{border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-xs);padding:8px 6px;text-align:center;background:var(--alr-bg);cursor:text}
+.pg-sg span{display:block;font-size:11px;color:var(--alr-muted)}
+.pg-sg input{width:100%;border:0;background:transparent;color:var(--alr-text);font:800 21px var(--bodyFont);text-align:center;padding:0;outline:none;-moz-appearance:textfield}
+.pg-sg input::-webkit-inner-spin-button{display:none}
+.pg-sg.low{border-color:var(--alr-accent)}.pg-sg.low input{color:var(--alr-accent-text)}
+.pg-sg.set{border-style:dashed}
+.pg-est{border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-sm);overflow:hidden;background:var(--alr-bg)}
+.pg-er{display:grid;grid-template-columns:92px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--alr-border)}
+.pg-er:last-child{border-bottom:0}
+.pg-co{font-weight:700;font-size:13px;color:var(--alr-text)}.pg-co small{display:block;font-weight:400;font-size:11px;color:var(--alr-muted)}
+.pg-bar{height:6px;border-radius:999px;background:var(--alr-hover);position:relative}
+.pg-bar i{position:absolute;top:0;bottom:0;border-radius:999px;background:var(--alr-accent)}
+.pg-gv{font-size:19px;font-weight:800;color:var(--alr-accent);text-align:right;white-space:nowrap}
+.pg-gv small{display:block;font-size:11px;font-weight:500;color:var(--alr-muted)}
+.pg-weak{border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-sm);background:var(--alr-bg);padding:10px 12px;font-size:12.5px;color:var(--alr-text-2);line-height:1.5}
+.pg-weak b{color:var(--alr-text)}
+.pg-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.pg-actions button{width:100%;white-space:nowrap}
+.pg-disc{font-size:11px;color:var(--alr-muted);line-height:1.5}
 /* account chip + sign-in */
 .app-who:empty{display:none}
 .app-who{display:flex;align-items:center;gap:7px;border:1px solid var(--alr-border-strong);border-radius:999px;padding:3px 10px 3px 3px;font-size:12px;white-space:nowrap}
@@ -231,6 +333,7 @@ button,input{font:inherit}
   <div class="app-save">
     <nav class="app-tabs" role="tablist">
       <button type="button" role="tab" class="on" id="app-tab-editor" data-view="editor">Editor</button>
+      <button type="button" role="tab" id="app-tab-pregrade" data-view="pregrade">Pre-grade</button>
       <button type="button" role="tab" id="app-tab-cards" data-view="cards">My Cards</button>
     </nav>
     <span class="app-save-lab">SAVE TO</span>
@@ -239,6 +342,60 @@ button,input{font:inherit}
     <span class="app-who" id="app-who"></span>
   </div>
   <main class="app-main" id="app-editor"><div id="alr-lc-tool"><div class="alr-lc-wrap"><div class="alr-lc-topbar"><span class="alr-lc-topbar-title">ALR INITIATIVE GRADING</span><span class="alr-lc-topbar-sub">2.65 × 0.78 in · fits a 2.68 × 0.79 in slab slot</span></div><div class="alr-lc-body"><div class="alr-lc-left"><div class="alr-lc-section-label">Preset</div><div class="alr-lc-preset-row"><button id="alr-lc-preset-dark" class="alr-lc-preset-btn alr-lc-preset-active">ALR Dark</button><button id="alr-lc-preset-light" class="alr-lc-preset-btn">ALR Light</button></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Find Card <span class="alr-lc-opt">optional · fills in the details</span></div><div id="alr-lc-find"><div class="alr-lc-games" id="alr-lc-games" role="group" aria-label="Card game"><button type="button" data-game="one-piece" class="on">One Piece</button><button type="button" data-game="pokemon">Pokémon</button><button type="button" data-game="yugioh">Yu-Gi-Oh!</button></div><div class="alr-lc-findrow"><input class="alr-lc-input" id="alr-lc-q" type="search" autocomplete="off" placeholder="Name or card number"/><button type="button" class="alr-lc-qbtn" id="alr-lc-qbtn">Search</button></div><div id="alr-lc-results"></div><div id="alr-lc-picked"></div></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Card Identity</div><div class="alr-lc-field"><div class="alr-lc-label">Card Name <span class="alr-lc-req">*</span></div><input class="alr-lc-input" id="alr-lc-name" value="CARD NAME" maxlength="120"/></div><div class="alr-lc-field"><div class="alr-lc-label">Set / Series</div><input class="alr-lc-input" id="alr-lc-set" value="SET - SERIES - EN - YEAR" maxlength="120"/></div><div class="alr-lc-field"><div class="alr-lc-label">Variant / Edition</div><input class="alr-lc-input" id="alr-lc-variant" value="VARIANT / EDITION" maxlength="120"/></div><div class="alr-lc-field"><div class="alr-lc-label">Cert Number</div><div class="alr-lc-cert-row"><input class="alr-lc-input" id="alr-lc-cert" value="0000-ALR"/><button class="alr-lc-cert-gen" id="alr-lc-cert-gen" title="Generate">↻</button></div></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Grade</div><div class="alr-lc-two"><div class="alr-lc-field"><div class="alr-lc-label">Grade</div><input class="alr-lc-input" id="alr-lc-grade" type="number" min="1" max="10" step="1" inputmode="numeric" value="10"/></div><div class="alr-lc-field"><div class="alr-lc-label">Grade Label</div><input class="alr-lc-input" id="alr-lc-gl" value="GEM MINT" maxlength="40"/></div></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Report <span class="alr-lc-opt">optional · not printed on the label</span></div><div class="alr-lc-field"><div class="alr-lc-label">Date Graded</div><input class="alr-lc-input" id="alr-lc-rdate" type="date"/></div><div class="alr-lc-two"><div class="alr-lc-field"><div class="alr-lc-label">Centering</div><input class="alr-lc-input" id="alr-lc-rcen" placeholder="55/45" maxlength="40"/></div><div class="alr-lc-field"><div class="alr-lc-label">Corners</div><input class="alr-lc-input" id="alr-lc-rcor" placeholder="Sharp" maxlength="40"/></div></div><div class="alr-lc-two"><div class="alr-lc-field"><div class="alr-lc-label">Edges</div><input class="alr-lc-input" id="alr-lc-redg" placeholder="Clean" maxlength="40"/></div><div class="alr-lc-field"><div class="alr-lc-label">Surface</div><input class="alr-lc-input" id="alr-lc-rsur" placeholder="No marks" maxlength="40"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Grader Notes</div><textarea class="alr-lc-input alr-lc-notes" id="alr-lc-rnotes" rows="3" maxlength="2000" placeholder="Anything worth noting about the card"></textarea></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Card Photo <span class="alr-lc-opt">optional · report and cert page</span></div><div id="alr-lc-photo-show"></div><label class="alr-lc-photo-drop" id="alr-lc-photo-drop"><input type="file" id="alr-lc-photo" accept="image/*" hidden/><span class="alr-lc-photo-plus">+</span><span>Add your photo</span><span class="alr-lc-photo-sm">Drag it in or choose a file. On a phone this can use the camera.</span></label><div class="alr-lc-photo-msg" id="alr-lc-photo-msg"></div><div class="alr-lc-rule"></div><div id="alr-lc-colours-front"><div class="alr-lc-section-label">Front Colours</div><div class="alr-lc-sub">Text</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Primary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-ctxt" value="#ede8de"/><input class="alr-lc-hex" id="alr-lc-htxt" value="#ede8de"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Secondary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cmut" value="#b7b1a6"/><input class="alr-lc-hex" id="alr-lc-hmut" value="#b7b1a6"/></div></div></div><div class="alr-lc-sub">Accent</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Accent</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cacc" value="#cc785c"/><input class="alr-lc-hex" id="alr-lc-hacc" value="#cc785c"/></div></div></div><div class="alr-lc-sub">Panels</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 1 · Logo</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp1" value="#121110"/><input class="alr-lc-hex" id="alr-lc-hp1" value="#121110"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Panel 2 · Card Info</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp2" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-hp2" value="#1a1917"/></div></div></div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 3 · Grade</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp3" value="#121110"/><input class="alr-lc-hex" id="alr-lc-hp3" value="#121110"/></div></div></div></div><div id="alr-lc-colours-back" style="display:none"><div class="alr-lc-section-label">Back Colours</div><div class="alr-lc-sub">Text</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Primary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bctxt" value="#ede8de"/><input class="alr-lc-hex" id="alr-lc-bhtxt" value="#ede8de"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Secondary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcmut" value="#b7b1a6"/><input class="alr-lc-hex" id="alr-lc-bhmut" value="#b7b1a6"/></div></div></div><div class="alr-lc-sub">Accent</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Accent</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcacc" value="#cc785c"/><input class="alr-lc-hex" id="alr-lc-bhacc" value="#cc785c"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Scale Boxes</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcsbox" value="#44423f"/><input class="alr-lc-hex" id="alr-lc-bhsbox" value="#44423f"/></div></div></div><div class="alr-lc-sub">Panels</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 1 · Logo</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp1" value="#121110"/><input class="alr-lc-hex" id="alr-lc-bhp1" value="#121110"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Panel 2 · Grade Scale</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp2" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-bhp2" value="#1a1917"/></div></div></div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 3 · Cert</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp3" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-bhp3" value="#1a1917"/></div></div></div></div></div><div class="alr-lc-right"><div class="alr-lc-tabs"><button class="alr-lc-tab alr-lc-tab-active" id="alr-lc-tab-front">Front</button><button class="alr-lc-tab" id="alr-lc-tab-back">Back</button><button class="alr-lc-tab" id="alr-lc-tab-fold">Fold Sheet</button></div><div class="alr-lc-preview" id="alr-lc-preview"></div><div class="alr-lc-actions"><button class="alr-lc-btn-primary" id="alr-lc-dl-front">Download Front</button><button class="alr-lc-btn-ghost" id="alr-lc-dl-back">Download Back</button><button class="alr-lc-btn-ghost" id="alr-lc-dl-fold">Download Fold</button><button class="alr-lc-btn-ghost" id="alr-lc-dl-report">Download Report</button><span class="alr-lc-status" id="alr-lc-status">Ready</span></div><div class="alr-lc-account" id="alr-lc-account" hidden></div></div></div></div></div></main>
+  <main class="app-main app-pg" id="app-pregrade" hidden>
+    <div class="pg-wrap">
+      <div class="alr-lc-topbar pg-top">
+        <span class="alr-lc-topbar-title">ALR INITIATIVE PRE-GRADE<span class="pg-stamp">ESTIMATE</span></span>
+        <span class="alr-lc-topbar-sub pg-cert" id="pg-cert"></span>
+        <button type="button" class="alr-lc-btn-ghost pg-newbtn" id="pg-new">New pre-grade</button>
+      </div>
+      <div class="pg-grid">
+        <section class="pg-col">
+          <div class="alr-lc-section-label">Card</div>
+          <div class="alr-lc-games" id="pg-games">
+            <button type="button" data-game="one-piece" class="on">One Piece</button><button type="button" data-game="pokemon">Pokémon</button><button type="button" data-game="yugioh">Yu-Gi-Oh!</button>
+          </div>
+          <div class="alr-lc-findrow"><input class="alr-lc-input" id="pg-q" type="search" placeholder="Name or card number" autocomplete="off" /><button type="button" class="alr-lc-qbtn" id="pg-qbtn">Search</button></div>
+          <div id="pg-results"></div>
+          <div id="pg-picked"></div>
+          <div class="alr-lc-section-label pg-gap">Photos <span class="alr-lc-opt">front and back</span></div>
+          <div class="pg-sub">Flat, even light, straight on.</div>
+          <div class="pg-photos">
+            <label class="pg-ph" id="pg-ph-front"><input type="file" id="pg-file-front" accept="image/*" hidden /><span class="pg-ph-in" id="pg-phin-front"></span></label>
+            <label class="pg-ph" id="pg-ph-back"><input type="file" id="pg-file-back" accept="image/*" hidden /><span class="pg-ph-in" id="pg-phin-back"></span></label>
+          </div>
+          <div class="pg-msg" id="pg-ph-msg"></div>
+        </section>
+        <section class="pg-col">
+          <div class="alr-lc-section-label">Centering</div>
+          <div class="pg-sub">Grey lines go on the card edge, orange lines on the inner border. Drag any line to adjust.</div>
+          <div class="pg-tools">
+            <div class="pg-seg" id="pg-sides"><button type="button" data-side="front" class="on">Front</button><button type="button" data-side="back">Back</button></div>
+            <button type="button" class="alr-lc-btn-ghost pg-tool" id="pg-auto">Auto-detect</button>
+            <button type="button" class="alr-lc-btn-ghost pg-tool" id="pg-loupe">Loupe</button>
+          </div>
+          <div class="pg-stage" id="pg-stage"></div>
+          <div class="pg-legend"><span><i class="o"></i>card edge</span><span><i class="n"></i>inner border</span><span class="pg-msg" id="pg-auto-msg"></span></div>
+          <div class="pg-ratios" id="pg-ratios"></div>
+          <div class="pg-cap" id="pg-cap"></div>
+        </section>
+        <section class="pg-col">
+          <div class="alr-lc-section-label">Inspection</div>
+          <div id="pg-inspect"></div>
+          <div class="alr-lc-section-label pg-gap">Estimate</div>
+          <div id="pg-result"></div>
+          <div class="pg-actions">
+            <button type="button" class="alr-lc-btn-primary" id="pg-save">Save Pre-grade</button>
+            <button type="button" class="alr-lc-btn-ghost" id="pg-report">Report</button>
+            <button type="button" class="alr-lc-btn-ghost" id="pg-labels">Labels</button>
+            <button type="button" class="alr-lc-btn-ghost" id="pg-editor">Send to Editor</button>
+          </div>
+          <div class="pg-msg" id="pg-status"></div>
+          <div class="pg-disc">Estimates only, based on each company’s published standards as we understand them. ALR Initiative is not affiliated with PSA, TAG, Beckett or CGC, and their grades can differ.</div>
+        </section>
+      </div>
+    </div>
+  </main>
   <main class="app-main app-cards" id="app-cards" hidden>
     <div class="app-cards-wrap">
       <div class="app-cards-head">
@@ -268,5 +425,6 @@ button,input{font:inherit}
   <script src="app.js"></script>
   <script src="label.js"></script>
   <script src="alr-graded.js"></script>
+  <script src="pregrade.js"></script>
 </body>
 </html>
