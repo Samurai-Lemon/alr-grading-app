@@ -30,6 +30,40 @@ button,input{font:inherit}
 .app-save-btn:hover{background:var(--alr-hover)}
 /* The tool fills the window: settings scroll on their own, preview and buttons stay in view. */
 .app-main{flex:1;min-height:0;padding:16px;display:flex;flex-direction:column}
+/* Editor | My Cards */
+.app-tabs{display:flex;gap:2px;border:1px solid var(--alr-border-strong);border-radius:9px;padding:2px;margin-right:6px}
+.app-tabs button{font:inherit;font-size:12.5px;font-weight:600;border:0;border-radius:7px;padding:5px 12px;background:transparent;color:var(--alr-muted);cursor:pointer}
+.app-tabs button.on{background:var(--alr-hover);color:var(--alr-text)}
+.app-main[hidden]{display:none}
+.app-cards{overflow:auto;display:block}
+.app-cards-wrap{max-width:1240px;margin:0 auto;border:1px solid var(--alr-border);border-radius:var(--alr-r-lg);background:var(--alr-surface);min-height:100%}
+.app-cards-head{display:flex;align-items:center;gap:14px;padding:18px 20px;border-bottom:1px solid var(--alr-border)}
+.app-cards-head h2{margin:2px 0 0;font-size:19px}
+.app-eb{font:600 10.5px var(--codeFont);letter-spacing:1.3px;color:var(--alr-accent-text)}
+.app-cards-count{margin-left:auto;font-size:13px;color:var(--alr-muted)}
+.app-cards-list .alr-reg-empty{padding:40px 20px;text-align:center;color:var(--alr-muted);font-size:14px}
+.app-cards-list .alr-reg-empty button{margin-top:12px}
+/*CARDSCSS*/
+/* account chip + sign-in */
+.app-who:empty{display:none}
+.app-who{display:flex;align-items:center;gap:7px;border:1px solid var(--alr-border-strong);border-radius:999px;padding:3px 10px 3px 3px;font-size:12px;white-space:nowrap}
+.app-av{width:22px;height:22px;border-radius:50%;background:var(--alr-accent);color:var(--alr-on-accent);font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center}
+.app-who button{border:0;background:none;color:var(--alr-muted);font:inherit;font-size:11px;cursor:pointer;padding:0 0 0 4px}
+.app-who button:hover{color:var(--alr-accent-text)}
+.app-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:50}
+.app-modal[hidden]{display:none}
+.app-modal-box{width:340px;background:var(--alr-surface);border:1px solid var(--alr-border-strong);border-radius:16px;padding:22px;box-shadow:0 24px 60px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:10px}
+.app-modal-box h2{margin:0;font-size:17px}
+.app-modal-box p{margin:0 0 4px;font-size:12.5px;color:var(--alr-text-2);line-height:1.5}
+.app-in{background:var(--alr-bg);border:1px solid var(--alr-border-strong);border-radius:9px;padding:9px 11px;font-size:13px;color:var(--alr-text);outline:none}
+.app-in:focus{border-color:var(--alr-accent)}
+.app-modal-msg{font-size:12px;color:#e27a5e;min-height:0}
+.app-modal-btns{display:flex;justify-content:flex-end;gap:8px}
+.app-btn,.app-btn-ghost{font:inherit;font-size:13px;font-weight:700;border-radius:9px;padding:8px 16px;cursor:pointer}
+.app-btn{background:var(--alr-accent);color:var(--alr-on-accent);border:0}
+.app-btn[disabled]{opacity:.6}
+.app-btn-ghost{background:transparent;border:1px solid var(--alr-border-strong);color:var(--alr-text)}
+.app-modal-link{font-size:12px;color:var(--alr-accent-text);text-align:center;text-decoration:none}
 .app-main #alr-lc-tool{flex:1;min-height:0;display:flex}
 .app-main .alr-lc-wrap{flex:1;min-height:0;display:flex;flex-direction:column;margin:0 auto!important;width:100%;max-width:1240px}
 .app-main .alr-lc-body{flex:1;min-height:0}
@@ -41,13 +75,44 @@ button,input{font:inherit}
 </head>
 <body>
   <div class="app-save">
+    <nav class="app-tabs" role="tablist">
+      <button type="button" role="tab" class="on" id="app-tab-editor" data-view="editor">Editor</button>
+      <button type="button" role="tab" id="app-tab-cards" data-view="cards">My Cards</button>
+    </nav>
     <span class="app-save-lab">SAVE TO</span>
     <span class="app-save-path" id="app-save-path" title="">…</span>
     <button class="app-save-btn" id="app-save-change" type="button">Change…</button>
+    <span class="app-who" id="app-who"></span>
   </div>
-  <main class="app-main"><!--TOOL--></main>
+  <main class="app-main" id="app-editor"><!--TOOL--></main>
+  <main class="app-main app-cards" id="app-cards" hidden>
+    <div class="app-cards-wrap">
+      <div class="app-cards-head">
+        <div><div class="app-eb">YOUR ACCOUNT</div><h2>My Graded Cards</h2></div>
+        <span class="app-cards-count" id="alr-account-graded-count"></span>
+        <button type="button" class="app-btn-ghost" id="app-cards-refresh">Refresh</button>
+      </div>
+      <div class="app-cards-list" id="alr-account-graded"></div>
+    </div>
+  </main>
+  <div class="app-modal" id="app-signin" hidden>
+    <form class="app-modal-box" id="app-signin-form">
+      <h2>Sign in to ALR</h2>
+      <p>Use your alrinitiative.com account. Cards you save in the app appear on your Account page.</p>
+      <input class="app-in" id="app-signin-email" type="email" autocomplete="username" placeholder="Email" required />
+      <input class="app-in" id="app-signin-pass" type="password" autocomplete="current-password" placeholder="Password" required />
+      <div class="app-modal-msg" id="app-signin-msg"></div>
+      <div class="app-modal-btns">
+        <button type="button" class="app-btn-ghost" id="app-signin-cancel">Cancel</button>
+        <button type="submit" class="app-btn" id="app-signin-go">Sign in</button>
+      </div>
+      <a class="app-modal-link" href="https://alrinitiative.com/Account" target="_blank" rel="noopener">No account? Create one on alrinitiative.com ↗</a>
+    </form>
+  </div>
   <script src="vendor/opentype.min.js"></script>
+  <script src="vendor/supabase.js"></script>
   <script src="app.js"></script>
   <script src="label.js"></script>
+  <script src="alr-graded.js"></script>
 </body>
 </html>

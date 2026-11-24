@@ -30,6 +30,57 @@ button,input{font:inherit}
 .app-save-btn:hover{background:var(--alr-hover)}
 /* The tool fills the window: settings scroll on their own, preview and buttons stay in view. */
 .app-main{flex:1;min-height:0;padding:16px;display:flex;flex-direction:column}
+/* Editor | My Cards */
+.app-tabs{display:flex;gap:2px;border:1px solid var(--alr-border-strong);border-radius:9px;padding:2px;margin-right:6px}
+.app-tabs button{font:inherit;font-size:12.5px;font-weight:600;border:0;border-radius:7px;padding:5px 12px;background:transparent;color:var(--alr-muted);cursor:pointer}
+.app-tabs button.on{background:var(--alr-hover);color:var(--alr-text)}
+.app-main[hidden]{display:none}
+.app-cards{overflow:auto;display:block}
+.app-cards-wrap{max-width:1240px;margin:0 auto;border:1px solid var(--alr-border);border-radius:var(--alr-r-lg);background:var(--alr-surface);min-height:100%}
+.app-cards-head{display:flex;align-items:center;gap:14px;padding:18px 20px;border-bottom:1px solid var(--alr-border)}
+.app-cards-head h2{margin:2px 0 0;font-size:19px}
+.app-eb{font:600 10.5px var(--codeFont);letter-spacing:1.3px;color:var(--alr-accent-text)}
+.app-cards-count{margin-left:auto;font-size:13px;color:var(--alr-muted)}
+.app-cards-list .alr-reg-empty{padding:40px 20px;text-align:center;color:var(--alr-muted);font-size:14px}
+.app-cards-list .alr-reg-empty button{margin-top:12px}
+/* account: your graded cards */
+.alr-gc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; padding: 14px; }
+.alr-gc { border: 1px solid var(--alr-border); border-radius: 12px; overflow: hidden; background: var(--alr-bg); display: flex; flex-direction: column; }
+.alr-gc-img { height: 170px; display: flex; align-items: center; justify-content: center; background: var(--alr-surface-2); }
+.alr-gc-img img { max-height: 154px; max-width: 90%; border-radius: 6px; }
+.alr-gc-ph { font-size: 48px; font-weight: 800; color: var(--alr-accent); opacity: .5; }
+.alr-gc-meta { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.alr-gc-name { font-weight: 700; color: var(--alr-text); }
+.alr-gc-sub { font-size: 12px; color: var(--alr-muted); }
+.alr-gc-mono { font-family: var(--codeFont), monospace; }
+.alr-gc-grade { display: flex; align-items: center; gap: 7px; }
+.alr-gc-grade b { font-size: 20px; color: var(--alr-accent); }
+.alr-gc-grade span { font-size: 10px; font-weight: 800; border: 1.5px solid var(--alr-accent); color: var(--alr-accent); border-radius: 2px; padding: 1px 5px; letter-spacing: .5px; }
+.alr-gc-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 6px; }
+.alr-gc-actions a, .alr-gc-actions button { font-size: 12px; padding: 5px 9px; border-radius: 8px; background: var(--alr-hover); color: var(--alr-text) !important; border: 0; cursor: pointer; text-decoration: none !important; font-family: inherit; }
+.alr-gc-actions .alr-gc-del { color: #e27a5e !important; }
+.alr-gc-status { font-size: 11.5px; color: var(--alr-muted); min-height: 1em; }
+
+/* account chip + sign-in */
+.app-who:empty{display:none}
+.app-who{display:flex;align-items:center;gap:7px;border:1px solid var(--alr-border-strong);border-radius:999px;padding:3px 10px 3px 3px;font-size:12px;white-space:nowrap}
+.app-av{width:22px;height:22px;border-radius:50%;background:var(--alr-accent);color:var(--alr-on-accent);font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center}
+.app-who button{border:0;background:none;color:var(--alr-muted);font:inherit;font-size:11px;cursor:pointer;padding:0 0 0 4px}
+.app-who button:hover{color:var(--alr-accent-text)}
+.app-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:50}
+.app-modal[hidden]{display:none}
+.app-modal-box{width:340px;background:var(--alr-surface);border:1px solid var(--alr-border-strong);border-radius:16px;padding:22px;box-shadow:0 24px 60px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:10px}
+.app-modal-box h2{margin:0;font-size:17px}
+.app-modal-box p{margin:0 0 4px;font-size:12.5px;color:var(--alr-text-2);line-height:1.5}
+.app-in{background:var(--alr-bg);border:1px solid var(--alr-border-strong);border-radius:9px;padding:9px 11px;font-size:13px;color:var(--alr-text);outline:none}
+.app-in:focus{border-color:var(--alr-accent)}
+.app-modal-msg{font-size:12px;color:#e27a5e;min-height:0}
+.app-modal-btns{display:flex;justify-content:flex-end;gap:8px}
+.app-btn,.app-btn-ghost{font:inherit;font-size:13px;font-weight:700;border-radius:9px;padding:8px 16px;cursor:pointer}
+.app-btn{background:var(--alr-accent);color:var(--alr-on-accent);border:0}
+.app-btn[disabled]{opacity:.6}
+.app-btn-ghost{background:transparent;border:1px solid var(--alr-border-strong);color:var(--alr-text)}
+.app-modal-link{font-size:12px;color:var(--alr-accent-text);text-align:center;text-decoration:none}
 .app-main #alr-lc-tool{flex:1;min-height:0;display:flex}
 .app-main .alr-lc-wrap{flex:1;min-height:0;display:flex;flex-direction:column;margin:0 auto!important;width:100%;max-width:1240px}
 .app-main .alr-lc-body{flex:1;min-height:0}
@@ -79,6 +130,26 @@ button,input{font:inherit}
         .alr-lc-svgwrap svg{width:100%;height:auto;display:block}
         .alr-lc-foldline{width:100%;max-width:520px;display:flex;align-items:center;gap:8px;font-size:9px;color:var(--gray);letter-spacing:1.5px}
         .alr-lc-foldline-dash{flex:1;border-top:1px dashed var(--gray)}
+        .alr-lc-desk{margin-top:16px;display:grid;grid-template-columns:auto 1fr auto;gap:8px 18px;align-items:center;border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-lg);padding:16px 20px;background:var(--alr-surface)}
+        .alr-lc-desk-icon{width:56px;height:56px;border-radius:13px;display:block}
+        .alr-lc-desk-eb{font:600 11px var(--codeFont),monospace;letter-spacing:1.2px;color:var(--alr-accent-text)}
+        .alr-lc-desk-title{font-size:17px;font-weight:700;color:var(--alr-text);margin:3px 0}
+        .alr-lc-desk-desc{font-size:13px;color:var(--alr-text-2);line-height:1.45;max-width:420px}
+        .alr-lc-desk-act{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+        .alr-lc-desk-btn{display:inline-flex;align-items:center;gap:8px;background:var(--alr-accent);color:var(--alr-on-accent)!important;font-weight:700;font-size:14px;padding:10px 16px;border-radius:var(--alr-r-sm);white-space:nowrap;text-decoration:none!important;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,filter .15s ease}
+        .alr-lc-desk-btn:hover,.alr-lc-desk-btn:focus-visible{transform:translateY(-2px)}
+        .alr-lc-desk-btn:focus-visible{outline:2px solid var(--alr-accent-text);outline-offset:2px}
+        .alr-lc-desk-btn:active{transform:translateY(0)}
+        .alr-lc-desk-btn svg{width:15px;height:15px;flex:none}
+        .alr-lc-desk-sub{font-size:11.5px;color:var(--alr-muted)}
+        .alr-lc-desk-oth{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end;font-size:12px}
+        .alr-lc-desk-oth a{color:var(--alr-accent-text)!important;display:inline-flex;gap:4px;align-items:center;text-decoration:none!important}
+        .alr-lc-desk-oth a:hover{text-decoration:underline!important}
+        .alr-lc-desk-oth svg{width:12px;height:12px}
+        .alr-lc-desk-note{grid-column:1/-1;font-size:11px;color:var(--alr-muted);text-align:right}
+        .alr-lc-desk.is-mobile .alr-lc-desk-note,.alr-lc-desk.is-mobile .alr-lc-desk-sub{display:none}
+        @media(max-width:700px){.alr-lc-desk{grid-template-columns:auto 1fr}.alr-lc-desk-act{grid-column:1/-1;align-items:stretch}.alr-lc-desk-btn{justify-content:center}.alr-lc-desk-oth{justify-content:center}.alr-lc-desk-note{text-align:center}}
+        html.alr-app .alr-lc-desk{display:none!important}
         .alr-lc-right{container-type:inline-size}
         /* Opened as the installed web app: just the tool, no site menus. */
         html.alr-app #quartz-header,html.alr-app .left.sidebar,html.alr-app .right.sidebar,html.alr-app .page-footer,html.alr-app footer,html.alr-app #alr-terminal-mount,html.alr-app .alr-lc .alr-bb{display:none!important}
@@ -87,9 +158,61 @@ button,input{font:inherit}
         html.alr-app .center{max-width:1100px!important;width:auto!important;margin:0 auto!important;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))!important}
         html.alr-app .center > hr{display:none}
         html.alr-app .alr-lc-wrap{margin-top:0}
-        .alr-lc-actions{border-top:1px solid var(--alr-border);padding:12px 20px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:center;background:transparent}
+        .alr-lc-actions{border-top:1px solid var(--alr-border);padding:12px 20px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;align-items:center;background:transparent}
         .alr-lc-actions button{width:100%;white-space:nowrap}
-        @container (max-width:470px){.alr-lc-actions{grid-template-columns:1fr}}
+        @container (max-width:640px){.alr-lc-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+        @container (max-width:360px){.alr-lc-actions{grid-template-columns:1fr}}
+        .alr-lc-opt{font-weight:400;color:var(--alr-muted);font-size:11px}
+        .alr-lc-games{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-xs);padding:3px;gap:2px}
+        .alr-lc-games button{font-family:var(--bodyFont);font-size:12px;font-weight:600;border:0;border-radius:6px;padding:7px 2px;background:transparent;color:var(--alr-muted);cursor:pointer}
+        .alr-lc-games button.on{background:var(--alr-hover);color:var(--alr-text)}
+        .alr-lc-findrow{display:flex;gap:6px;margin-top:8px}
+        .alr-lc-findrow .alr-lc-input{flex:1;min-width:0}
+        .alr-lc-qbtn{font-family:var(--bodyFont);font-size:13px;font-weight:700;border:0;border-radius:var(--alr-r-xs);padding:0 12px;background:var(--alr-accent);color:var(--alr-on-accent);cursor:pointer}
+        .alr-lc-find-msg,.alr-lc-find-count,.alr-lc-find-src{font-size:11.5px;color:var(--alr-muted);margin:8px 0 6px}
+        .alr-lc-find-src{margin:6px 0 0}
+        .alr-lc-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;max-height:330px;overflow:auto;padding-right:2px}
+        .alr-lc-tile{display:flex;flex-direction:column;gap:2px;padding:4px;border:1.5px solid var(--alr-border);border-radius:8px;background:var(--alr-bg);cursor:pointer;text-align:center;min-width:0;font-family:var(--bodyFont)}
+        .alr-lc-tile.on{border-color:var(--alr-accent);background:var(--alr-hover)}
+        .alr-lc-tile img,.alr-lc-tile-ph{width:100%;aspect-ratio:63/88;object-fit:cover;border-radius:4px;display:block;background:var(--alr-surface-2)}
+        .alr-lc-tile-t{font-size:10.5px;font-weight:700;color:var(--alr-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .alr-lc-tile-s{font-size:9.5px;color:var(--alr-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .alr-lc-picked{display:flex;gap:10px;align-items:center;margin-top:10px;padding:8px;border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-xs);background:var(--alr-bg)}
+        .alr-lc-picked img{width:48px;border-radius:4px;flex:none}
+        .alr-lc-picked div{display:flex;flex-direction:column;gap:1px;min-width:0;font-size:11.5px;color:var(--alr-text-2)}
+        .alr-lc-picked b{font-size:12.5px;color:var(--alr-text)}
+        #alr-lc-picked select{margin-top:6px}
+        #alr-lc-picked .alr-lc-label{display:block;margin-top:8px}
+        .alr-lc-linkbtn{background:none;border:0;padding:0;margin-top:3px;color:var(--alr-accent-text);font-size:11.5px;font-weight:600;cursor:pointer;text-align:left;font-family:var(--bodyFont)}
+        .alr-lc-photo-drop{display:flex;flex-direction:column;align-items:center;gap:3px;padding:14px 10px;border:1.5px dashed var(--alr-border-strong);border-radius:var(--alr-r-xs);cursor:pointer;text-align:center;font-size:12.5px;color:var(--alr-text-2)}
+        .alr-lc-photo-drop.drag,.alr-lc-photo-drop:hover{border-color:var(--alr-accent);background:var(--alr-hover)}
+        .alr-lc-photo-plus{font-size:20px;line-height:1;color:var(--alr-accent-text)}
+        .alr-lc-photo-sm{font-size:11px;color:var(--alr-muted)}
+        .alr-lc-photo-has{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+        .alr-lc-photo-has img{width:70px;border-radius:6px;flex:none}
+        .alr-lc-photo-has div{display:flex;flex-direction:column;gap:2px;font-size:11.5px;color:var(--alr-text-2)}
+        .alr-lc-photo-has b{font-size:12.5px;color:var(--alr-text)}
+        .alr-lc-photo-msg{font-size:11.5px;color:var(--alr-muted);min-height:0}
+        .alr-lc-notes{resize:vertical;min-height:64px;font-family:var(--bodyFont)}
+        .alr-lc-input[readonly]{opacity:.75;cursor:default}
+        .alr-lc-account{padding:0 20px 14px}
+        .alr-lc-acct{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-sm);padding:12px 14px;background:var(--alr-bg)}
+        .alr-lc-acct-txt{flex:1;min-width:200px;display:flex;flex-direction:column;gap:2px}
+        .alr-lc-acct-txt b{font-size:13.5px;color:var(--alr-text)}
+        .alr-lc-acct-txt span{font-size:12px;color:var(--alr-text-2);line-height:1.45}
+        .alr-lc-acct-ok b{color:#5d9a55}
+        .alr-lc-acct-btn{font-family:var(--bodyFont);font-size:13px;font-weight:700;min-height:36px;padding:0 14px;border-radius:var(--alr-r-xs);border:0;cursor:pointer;background:var(--alr-accent);color:var(--alr-on-accent)!important;text-decoration:none!important;display:inline-flex;align-items:center;white-space:nowrap}
+        .alr-lc-acct-btn.alr-lc-acct-ghost{background:transparent;border:1px solid var(--alr-accent);color:var(--alr-accent-text)!important}
+        .alr-lc-acct-btn[disabled]{opacity:.6;cursor:default}
+        .alr-lc-acct-msg{font-size:12px;color:var(--alr-muted);margin-top:6px}
+        .alr-lc-last{border:1px solid #2f4a2f;background:color-mix(in srgb,#5d9a55 10%,var(--alr-bg));border-radius:var(--alr-r-sm);padding:10px 12px;margin-bottom:10px}
+        .alr-lc-last-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding-right:22px;position:relative}
+        .alr-lc-last-head b{font-size:13.5px;color:#5d9a55}
+        .alr-lc-last-head span{font-size:12px;color:var(--alr-text-2)}
+        .alr-lc-last-x{position:absolute;right:-4px;top:-4px;border:0;background:none;color:var(--alr-muted);font-size:18px;line-height:1;cursor:pointer;padding:2px 6px}
+        .alr-lc-last-btns{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
+        .alr-lc-last-btns span{font-size:12px;color:var(--alr-muted);margin-right:2px}
+        .alr-lc-last-btns button,.alr-lc-last-btns a{font-family:var(--bodyFont);font-size:12.5px;font-weight:600;border:0;border-radius:8px;padding:6px 11px;background:var(--alr-hover);color:var(--alr-text)!important;cursor:pointer;text-decoration:none!important}
         .alr-lc-btn-primary{font-family:var(--bodyFont);font-size:14px;font-weight:600;min-height:40px;padding:0 16px;border-radius:var(--alr-r-sm);cursor:pointer;background:var(--alr-accent);border:none;color:var(--alr-on-accent);transition:all .15s}
         .alr-lc-btn-primary:hover{background:var(--alr-accent-text)}
         .alr-lc-btn-ghost{font-family:var(--bodyFont);font-size:14px;font-weight:500;min-height:40px;padding:0 16px;border-radius:var(--alr-r-sm);cursor:pointer;background:var(--alr-hover);border:none;color:var(--alr-text);transition:all .15s}
@@ -106,13 +229,44 @@ button,input{font:inherit}
 </head>
 <body>
   <div class="app-save">
+    <nav class="app-tabs" role="tablist">
+      <button type="button" role="tab" class="on" id="app-tab-editor" data-view="editor">Editor</button>
+      <button type="button" role="tab" id="app-tab-cards" data-view="cards">My Cards</button>
+    </nav>
     <span class="app-save-lab">SAVE TO</span>
     <span class="app-save-path" id="app-save-path" title="">…</span>
     <button class="app-save-btn" id="app-save-change" type="button">Change…</button>
+    <span class="app-who" id="app-who"></span>
   </div>
-  <main class="app-main"><div id="alr-lc-tool"><div class="alr-lc-wrap"><div class="alr-lc-topbar"><span class="alr-lc-topbar-title">ALR INITIATIVE GRADING</span><span class="alr-lc-topbar-sub">2.65 × 0.78 in · fits a 2.68 × 0.79 in slab slot</span></div><div class="alr-lc-body"><div class="alr-lc-left"><div class="alr-lc-section-label">Preset</div><div class="alr-lc-preset-row"><button id="alr-lc-preset-dark" class="alr-lc-preset-btn alr-lc-preset-active">ALR Dark</button><button id="alr-lc-preset-light" class="alr-lc-preset-btn">ALR Light</button></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Card Identity</div><div class="alr-lc-field"><div class="alr-lc-label">Card Name <span class="alr-lc-req">*</span></div><input class="alr-lc-input" id="alr-lc-name" value="CARD NAME"/></div><div class="alr-lc-field"><div class="alr-lc-label">Set / Series</div><input class="alr-lc-input" id="alr-lc-set" value="SET - SERIES - EN - YEAR"/></div><div class="alr-lc-field"><div class="alr-lc-label">Variant / Edition</div><input class="alr-lc-input" id="alr-lc-variant" value="VARIANT / EDITION"/></div><div class="alr-lc-field"><div class="alr-lc-label">Cert Number</div><div class="alr-lc-cert-row"><input class="alr-lc-input" id="alr-lc-cert" value="0000-ALR"/><button class="alr-lc-cert-gen" id="alr-lc-cert-gen" title="Generate">↻</button></div></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Grade</div><div class="alr-lc-two"><div class="alr-lc-field"><div class="alr-lc-label">Grade</div><input class="alr-lc-input" id="alr-lc-grade" type="number" min="1" max="10" step="1" inputmode="numeric" value="10"/></div><div class="alr-lc-field"><div class="alr-lc-label">Grade Label</div><input class="alr-lc-input" id="alr-lc-gl" value="GEM MINT"/></div></div><div class="alr-lc-rule"></div><div id="alr-lc-colours-front"><div class="alr-lc-section-label">Front Colours</div><div class="alr-lc-sub">Text</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Primary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-ctxt" value="#ede8de"/><input class="alr-lc-hex" id="alr-lc-htxt" value="#ede8de"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Secondary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cmut" value="#b7b1a6"/><input class="alr-lc-hex" id="alr-lc-hmut" value="#b7b1a6"/></div></div></div><div class="alr-lc-sub">Accent</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Accent</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cacc" value="#cc785c"/><input class="alr-lc-hex" id="alr-lc-hacc" value="#cc785c"/></div></div></div><div class="alr-lc-sub">Panels</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 1 · Logo</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp1" value="#121110"/><input class="alr-lc-hex" id="alr-lc-hp1" value="#121110"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Panel 2 · Card Info</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp2" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-hp2" value="#1a1917"/></div></div></div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 3 · Grade</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp3" value="#121110"/><input class="alr-lc-hex" id="alr-lc-hp3" value="#121110"/></div></div></div></div><div id="alr-lc-colours-back" style="display:none"><div class="alr-lc-section-label">Back Colours</div><div class="alr-lc-sub">Text</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Primary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bctxt" value="#ede8de"/><input class="alr-lc-hex" id="alr-lc-bhtxt" value="#ede8de"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Secondary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcmut" value="#b7b1a6"/><input class="alr-lc-hex" id="alr-lc-bhmut" value="#b7b1a6"/></div></div></div><div class="alr-lc-sub">Accent</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Accent</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcacc" value="#cc785c"/><input class="alr-lc-hex" id="alr-lc-bhacc" value="#cc785c"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Scale Boxes</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcsbox" value="#44423f"/><input class="alr-lc-hex" id="alr-lc-bhsbox" value="#44423f"/></div></div></div><div class="alr-lc-sub">Panels</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 1 · Logo</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp1" value="#121110"/><input class="alr-lc-hex" id="alr-lc-bhp1" value="#121110"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Panel 2 · Grade Scale</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp2" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-bhp2" value="#1a1917"/></div></div></div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 3 · Cert</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp3" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-bhp3" value="#1a1917"/></div></div></div></div></div><div class="alr-lc-right"><div class="alr-lc-tabs"><button class="alr-lc-tab alr-lc-tab-active" id="alr-lc-tab-front">Front</button><button class="alr-lc-tab" id="alr-lc-tab-back">Back</button><button class="alr-lc-tab" id="alr-lc-tab-fold">Fold Sheet</button></div><div class="alr-lc-preview" id="alr-lc-preview"></div><div class="alr-lc-actions"><button class="alr-lc-btn-primary" id="alr-lc-dl-front">Download Front</button><button class="alr-lc-btn-ghost" id="alr-lc-dl-back">Download Back</button><button class="alr-lc-btn-ghost" id="alr-lc-dl-fold">Download Fold</button><span class="alr-lc-status" id="alr-lc-status">Ready</span></div></div></div></div></div></main>
+  <main class="app-main" id="app-editor"><div id="alr-lc-tool"><div class="alr-lc-wrap"><div class="alr-lc-topbar"><span class="alr-lc-topbar-title">ALR INITIATIVE GRADING</span><span class="alr-lc-topbar-sub">2.65 × 0.78 in · fits a 2.68 × 0.79 in slab slot</span></div><div class="alr-lc-body"><div class="alr-lc-left"><div class="alr-lc-section-label">Preset</div><div class="alr-lc-preset-row"><button id="alr-lc-preset-dark" class="alr-lc-preset-btn alr-lc-preset-active">ALR Dark</button><button id="alr-lc-preset-light" class="alr-lc-preset-btn">ALR Light</button></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Find Card <span class="alr-lc-opt">optional · fills in the details</span></div><div id="alr-lc-find"><div class="alr-lc-games" id="alr-lc-games" role="group" aria-label="Card game"><button type="button" data-game="one-piece" class="on">One Piece</button><button type="button" data-game="pokemon">Pokémon</button><button type="button" data-game="yugioh">Yu-Gi-Oh!</button></div><div class="alr-lc-findrow"><input class="alr-lc-input" id="alr-lc-q" type="search" autocomplete="off" placeholder="Name or card number"/><button type="button" class="alr-lc-qbtn" id="alr-lc-qbtn">Search</button></div><div id="alr-lc-results"></div><div id="alr-lc-picked"></div></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Card Identity</div><div class="alr-lc-field"><div class="alr-lc-label">Card Name <span class="alr-lc-req">*</span></div><input class="alr-lc-input" id="alr-lc-name" value="CARD NAME" maxlength="120"/></div><div class="alr-lc-field"><div class="alr-lc-label">Set / Series</div><input class="alr-lc-input" id="alr-lc-set" value="SET - SERIES - EN - YEAR" maxlength="120"/></div><div class="alr-lc-field"><div class="alr-lc-label">Variant / Edition</div><input class="alr-lc-input" id="alr-lc-variant" value="VARIANT / EDITION" maxlength="120"/></div><div class="alr-lc-field"><div class="alr-lc-label">Cert Number</div><div class="alr-lc-cert-row"><input class="alr-lc-input" id="alr-lc-cert" value="0000-ALR"/><button class="alr-lc-cert-gen" id="alr-lc-cert-gen" title="Generate">↻</button></div></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Grade</div><div class="alr-lc-two"><div class="alr-lc-field"><div class="alr-lc-label">Grade</div><input class="alr-lc-input" id="alr-lc-grade" type="number" min="1" max="10" step="1" inputmode="numeric" value="10"/></div><div class="alr-lc-field"><div class="alr-lc-label">Grade Label</div><input class="alr-lc-input" id="alr-lc-gl" value="GEM MINT" maxlength="40"/></div></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Report <span class="alr-lc-opt">optional · not printed on the label</span></div><div class="alr-lc-field"><div class="alr-lc-label">Date Graded</div><input class="alr-lc-input" id="alr-lc-rdate" type="date"/></div><div class="alr-lc-two"><div class="alr-lc-field"><div class="alr-lc-label">Centering</div><input class="alr-lc-input" id="alr-lc-rcen" placeholder="55/45" maxlength="40"/></div><div class="alr-lc-field"><div class="alr-lc-label">Corners</div><input class="alr-lc-input" id="alr-lc-rcor" placeholder="Sharp" maxlength="40"/></div></div><div class="alr-lc-two"><div class="alr-lc-field"><div class="alr-lc-label">Edges</div><input class="alr-lc-input" id="alr-lc-redg" placeholder="Clean" maxlength="40"/></div><div class="alr-lc-field"><div class="alr-lc-label">Surface</div><input class="alr-lc-input" id="alr-lc-rsur" placeholder="No marks" maxlength="40"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Grader Notes</div><textarea class="alr-lc-input alr-lc-notes" id="alr-lc-rnotes" rows="3" maxlength="2000" placeholder="Anything worth noting about the card"></textarea></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Card Photo <span class="alr-lc-opt">optional · report and cert page</span></div><div id="alr-lc-photo-show"></div><label class="alr-lc-photo-drop" id="alr-lc-photo-drop"><input type="file" id="alr-lc-photo" accept="image/*" hidden/><span class="alr-lc-photo-plus">+</span><span>Add your photo</span><span class="alr-lc-photo-sm">Drag it in or choose a file. On a phone this can use the camera.</span></label><div class="alr-lc-photo-msg" id="alr-lc-photo-msg"></div><div class="alr-lc-rule"></div><div id="alr-lc-colours-front"><div class="alr-lc-section-label">Front Colours</div><div class="alr-lc-sub">Text</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Primary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-ctxt" value="#ede8de"/><input class="alr-lc-hex" id="alr-lc-htxt" value="#ede8de"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Secondary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cmut" value="#b7b1a6"/><input class="alr-lc-hex" id="alr-lc-hmut" value="#b7b1a6"/></div></div></div><div class="alr-lc-sub">Accent</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Accent</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cacc" value="#cc785c"/><input class="alr-lc-hex" id="alr-lc-hacc" value="#cc785c"/></div></div></div><div class="alr-lc-sub">Panels</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 1 · Logo</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp1" value="#121110"/><input class="alr-lc-hex" id="alr-lc-hp1" value="#121110"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Panel 2 · Card Info</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp2" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-hp2" value="#1a1917"/></div></div></div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 3 · Grade</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp3" value="#121110"/><input class="alr-lc-hex" id="alr-lc-hp3" value="#121110"/></div></div></div></div><div id="alr-lc-colours-back" style="display:none"><div class="alr-lc-section-label">Back Colours</div><div class="alr-lc-sub">Text</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Primary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bctxt" value="#ede8de"/><input class="alr-lc-hex" id="alr-lc-bhtxt" value="#ede8de"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Secondary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcmut" value="#b7b1a6"/><input class="alr-lc-hex" id="alr-lc-bhmut" value="#b7b1a6"/></div></div></div><div class="alr-lc-sub">Accent</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Accent</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcacc" value="#cc785c"/><input class="alr-lc-hex" id="alr-lc-bhacc" value="#cc785c"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Scale Boxes</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcsbox" value="#44423f"/><input class="alr-lc-hex" id="alr-lc-bhsbox" value="#44423f"/></div></div></div><div class="alr-lc-sub">Panels</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 1 · Logo</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp1" value="#121110"/><input class="alr-lc-hex" id="alr-lc-bhp1" value="#121110"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Panel 2 · Grade Scale</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp2" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-bhp2" value="#1a1917"/></div></div></div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 3 · Cert</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp3" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-bhp3" value="#1a1917"/></div></div></div></div></div><div class="alr-lc-right"><div class="alr-lc-tabs"><button class="alr-lc-tab alr-lc-tab-active" id="alr-lc-tab-front">Front</button><button class="alr-lc-tab" id="alr-lc-tab-back">Back</button><button class="alr-lc-tab" id="alr-lc-tab-fold">Fold Sheet</button></div><div class="alr-lc-preview" id="alr-lc-preview"></div><div class="alr-lc-actions"><button class="alr-lc-btn-primary" id="alr-lc-dl-front">Download Front</button><button class="alr-lc-btn-ghost" id="alr-lc-dl-back">Download Back</button><button class="alr-lc-btn-ghost" id="alr-lc-dl-fold">Download Fold</button><button class="alr-lc-btn-ghost" id="alr-lc-dl-report">Download Report</button><span class="alr-lc-status" id="alr-lc-status">Ready</span></div><div class="alr-lc-account" id="alr-lc-account" hidden></div></div></div></div></div></main>
+  <main class="app-main app-cards" id="app-cards" hidden>
+    <div class="app-cards-wrap">
+      <div class="app-cards-head">
+        <div><div class="app-eb">YOUR ACCOUNT</div><h2>My Graded Cards</h2></div>
+        <span class="app-cards-count" id="alr-account-graded-count"></span>
+        <button type="button" class="app-btn-ghost" id="app-cards-refresh">Refresh</button>
+      </div>
+      <div class="app-cards-list" id="alr-account-graded"></div>
+    </div>
+  </main>
+  <div class="app-modal" id="app-signin" hidden>
+    <form class="app-modal-box" id="app-signin-form">
+      <h2>Sign in to ALR</h2>
+      <p>Use your alrinitiative.com account. Cards you save in the app appear on your Account page.</p>
+      <input class="app-in" id="app-signin-email" type="email" autocomplete="username" placeholder="Email" required />
+      <input class="app-in" id="app-signin-pass" type="password" autocomplete="current-password" placeholder="Password" required />
+      <div class="app-modal-msg" id="app-signin-msg"></div>
+      <div class="app-modal-btns">
+        <button type="button" class="app-btn-ghost" id="app-signin-cancel">Cancel</button>
+        <button type="submit" class="app-btn" id="app-signin-go">Sign in</button>
+      </div>
+      <a class="app-modal-link" href="https://alrinitiative.com/Account" target="_blank" rel="noopener">No account? Create one on alrinitiative.com ↗</a>
+    </form>
+  </div>
   <script src="vendor/opentype.min.js"></script>
+  <script src="vendor/supabase.js"></script>
   <script src="app.js"></script>
   <script src="label.js"></script>
+  <script src="alr-graded.js"></script>
 </body>
 </html>

@@ -33,8 +33,15 @@ const js = blockWith(page, 'script', 'function cricutSvg');
 fs.writeFileSync('src/tool.html', tool);
 fs.writeFileSync('src/tool.css', css);
 fs.writeFileSync('src/label.js', js);
+// report PDF, card lookup and photos (shared with the site's cert page and Account list)
+fs.copyFileSync(path.join(site, 'quartz', 'static', 'alr-graded.js'), 'src/alr-graded.js');
+// the card grid styles from the site's Account page (My Cards uses the same layout)
+const gradedTsx = fs.readFileSync(path.join(site, 'quartz', 'components', 'ALRGradedCards.tsx'), 'utf8');
+const gcStart = gradedTsx.indexOf('/* account: your graded cards */');
+const gcCss = gcStart < 0 ? '' : gradedTsx.slice(gcStart, gradedTsx.indexOf('`', gcStart));
 const shell = fs.readFileSync('src/shell.html', 'utf8')
   .replace('<!--TOOL-->', tool)
-  .replace('/*TOOLCSS*/', css);
+  .replace('/*TOOLCSS*/', css)
+  .replace('/*CARDSCSS*/', gcCss);
 fs.writeFileSync('src/index.html', shell);
 console.log(`synced from ${site}: markup ${tool.length} B, css ${css.length} B, script ${js.length} B`);

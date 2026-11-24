@@ -20,12 +20,20 @@
       name: val('alr-lc-name') || 'CARD NAME',
       set: val('alr-lc-set') || 'SET - SERIES - EN - YEAR',
       variant: val('alr-lc-variant') || 'VARIANT / EDITION',
-      cert: val('alr-lc-cert') || '0000-ALR',
+      cert: acct.saved ? acct.saved.cert : (val('alr-lc-cert') || '0000-ALR'),
+      qr: acct.saved && window.qrcode && window.ALRGraded ? window.ALRGraded.certUrl(acct.saved.cert_no) : null,
       grade: val('alr-lc-grade') || '10',
       gl: val('alr-lc-gl') || 'GEM MINT',
       txt: val('alr-lc-ctxt'), mut: val('alr-lc-cmut'), acc: val('alr-lc-cacc'),
       p1: val('alr-lc-cp1'), p2: val('alr-lc-cp2'), p3: val('alr-lc-cp3')
     };
+  }
+
+  // Optional report details (not printed on the label).
+  function getReport() {
+    var c = { centering: val('alr-lc-rcen'), corners: val('alr-lc-rcor'), edges: val('alr-lc-redg'), surface: val('alr-lc-rsur') };
+    Object.keys(c).forEach(function(k) { c[k] = String(c[k] || '').trim(); if (!c[k]) delete c[k]; });
+    return { date: val('alr-lc-rdate'), condition: c, notes: String(val('alr-lc-rnotes') || '').trim() };
   }
 
   function getB() {
@@ -186,8 +194,26 @@
   }
 
   // The back: the grading scale with this card's grade lit, and the cert number and barcode again.
-  function backInner(v) {
-    var d = derive(v), f = getF(), id = 'lb' + Math.random().toString(36).slice(2);
+  // The QR on a saved card's back opens its public report page. It sits on its own tile in the
+  // lighter of the text/panel colours (scanners need dark modules on a light ground).
+  function qrTile(url, v) {
+    var m = window.ALRGraded.qrMatrix(url), n = m.length, size = 112, x0 = GC - size / 2, y0 = 74, q = 2, cell = size / (n + 2 * q);
+    var light = lum(v.txt) >= lum(v.p3) ? v.txt : v.p3, dark = light === v.txt ? v.p3 : v.txt;
+    var out = '<rect x="' + x0 + '" y="' + y0 + '" width="' + size + '" height="' + size + '" rx="4" fill="' + light + '"/>';
+    for (var r = 0; r < n; r++) {
+      var c = 0;
+      while (c < n) {
+        if (!m[r][c]) { c++; continue; }
+        var st = c; while (c < n && m[r][c]) c++;
+        out += '<rect x="' + r3(x0 + (q + st) * cell) + '" y="' + r3(y0 + (q + r) * cell) + '" width="' + r3((c - st) * cell + 0.05) + '" height="' + r3(cell + 0.05) + '" fill="' + dark + '"/>';
+      }
+    }
+    return out;
+  }
+
+  function backInner(v, f) {
+    f = f || getF();
+    var d = derive(v), id = 'lb' + Math.random().toString(36).slice(2);
     var gn = Math.floor(parseFloat(f.grade)), lit = isNaN(gn) ? 10 : Math.max(1, Math.min(10, gn));
     var gtxt = onColour(v.acc), boxes = '', litX = 170, step = Math.min(35, (GX - 170 - 12) / 10), bw = step - 4;
     SCALE.forEach(function(s, k) {
@@ -208,7 +234,7 @@
       + '<line x1="' + GX + '" y1="0" x2="' + GX + '" y2="200" stroke="' + d.line + '" stroke-width="2"/>'
       + t(GC, 36, 14, v.mut, 'CERT NO.', { anchor: 'middle', weight: 700, ls: 1 })
       + t(GC, 60, Math.max(13, Math.min(18, Math.floor(130 / Math.max(1, f.cert.length * 0.6)))), v.txt, f.cert, { anchor: 'middle', mono: true })
-      + barcode(f.cert, GX + 20, 76, 112, 100, v.txt)
+      + (f.qr ? qrTile(f.qr, v) : barcode(f.cert, GX + 20, 76, 112, 100, v.txt))
       + frameRect(d);
   }
 
@@ -219,8 +245,8 @@
   function buildFront(v, fonts) {
     return svgOpen(LABEL_W_IN, LABEL_H_IN, '0 0 ' + VW + ' 200') + (fonts || '') + frontInner(v) + '</svg>';
   }
-  function buildBack(v, fonts) {
-    return svgOpen(LABEL_W_IN, LABEL_H_IN, '0 0 ' + VW + ' 200') + (fonts || '') + backInner(v) + '</svg>';
+  function buildBack(v, fonts, f) {
+    return svgOpen(LABEL_W_IN, LABEL_H_IN, '0 0 ' + VW + ' 200') + (fonts || '') + backInner(v, f) + '</svg>';
   }
 
   // Front, fold line, then the back upside down, with crop marks around the strip.
@@ -232,7 +258,7 @@
     return svgOpen(FOLD_W_IN, FOLD_H_IN, (-m) + ' ' + (-m) + ' ' + (W + 2 * m) + ' ' + (H + 2 * m))
       + (fonts || '')
       + '<g><svg width="' + W + '" height="200" viewBox="0 0 ' + W + ' 200" style="color:unset">' + frontInner(vf) + '</svg></g>'
-      + '<g transform="translate(' + W + ',' + H + ') rotate(180)"><svg width="' + W + '" height="200" viewBox="0 0 ' + W + ' 200" style="color:unset">' + backInner(vb) + '</svg></g>'
+      + '<g transform="translate(' + W + ',' + H + ') rotate(180)"><svg width="' + W + '" height="200" viewBox="0 0 ' + W + ' 200" style="color:unset">' + backInner(vb, vf) + '</svg></g>'
       + '<line x1="-30" y1="203" x2="' + (W + 30) + '" y2="203" stroke="#888" stroke-width="0.7" stroke-dasharray="8,6"/>'
       + '<g stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="square">'
       + ln(-70, 0, -20, 0) + ln(0, -70, 0, -20) + ln(W + 20, 0, W + 70, 0) + ln(W, -70, W, -20)
@@ -467,7 +493,7 @@
   // The file is built and saved inside the click itself. Safari only honours the file name
   // (and saves instead of opening a tab) while it still counts as the user's click, so the
   // fonts are loaded ahead of time when the page opens.
-  function download(which) {
+  function download(which, snap) {
     var s = g('alr-lc-status');
     if (!otFonts) {
       if (s) s.textContent = 'Loading fonts… click again in a moment.';
@@ -476,10 +502,11 @@
       return;
     }
     try {
-      var vf = getF(), vb = getB(), svg, base, win = LABEL_W_IN, hin = LABEL_H_IN;
-      if (which === 'front') { svg = buildFront(vf); base = 'alr_label_front'; }
-      else if (which === 'back') { svg = buildBack(vb); base = 'alr_label_back'; }
-      else { svg = buildFold(vf, vb); base = 'alr_label_foldcut'; win = FOLD_W_IN; hin = FOLD_H_IN; }
+      var vf = snap ? snap.vf : getF(), vb = snap ? snap.vb : getB(), svg, base, win = LABEL_W_IN, hin = LABEL_H_IN;
+      var stem = snap && window.ALRGraded ? window.ALRGraded.fileStem(vf.name, vf.grade) + '_' : 'alr_label_';
+      if (which === 'front') { svg = buildFront(vf); base = stem + 'front'; }
+      else if (which === 'back') { svg = buildBack(vb, null, vf); base = stem + 'back'; }
+      else { svg = buildFold(vf, vb); base = stem + 'foldcut'; win = FOLD_W_IN; hin = FOLD_H_IN; }
       var out = cricutSvg(svg, win, hin, otFonts), size = inch(win) + ' × ' + inch(hin);
       if (typeof window.ALR_SAVE === 'function') {
         if (s) s.textContent = 'Saving…';
@@ -493,6 +520,266 @@
     } catch (e) { if (s) s.textContent = 'Could not make the file. Try again.'; }
   }
 
+  // ── Grading report (PDF). Built by alr-graded.js; the label goes on it at actual size. ──
+  function downloadReport(snap) {
+    var s = g('alr-lc-status');
+    if (!window.ALRGraded) { if (s) s.textContent = 'Report tools are still loading. Try again in a moment.'; return; }
+    var vf = snap ? snap.vf : getF(), r = snap ? snap.report : getReport(), rp = snap ? snap.photo : window.ALRGraded.reportPhoto();
+    var cm = snap ? snap.meta : meta(), saved = snap ? snap.saved : acct.saved;
+    if (s) s.textContent = 'Making the report…';
+    labelPng(vf).then(function(png) {
+      return window.ALRGraded.reportPdf({
+        cert: vf.cert, certNo: saved ? saved.cert_no : null,
+        name: vf.name, set: vf.set, variant: vf.variant, grade: vf.grade, gradeLabel: vf.gl,
+        date: r.date, condition: r.condition, notes: r.notes, labelPng: png,
+        cardNumber: cm.number, printing: cm.printing, game: cm.game ? window.ALRGraded.gameName(cm.game) : '',
+        photo: rp.photo, photoIsOfficial: rp.official,
+        photoSource: rp.official && cm.game ? window.ALRGraded.games[cm.game].source : null
+      });
+    }).then(function(blob) {
+      return window.ALRGraded.saveFile(blob, window.ALRGraded.fileStem(vf.name, vf.grade) + '_report.pdf');
+    }).then(function(fn) { if (s) s.textContent = 'Downloaded ' + (fn || 'report') + ' · letter size'; })
+      .catch(function() { if (s) s.textContent = 'Could not make the report. Try again.'; });
+  }
+
+  // The front label as a 600 DPI PNG (text drawn as shapes, so it looks the same everywhere).
+  function labelPng(v) {
+    return loadOutliner().then(function(fonts) {
+      var svg = cricutSvg(buildFront(v), LABEL_W_IN, LABEL_H_IN, fonts);
+      return new Promise(function(resolve, reject) {
+        var img = new Image(), url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+        img.onload = function() {
+          var c = document.createElement('canvas');
+          c.width = Math.round(LABEL_W_IN * 600); c.height = Math.round(LABEL_H_IN * 600);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          URL.revokeObjectURL(url);
+          resolve(c.toDataURL('image/png'));
+        };
+        img.onerror = function() { URL.revokeObjectURL(url); reject(new Error('label')); };
+        img.src = url;
+      });
+    });
+  }
+
+  // Other pages (cert page, Account) draw saved labels with this. Missing colours fall back to ALR Dark.
+  function fullFront(v) {
+    var o = {}, d = PRESETS.dark.front;
+    Object.keys(d).forEach(function(k) { o[k] = d[k]; });
+    Object.keys(v || {}).forEach(function(k) { if (v[k] != null && v[k] !== '') o[k] = v[k]; });
+    o.name = o.name || 'CARD NAME'; o.set = o.set || ''; o.variant = o.variant || '';
+    o.cert = o.cert || ''; o.grade = String(o.grade || '10'); o.gl = o.gl || '';
+    return o;
+  }
+  function meta() { return window.ALRGraded ? window.ALRGraded.cardMeta() : {}; }
+  // A saved card's label files (front, back with its QR, fold sheet), e.g. from the app's My Cards.
+  function saveLabels(row) {
+    var lab = row.label || {}, f = {}, b = {}, d = PRESETS.dark.back;
+    Object.keys(lab.front || {}).forEach(function(k) { f[k] = lab.front[k]; });
+    f.name = row.card_name; f.set = lab.set != null ? lab.set : (row.set_name || ''); f.variant = lab.variant != null ? lab.variant : (row.printing || '');
+    f.cert = row.cert; f.grade = String(row.grade); f.gl = row.grade_label;
+    var vf = fullFront(f);
+    vf.qr = window.ALRGraded && window.qrcode ? window.ALRGraded.certUrl(row.cert_no) : null;
+    Object.keys(d).forEach(function(k) { b[k] = (lab.back && lab.back[k]) || d[k]; });
+    var snap = { vf: vf, vb: b };
+    return loadOutliner().then(function() {
+      download('front', snap); download('back', snap); download('fold', snap);
+      return 'Saved front, back and fold for ' + row.cert;
+    });
+  }
+  window.ALRLabel = {
+    markDirty: function() { markDirty(); },
+    saveLabels: saveLabels,
+    editCard: function(id) { if (acct.sb && acct.session) loadForEdit(id); },
+    frontPng: function(v) { return labelPng(fullFront(v)); },
+    frontSvg: function(v) {
+      return loadOutliner().then(function(fonts) {
+        return cricutSvg(buildFront(fullFront(v)), LABEL_W_IN, LABEL_H_IN, fonts).replace(/^<[?]xml[^>]*>/, '');
+      });
+    }
+  };
+
+  // ── Saving cards to an account (Supabase, shared with the Account page). ──
+  var acct = { sb: null, session: null, saved: null, dirty: false, busy: false, msg: '', bound: false, last: null };
+  function pick(v, keys) { var o = {}; keys.forEach(function(k) { o[k] = v[k]; }); return o; }
+  function displayName(sess) {
+    var u = sess && sess.user;
+    return (u && u.user_metadata && u.user_metadata.display_name) || (u && u.email) || 'your account';
+  }
+  function setCertLock() {
+    var el = g('alr-lc-cert'), gen = g('alr-lc-cert-gen');
+    if (el) { el.readOnly = !!acct.saved; if (acct.saved) el.value = acct.saved.cert; el.title = acct.saved ? 'Issued when the card was saved' : ''; }
+    if (gen) gen.style.display = acct.saved ? 'none' : '';
+  }
+  function markDirty() {
+    if (acct.saved && !acct.dirty) { acct.dirty = true; renderAcct(); }
+  }
+  // The desktop app isn't on alrinitiative.com, so its links need the full address.
+  function certLink(n) { return (window.ALR_DESKTOP ? 'https://alrinitiative.com' : '') + '/cert?c=' + Number(n); }
+  function renderAcct() {
+    var box = g('alr-lc-account');
+    if (!box) return;
+    if (!window.ALR_supabase) { box.hidden = true; return; }
+    box.hidden = false;
+    var dis = acct.busy ? ' disabled' : '', html;
+    if (!acct.session) {
+      html = '<div class="alr-lc-acct-txt"><b>Save this card to your account</b><span>Keep the report, get an official cert number and a QR code on the label that opens this card’s report.</span></div>'
+        + (typeof window.ALR_signIn === 'function'
+          ? '<button type="button" class="alr-lc-acct-btn alr-lc-acct-ghost" id="alr-lc-acct-signin">Sign in</button>'
+          : '<a class="alr-lc-acct-btn alr-lc-acct-ghost" href="/Account" target="_blank" rel="noopener">Sign in ↗</a>');
+    } else if (!acct.saved) {
+      html = '<div class="alr-lc-acct-txt"><b>Save to my account</b><span>Signed in as ' + esc(displayName(acct.session)) + '. Saving gives this card an official cert number and puts its QR code on the back.</span></div>'
+        + '<button type="button" class="alr-lc-acct-btn" id="alr-lc-acct-save"' + dis + '>Save card</button>';
+    } else if (acct.dirty) {
+      html = '<div class="alr-lc-acct-txt"><b>Unsaved changes · ' + esc(acct.saved.cert) + '</b><span>Update the saved card so its report page matches.</span></div>'
+        + '<button type="button" class="alr-lc-acct-btn" id="alr-lc-acct-save"' + dis + '>Update card</button>'
+        + '<button type="button" class="alr-lc-acct-btn alr-lc-acct-ghost" id="alr-lc-acct-new"' + dis + '>New card</button>';
+    } else {
+      html = '<div class="alr-lc-acct-txt alr-lc-acct-ok"><b>✓ Saved as ' + esc(acct.saved.cert) + '</b><span>The QR code on the back opens this card’s report.</span></div>'
+        + '<a class="alr-lc-acct-btn alr-lc-acct-ghost" href="' + certLink(acct.saved.cert_no) + '" target="_blank" rel="noopener">Report page ↗</a>'
+        + '<button type="button" class="alr-lc-acct-btn alr-lc-acct-ghost" id="alr-lc-acct-new"' + dis + '>New card</button>';
+    }
+    var last = '';
+    if (acct.last) {
+      var L = acct.last.saved;
+      last = '<div class="alr-lc-last"><div class="alr-lc-last-head"><b>✓ ' + (acct.last.updated ? 'Updated ' : 'Saved as ') + esc(L.cert) + '</b>'
+        + '<span>' + esc(acct.last.vf.name) + ' · ' + esc(acct.last.vf.grade) + ' ' + esc(acct.last.vf.gl) + '. The editor is ready for your next card.</span>'
+        + '<button type="button" class="alr-lc-last-x" id="alr-lc-last-x" title="Close" aria-label="Close">×</button></div>'
+        + '<div class="alr-lc-last-btns"><span>Download its files:</span>'
+        + '<button type="button" data-last="front">Front</button><button type="button" data-last="back">Back</button>'
+        + '<button type="button" data-last="fold">Fold</button><button type="button" data-last="report">Report</button>'
+        + '<a href="' + certLink(L.cert_no) + '" target="_blank" rel="noopener">Report page ↗</a></div></div>';
+    }
+    box.innerHTML = last + '<div class="alr-lc-acct">' + html + '</div>' + (acct.msg ? '<div class="alr-lc-acct-msg">' + esc(acct.msg) + '</div>' : '');
+    var lx = g('alr-lc-last-x');
+    if (lx) lx.addEventListener('click', function() { acct.last = null; renderAcct(); });
+    Array.prototype.forEach.call(box.querySelectorAll('[data-last]'), function(b) {
+      b.addEventListener('click', function() {
+        var w = b.getAttribute('data-last');
+        if (w === 'report') downloadReport(acct.last); else download(w, acct.last);
+      });
+    });
+    var si = g('alr-lc-acct-signin');
+    if (si) si.addEventListener('click', function() { window.ALR_signIn(); });
+    var sv = g('alr-lc-acct-save'), nw = g('alr-lc-acct-new');
+    if (sv) sv.addEventListener('click', saveCard);
+    if (nw) nw.addEventListener('click', newCard);
+  }
+  function saveCard() {
+    if (!acct.sb || !acct.session || acct.busy) return;
+    var vf = getF(), vb = getB(), r = getReport();
+    var payload = {
+      card_name: String(vf.name).slice(0, 120), set_name: String(vf.set).slice(0, 120), printing: String(vf.variant).slice(0, 120),
+      grade: Math.max(1, Math.min(10, Math.round(Number(vf.grade)) || 10)), grade_label: String(vf.gl).slice(0, 40),
+      condition: r.condition, notes: r.notes ? r.notes.slice(0, 2000) : null,
+      label: { set: vf.set, variant: vf.variant, front: pick(vf, FRONT_KEYS), back: pick(vb, BACK_KEYS) },
+      source: window.ALR_DESKTOP ? 'app' : 'site'
+    };
+    if (r.date) payload.graded_on = r.date;
+    if (window.ALRGraded) {
+      var extra = window.ALRGraded.savePayload();
+      Object.keys(extra).forEach(function(k) { payload[k] = extra[k]; });
+    }
+    acct.busy = true; acct.msg = acct.saved ? 'Updating…' : 'Saving…'; renderAcct();
+    var q = acct.saved
+      ? acct.sb.from('graded_cards').update(payload).eq('id', acct.saved.id).select('id, cert, cert_no').single()
+      : acct.sb.from('graded_cards').insert(payload).select('id, cert, cert_no').single();
+    var photoFailed = false, first = !acct.saved;
+    q.then(function(res) {
+      if (res.error) throw res.error;
+      acct.saved = res.data; acct.dirty = false;
+      setCertLock();
+      return window.ALRGraded ? window.ALRGraded.syncPhoto(acct.sb, res.data.id).catch(function() { photoFailed = true; })
+        .then(function() { return window.ALRGraded.loadQR(); }) : null;
+    }).then(function() {
+      acct.busy = false;
+      if (photoFailed) {
+        // keep the card open so the photo can be retried
+        acct.msg = (first ? 'Saved as ' : 'Updated ') + acct.saved.cert + ', but the photo didn’t upload. Click Update card to try again.';
+        acct.dirty = true; render(); renderAcct(); return;
+      }
+      // Keep what's needed to download this card's finished files, then start a fresh card.
+      var cm = meta(), keep = {};
+      ['game', 'number', 'setName', 'printing'].forEach(function(k) { keep[k] = cm[k]; });
+      acct.last = { saved: acct.saved, vf: getF(), vb: getB(), report: getReport(), meta: keep,
+        photo: window.ALRGraded ? window.ALRGraded.reportPhoto() : { photo: null }, updated: !first };
+      resetEditor();
+    })
+      .catch(function(e) {
+        acct.busy = false;
+        acct.msg = 'Couldn’t save: ' + ((e && e.message) || 'check your connection and try again.');
+        renderAcct();
+      });
+  }
+  // A blank card for the next label. Colours stay as they are.
+  function resetEditor() {
+    acct.saved = null; acct.dirty = false; acct.msg = '';
+    setVal('alr-lc-name', 'CARD NAME'); setVal('alr-lc-set', 'SET - SERIES - EN - YEAR'); setVal('alr-lc-variant', 'VARIANT / EDITION');
+    setVal('alr-lc-cert', '0000-ALR'); setVal('alr-lc-grade', '10'); setVal('alr-lc-gl', 'GEM MINT');
+    ['alr-lc-rcen', 'alr-lc-rcor', 'alr-lc-redg', 'alr-lc-rsur', 'alr-lc-rnotes'].forEach(function(id) { setVal(id, ''); });
+    var now = new Date();
+    setVal('alr-lc-rdate', now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0'));
+    if (window.ALRGraded) window.ALRGraded.resetLookup();
+    if (/[?&]edit=/.test(location.search)) history.replaceState(history.state, '', location.pathname);
+    setCertLock(); render(); renderAcct();
+    var left = document.querySelector('.alr-lc-left'); if (left) left.scrollTop = 0;
+  }
+  function newCard() {
+    acct.saved = null; acct.dirty = false; acct.msg = '';
+    if (window.ALRGraded) window.ALRGraded.detachMeta();
+    var el = g('alr-lc-cert'); if (el) el.value = '0000-ALR';
+    if (/[?&]edit=/.test(location.search)) history.replaceState(history.state, '', location.pathname);
+    setCertLock(); render(); renderAcct();
+  }
+  function setVal(id, v) { var el = g(id); if (el && v != null) el.value = v; }
+  function loadForEdit(id) {
+    acct.msg = 'Loading saved card…'; renderAcct();
+    acct.sb.from('graded_cards').select('*').eq('id', id).single().then(function(res) {
+      if (res.error || !res.data) throw res.error || new Error('not found');
+      var row = res.data, lab = row.label || {};
+      setVal('alr-lc-name', row.card_name); setVal('alr-lc-set', lab.set != null ? lab.set : row.set_name);
+      setVal('alr-lc-variant', lab.variant != null ? lab.variant : row.printing);
+      setVal('alr-lc-grade', row.grade); setVal('alr-lc-gl', row.grade_label);
+      setVal('alr-lc-rdate', row.graded_on); setVal('alr-lc-rnotes', row.notes || '');
+      var c = row.condition || {};
+      setVal('alr-lc-rcen', c.centering || ''); setVal('alr-lc-rcor', c.corners || ''); setVal('alr-lc-redg', c.edges || ''); setVal('alr-lc-rsur', c.surface || '');
+      FRONT_KEYS.forEach(function(k) { if (lab.front && lab.front[k]) { setVal('alr-lc-c' + k, lab.front[k]); setVal('alr-lc-h' + k, lab.front[k]); } });
+      BACK_KEYS.forEach(function(k) { if (lab.back && lab.back[k]) { setVal('alr-lc-bc' + k, lab.back[k]); setVal('alr-lc-bh' + k, lab.back[k]); } });
+      acct.saved = { id: row.id, cert: row.cert, cert_no: row.cert_no }; acct.dirty = false; acct.msg = 'Editing ' + row.cert + '.';
+      if (window.ALRGraded) window.ALRGraded.setMetaFromRow(row);
+      setCertLock();
+      return window.ALRGraded ? window.ALRGraded.loadQR() : null;
+    }).then(function() { render(); renderAcct(); })
+      .catch(function() { acct.msg = 'Couldn’t open that saved card. It may have been deleted.'; renderAcct(); });
+  }
+  function setupAccount() {
+    var tool = g('alr-lc-tool');
+    if (tool && !tool._alrDirty) {
+      tool._alrDirty = true;
+      tool.addEventListener('input', function(e) {
+        if (e.target && e.target.id === 'alr-lc-cert') return;
+        markDirty();
+      });
+    }
+    if (!window.ALR_supabase) { renderAcct(); return; }
+    renderAcct();
+    window.ALR_supabase().then(function(sb) {
+      acct.sb = sb;
+      if (!acct.bound) {
+        acct.bound = true;
+        sb.auth.onAuthStateChange(function(_evt, session) {
+          acct.session = session;
+          if (!session) { acct.saved = null; acct.dirty = false; setCertLock(); render(); }
+          renderAcct();
+        });
+      }
+      return sb.auth.getSession();
+    }).then(function(res) {
+      acct.session = res && res.data ? res.data.session : null;
+      renderAcct();
+      var m = /[?&]edit=([0-9a-f-]{36})/.exec(location.search);
+      if (m && acct.session && (!acct.saved || acct.saved.id !== m[1])) loadForEdit(m[1]);
+    }).catch(function() { renderAcct(); });
+  }
 
   function setPreset(name) {
     var p = PRESETS[name];
@@ -503,6 +790,7 @@
     function sc(cid, hid, v) { var c = g(cid), h = g(hid); if (c) c.value = v; if (h) h.value = v; }
     FRONT_KEYS.forEach(function(k) { sc('alr-lc-c' + k, 'alr-lc-h' + k, p.front[k]); });
     BACK_KEYS.forEach(function(k) { sc('alr-lc-bc' + k, 'alr-lc-bh' + k, p.back[k]); });
+    markDirty();
     render();
   }
 
@@ -552,9 +840,59 @@
     }
   }
 
+  // ── Desktop app download strip: the big button matches the visitor's computer; links,
+  //    version and sizes come from the latest GitHub release (cached for 5 minutes). ──
+  var APP_REPO = 'Samurai-Lemon/alr-grading-app';
+  var APPLE_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9s-2-.9-3.4-.9c-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.8 1.2 1.8 2.6 3.1 2.5 1.3-.1 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.5.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.6-1-2.6-3.9zM13.9 4.9c.7-.8 1.2-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4z"/></svg>';
+  var WIN_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 4.5 10 3.4v7.8H2zm9-1.2L22 2v9.2H11zM2 12.2h8V20l-8-1.1zm9 0h11V22l-11-1.5z"/></svg>';
+  function visitorOS() {
+    var ua = navigator.userAgent || '', pf = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+    if (/iPhone|iPad|iPod|Android/i.test(ua) || (/Mac/i.test(pf) && navigator.maxTouchPoints > 1)) return 'mobile';
+    if (/Win/i.test(pf) || /Windows/i.test(ua)) return 'win';
+    if (/Mac/i.test(pf) || /Mac OS X/i.test(ua)) return 'mac';
+    return 'other';
+  }
+  function latestRelease() {
+    var KEY = 'alr-app-release';
+    try { var c = JSON.parse(localStorage.getItem(KEY) || 'null'); if (c && Date.now() - c.t < 300000) return Promise.resolve(c.r); } catch (e) {}
+    return fetch('https://api.github.com/repos/' + APP_REPO + '/releases/latest', { headers: { Accept: 'application/vnd.github+json' } })
+      .then(function(r) { if (!r.ok) throw new Error('release'); return r.json(); })
+      .then(function(j) {
+        var r = { tag: j.tag_name, page: j.html_url, assets: (j.assets || []).map(function(a) { return { n: a.name, u: a.browser_download_url, s: a.size }; }) };
+        try { localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), r: r })); } catch (e) {}
+        return r;
+      });
+  }
+  function setupDesk() {
+    var box = g('alr-lc-desk');
+    if (!box) return;
+    var os = visitorOS(), main = g('alr-lc-desk-main'), sub = g('alr-lc-desk-sub'), oth = g('alr-lc-desk-oth'), eb = g('alr-lc-desk-eb');
+    box.classList.toggle('is-mobile', os === 'mobile');
+    if (os === 'mobile') { if (main) main.textContent = 'Desktop app for Mac & Windows ↗'; return; }
+    latestRelease().then(function(r) {
+      function find(re) { for (var i = 0; i < r.assets.length; i++) if (re.test(r.assets[i].n)) return r.assets[i]; return null; }
+      function mb(a) { return a ? (Math.round(a.s / 104857.6) / 10) + ' MB' : ''; }
+      function link(a, html) { return a ? '<a href="' + a.u + '" rel="noopener">' + html + '</a>' : ''; }
+      var arm = find(/_aarch64.dmg$/), intel = find(/_x64.dmg$/), exe = find(/-setup.exe$/) || find(/.msi$/);
+      var all = '<a href="' + r.page + '" target="_blank" rel="noopener">All versions ↗</a>';
+      if (eb) eb.textContent = 'DESKTOP APP · ' + r.tag;
+      if (os === 'win' && exe) {
+        main.href = exe.u; main.removeAttribute('target'); main.innerHTML = WIN_SVG + ' Download for Windows';
+        sub.textContent = 'Windows 10 and 11 · ' + mb(exe) + ' installer';
+        oth.innerHTML = link(arm, APPLE_SVG + ' Mac (Apple Silicon)') + link(intel, 'Intel Mac') + all;
+      } else if (arm) {
+        // Browsers can't tell Apple Silicon from Intel, so Macs (and anyone else) get Apple Silicon first.
+        main.href = arm.u; main.removeAttribute('target'); main.innerHTML = APPLE_SVG + ' Download for Mac';
+        sub.textContent = 'Apple Silicon (M1 and later) · ' + mb(arm);
+        oth.innerHTML = link(intel, 'Intel Mac') + link(exe, WIN_SVG + ' Windows') + all;
+      }
+    }).catch(function() { /* keep the plain link to the release page */ });
+  }
+
   function init() {
     if (!g('alr-lc-tool')) { document.documentElement.classList.remove('alr-app'); return; }
     setupApp();
+    setupDesk();
     loadOutliner().catch(function() {});   // get the download fonts ready now
 
     function freshBtn(id) {
@@ -608,7 +946,17 @@
     if (df) df.addEventListener('click', function() { download('front'); });
     if (db) db.addEventListener('click', function() { download('back'); });
     if (dfo) dfo.addEventListener('click', function() { download('fold'); });
+    var drp = freshBtn('alr-lc-dl-report');
+    if (drp) drp.addEventListener('click', function() { downloadReport(); });
 
+    var rd = g('alr-lc-rdate');
+    if (rd && !rd.value) {
+      var now = new Date();
+      rd.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+    }
+    setCertLock();
+    setupAccount();
+    if (acct.saved && window.ALRGraded) window.ALRGraded.loadQR().then(render).catch(function() {});
     render();
   }
 
