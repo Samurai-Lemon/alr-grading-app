@@ -121,11 +121,12 @@
     if (!box) return;
     Array.prototype.forEach.call(document.querySelectorAll('#pg-games [data-game]'), function (b) { b.classList.toggle('on', b.getAttribute('data-game') === lookup.game); });
     if (msg) { box.innerHTML = '<div class="pg-msg">' + esc(msg) + '</div>'; return; }
-    box.innerHTML = lookup.items.length ? '<div class="alr-lc-tiles">' + lookup.items.map(function (it, i) {
+    box.innerHTML = (lookup.items.length && lookup.heading ? '<div class="pg-msg pg-found">' + esc(lookup.heading) + '</div>' : '') +
+      (lookup.items.length ? '<div class="alr-lc-tiles">' + lookup.items.map(function (it, i) {
       return '<button type="button" class="alr-lc-tile" data-pg-pick="' + i + '" title="' + esc(it.title + ' · ' + it.sub) + '">' +
         (it.img ? '<img src="' + esc(G().shown(it.game, it.img, 200)) + '" alt="" loading="lazy">' : '<span class="alr-lc-tile-ph"></span>') +
         '<span class="alr-lc-tile-t">' + esc(it.title) + '</span><span class="alr-lc-tile-s">' + esc(it.sub) + '</span></button>';
-    }).join('') + '</div>' : '';
+    }).join('') + '</div>' : '');
     Array.prototype.forEach.call(box.querySelectorAll('[data-pg-pick]'), function (b) {
       b.addEventListener('click', function () { pick(lookup.items[Number(b.getAttribute('data-pg-pick'))]); });
     });
@@ -133,15 +134,17 @@
   function runSearch() {
     var q = ($('pg-q').value || '').trim();
     if (q.length < 2 || lookup.busy || !G()) return;
-    lookup.busy = true; lookup.items = []; renderLookup('Searching…');
+    lookup.busy = true; lookup.items = []; lookup.heading = ''; renderLookup('Searching…');
     G().search(lookup.game, q).then(function (items) { lookup.busy = false; lookup.items = items; renderLookup(items.length ? '' : 'No cards found.'); })
       .catch(function () { lookup.busy = false; renderLookup('Couldn’t reach the card database.'); });
   }
   function pick(it) {
     if (!it) return;
-    var p = it.printings && it.printings[0];
+    var p = it.printings && ((it.preferCode && it.printings.filter(function (x) { return x.code === it.preferCode; })[0]) || it.printings[0]);
     S.card = { game: it.game, name: it.label.name, number: p ? p.code : it.number, setName: p ? p.set : it.setName,
-      printing: p ? p.rarity : it.printing, official: it.imgLarge || it.img || null, printings: it.printings || null };
+      printing: p ? p.rarity : it.printing, official: it.imgLarge || it.img || null, printings: it.printings || null,
+      // the label lines the Editor's own card search would write
+      labelSet: p ? (p.code + ' · EN').toUpperCase() : it.label.set, labelVariant: p ? String(p.rarity || '').toUpperCase() : it.label.variant };
     lookup.items = []; renderLookup(); renderPicked(); renderStage(); touched();
   }
   function renderPicked() {
@@ -156,7 +159,31 @@
       (c.game ? '<div class="alr-lc-picked">' + (img ? '<img src="' + esc(img) + '" alt="">' : '') + '<div><b>' + esc(G().games[c.game].label) + '</b><span>' + esc([c.number, c.printing].filter(Boolean).join(' · ')) + '</span><span>' + esc(c.setName || '') + '</span></div></div>' + prints : '');
     $('pg-name').addEventListener('input', function (e) { S.card.name = e.target.value; touched(); });
     var sel = $('pg-printing');
-    if (sel) sel.addEventListener('change', function () { var p = c.printings[Number(sel.value)]; c.number = p.code; c.setName = p.set; c.printing = p.rarity; renderPicked(); touched(); });
+    if (sel) sel.addEventListener('change', function () { var p = c.printings[Number(sel.value)]; c.number = p.code; c.setName = p.set; c.printing = p.rarity; c.labelSet = (p.code + ' · EN').toUpperCase(); c.labelVariant = String(p.rarity || '').toUpperCase(); renderPicked(); touched(); });
+  }
+
+  // ── recognise the card from the front photo ──────────────────────────────
+  function identify() {
+    var src = S.photos.front && (S.photos.front.orig || photoSrc('front'));
+    if (!src) { renderLookup('Add a front photo first.'); return; }
+    if (!window.ALRRecognize) { renderLookup('Card recognition isn’t available.'); return; }
+    lookup.busy = true; lookup.items = []; lookup.heading = '';
+    renderLookup('Reading the card in your photo… this takes about 10–20 seconds.');
+    window.ALRRecognize.identify(src, S.guides.front.set ? S.guides.front.outer : null, lookup.game).then(function (res) {
+      lookup.busy = false;
+      var r = res.read, said = r.code || (r.number ? r.number + (r.total ? '/' + r.total : '') : '') || '';
+      if (res.game) lookup.game = res.game;
+      lookup.items = res.items;
+      if (!res.items.length) {
+        renderLookup('Couldn’t recognise this card' + (said ? ' (read “' + said + '”)' : '') + '. Search by name or number above.');
+        return;
+      }
+      lookup.heading = 'From your photo' + (said ? ' (read ' + said + ')' : '') + '. Best match first. Pick your card:';
+      renderLookup();
+    }).catch(function () {
+      lookup.busy = false;
+      renderLookup('Couldn’t read the photo. Search by name or number above.');
+    });
   }
 
   // photos
@@ -178,8 +205,10 @@
     var st = $('pg-ph-msg');
     if (st) st.textContent = 'Preparing photo…';
     G().shrinkPhoto(file).then(function (p) {
-      S.photos[side] = { data: p.data, blob: p.blob };
+      // full-quality original stays in memory for reading the card (never uploaded)
+      S.photos[side] = { data: p.data, blob: p.blob, orig: URL.createObjectURL(file) };
       S.guides[side] = blankSide();
+      if (side === 'front' && !S.card.game) S.wantIdentify = true;
       if (st) st.textContent = '';
       renderPhotos(); S.side = side; renderStage();
       autoDetect(side);
@@ -202,7 +231,7 @@
     if (!stage) return;
     var src = photoSrc(S.side);
     if (!src) {
-      stage.innerHTML = '<div class="pg-stage-empty">Add a ' + S.side + ' photo to measure centering.<br><small>Lay the card flat, light it evenly, and shoot straight on.</small></div>';
+      stage.innerHTML = '<div class="pg-stage-empty">Add a ' + S.side + ' photo to measure centering.<br><small>Take the card out of its sleeve, lay it flat on a plain surface, light it evenly and shoot straight down.<br>Full-art card? Put the orange lines on its printed frame.</small></div>';
       renderRatios(); return;
     }
     if (!$('pg-img') || $('pg-img').getAttribute('data-src') !== src) {
@@ -320,6 +349,7 @@
         var iB = first(rowScore, oB - Math.max(4, Math.round(ch * 0.015)), oB - Math.round(ch * 0.075)) + 1;
         S.guides[side] = { outer: { l: oL / W, r: oR / W, t: oT / H, b: oB / H }, inner: { l: iL / W, r: iR / W, t: iT / H, b: iB / H }, set: true };
         if (st) st.textContent = 'Guides placed. Drag any line to fine-tune.';
+        if (side === 'front' && S.wantIdentify) { S.wantIdentify = false; setTimeout(identify, 0); }
       } catch (e) { if (st) st.textContent = 'Couldn’t read this photo automatically. Drag the guides by hand.'; }
       if (S.side === side) renderStage(); renderResult(); touched();
     };
@@ -395,7 +425,7 @@
     };
   }
   function labelFields(c) {
-    var setLine = [S.card.number, 'EN'].filter(Boolean).join(' · ') || (S.card.setName || '').toUpperCase().slice(0, 32);
+    var setLine = S.card.labelSet || [S.card.number, 'EN'].filter(Boolean).join(' · ') || (S.card.setName || '').toUpperCase().slice(0, 32);
     var estTxt = 'EST. PSA ' + fmt(c.est.psa.g) + ' · TAG ' + fmt(c.est.tag.g);
     return { name: (S.card.name || 'CARD NAME').toUpperCase(), set: setLine, variant: estTxt, grade: String(Math.round(c.est.psa.g)), gl: 'PRE-GRADE' };
   }
@@ -463,14 +493,15 @@
     var c = compute(), lf = labelFields(c), col = colours(), row = rowLike();
     var v = {}; Object.keys(col.front || {}).forEach(function (k) { v[k] = col.front[k]; });
     v.name = lf.name; v.set = lf.set; v.variant = lf.variant; v.cert = row.cert; v.grade = lf.grade; v.gl = 'PRE-GRADE';
-    var front = photoSrc('front'), official = !front && S.card.official;
+    // the clean database image wherever there is one; your photo only if the card isn't listed
+    var official = S.card.official || null, front = official ? null : photoSrc('front');
     window.ALRLabel.frontPng(v).then(function (png) {
       return G().reportPdf({
         kind: 'pregrade', pregrade: snapshot(), cert: row.cert, certNo: S.cert_no,
         name: S.card.name || lf.name, set: S.card.setName, variant: S.card.printing, cardNumber: S.card.number,
         printing: S.card.printing, game: S.card.game ? G().gameName(S.card.game) : '', grade: lf.grade, gradeLabel: 'PRE-GRADE',
         date: new Date().toISOString().slice(0, 10), condition: {}, notes: S.notes, labelPng: png,
-        photo: front || official || null, photoIsOfficial: !!official, photoSource: official ? G().games[S.card.game].source : null
+        photo: official || front || null, photoIsOfficial: !!official, photoSource: official ? G().games[S.card.game].source : null
       });
     }).then(function (blob) { return G().saveFile(blob, G().fileStem(S.card.name || 'CARD', 'PRE') + '_report.pdf'); })
       .then(function (msg) { status('Saved ' + msg); })
@@ -482,13 +513,18 @@
     (S.cert_no != null ? G().loadQR() : Promise.resolve()).then(function () { return window.ALRLabel.saveLabels(rowLike()); })
       .then(function (m) { status(m || 'Labels saved'); }).catch(function () { status('Couldn’t save the labels.'); });
   }
+  // Carries the card over for the final label: name, set line, variant, and the picked card
+  // (game, number, set, printing, official image) so the Editor's reports use the clean image.
   function sendToEditor() {
     if (needCard()) return;
     function set(id, v) { var el = $(id); if (el) { el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); } }
-    set('alr-lc-name', (S.card.name || '').toUpperCase());
-    set('alr-lc-set', [S.card.number, 'EN'].filter(Boolean).join(' · '));
-    set('alr-lc-variant', (S.card.printing || '').toUpperCase());
+    set('alr-lc-name', (S.card.name || '').toUpperCase().slice(0, 120));
+    set('alr-lc-set', (S.card.labelSet || [S.card.number, 'EN'].filter(Boolean).join(' · ') || (S.card.setName || '').toUpperCase()).slice(0, 120));
+    set('alr-lc-variant', (S.card.labelVariant || (S.card.printing || '').toUpperCase()).slice(0, 120));
+    if (G() && G().setCard) G().setCard({ game: S.card.game, number: S.card.number, setName: S.card.setName, printing: S.card.printing, official: S.card.official });
     if (window.ALR_showView) window.ALR_showView('editor');
+    var st = document.getElementById('alr-lc-status');
+    if (st) st.textContent = 'Card details filled in from the pre-grade' + (S.cert ? ' (' + S.cert + ')' : '') + '. Set the final grade, then Save card.';
   }
 
   // ── open a saved pre-grade (from My Cards) ────────────────────────────────
@@ -518,6 +554,7 @@
     });
     $('pg-q').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); runSearch(); } });
     $('pg-qbtn').addEventListener('click', runSearch);
+    $('pg-identify').addEventListener('click', identify);
     ['front', 'back'].forEach(function (side) {
       var inp = $('pg-file-' + side), drop = $('pg-ph-' + side);
       inp.addEventListener('change', function () { if (inp.files && inp.files[0]) takePhoto(side, inp.files[0]); inp.value = ''; });

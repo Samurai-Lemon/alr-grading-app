@@ -130,6 +130,8 @@ button,input{font:inherit}
 .pg-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
 .pg-actions button{width:100%;white-space:nowrap}
 .pg-disc{font-size:11px;color:var(--alr-muted);line-height:1.5}
+.pg-idbtn{align-self:flex-start}
+.pg-found{color:var(--alr-text-2)}
 /* account chip + sign-in */
 .app-who:empty{display:none}
 .app-who{display:flex;align-items:center;gap:7px;border:1px solid var(--alr-border-strong);border-radius:999px;padding:3px 10px 3px 3px;font-size:12px;white-space:nowrap}
@@ -186,10 +188,11 @@ button,input{font:inherit}
             <button type="button" data-game="one-piece" class="on">One Piece</button><button type="button" data-game="pokemon">Pokémon</button><button type="button" data-game="yugioh">Yu-Gi-Oh!</button>
           </div>
           <div class="alr-lc-findrow"><input class="alr-lc-input" id="pg-q" type="search" placeholder="Name or card number" autocomplete="off" /><button type="button" class="alr-lc-qbtn" id="pg-qbtn">Search</button></div>
+          <button type="button" class="alr-lc-btn-ghost pg-tool pg-idbtn" id="pg-identify">Identify from photo</button>
           <div id="pg-results"></div>
           <div id="pg-picked"></div>
           <div class="alr-lc-section-label pg-gap">Photos <span class="alr-lc-opt">front and back</span></div>
-          <div class="pg-sub">Flat, even light, straight on.</div>
+          <div class="pg-sub">Out of the sleeve, flat, even light, straight down. The front photo is also used to recognise the card.</div>
           <div class="pg-photos">
             <label class="pg-ph" id="pg-ph-front"><input type="file" id="pg-file-front" accept="image/*" hidden /><span class="pg-ph-in" id="pg-phin-front"></span></label>
             <label class="pg-ph" id="pg-ph-back"><input type="file" id="pg-file-back" accept="image/*" hidden /><span class="pg-ph-in" id="pg-phin-back"></span></label>
@@ -255,6 +258,8 @@ button,input{font:inherit}
   <script src="app.js"></script>
   <script src="label.js"></script>
   <script src="alr-graded.js"></script>
+  <script src="vendor/tesseract/tesseract.min.js"></script>
+  <script src="recognize.js"></script>
   <script src="pregrade.js"></script>
 </body>
 </html>
