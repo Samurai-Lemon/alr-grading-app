@@ -131,7 +131,95 @@ button,input{font:inherit}
 .pg-actions button{width:100%;white-space:nowrap}
 .pg-disc{font-size:11px;color:var(--alr-muted);line-height:1.5}
 .pg-idbtn{align-self:flex-start}
+#pg-check:empty{display:none}
+.pg-check-h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:600;color:var(--alr-text);margin:4px 0 6px}
+.pg-check{border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-sm);background:var(--alr-bg);overflow:hidden}
+.pg-ck{display:grid;grid-template-columns:16px 1fr auto;gap:8px;align-items:center;padding:8px 11px;border-bottom:1px solid var(--alr-border);font-size:12.5px;color:var(--alr-muted)}
+.pg-ck b{color:var(--alr-text);font-weight:600}
+.pg-ck small{font:11px var(--codeFont);color:var(--alr-muted);text-align:right}
+.pg-ck.bad{background:color-mix(in srgb,var(--alr-accent) 8%,transparent);color:var(--alr-accent-text)}
+.pg-ck.bad small{color:var(--alr-accent-text)}
+.pg-ck-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 11px;font-size:11.5px;color:var(--alr-muted)}
+.pg-linkbtn{border:0;background:none;padding:0;font:inherit;font-size:11.5px;font-weight:600;color:var(--alr-accent-text);cursor:pointer;white-space:nowrap}
+.pg-linkbtn:hover{text-decoration:underline}
+.pg-ph-badge{position:absolute;left:6px;top:6px;font-size:10px;font-weight:700;background:var(--alr-surface);border:1px solid var(--alr-border-strong);color:var(--alr-text-2);padding:2px 6px;border-radius:5px}
+.pg-ph-badge.bad{border-color:var(--alr-accent);color:var(--alr-accent-text)}
 .pg-found{color:var(--alr-text-2)}
+/* close-ups + whitening finder */
+.pg-grid[hidden]{display:none}
+.pg-top .pg-seg button{padding:5px 12px}
+.pg-cu{grid-template-columns:minmax(250px,300px) minmax(0,1fr) minmax(280px,340px)}
+.pg-cu-sides{align-self:flex-start}
+.pg-cu-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.pg-cu-head .pg-sub{margin:0}
+.pg-map{position:relative;align-self:center;width:100%;max-width:260px;margin:6px auto 0}
+.pg-map img{display:block;width:100%;border-radius:8px}
+.pg-map svg,.pg-tile svg,.pg-lb-img svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.pg-ring{fill:none;stroke:#e09a7e;stroke-width:2.5px;vector-effect:non-scaling-stroke}
+.pg-ring-sh{fill:none;stroke:rgba(18,17,16,.7);stroke-width:5px;vector-effect:non-scaling-stroke}
+.pg-num{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;border:2px solid #e09a7e;background:var(--alr-surface);color:var(--alr-accent-text);font:700 10.5px var(--bodyFont);display:flex;align-items:center;justify-content:center;pointer-events:none}
+.pg-cu-lab{font:600 10.5px var(--codeFont);letter-spacing:1.2px;color:var(--alr-muted);margin-top:4px}
+.pg-corners{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.pg-edges{display:flex;flex-direction:column;gap:10px}
+.pg-tile{position:relative;display:block;width:100%;padding:0;border:1px solid var(--alr-border-strong);border-radius:8px;overflow:hidden;background:var(--alr-surface-2);cursor:zoom-in}
+.pg-tile:hover{border-color:var(--alr-text-2)}
+.pg-tile.flag{border-color:var(--alr-accent)}
+.pg-tile img{display:block;width:100%;height:auto}
+.pg-tcap{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;color:var(--alr-text-2);margin-top:5px}
+.pg-tcap b{color:var(--alr-text);font-weight:600}
+.pg-pill{font-size:11px;font-weight:600;border:1px solid var(--alr-border-strong);color:var(--alr-muted);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.pg-pill.on{border-color:var(--alr-accent);color:var(--alr-accent-text);background:color-mix(in srgb,var(--alr-accent) 12%,transparent)}
+.pg-box{border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-sm);background:var(--alr-bg)}
+.pg-fd{display:grid;grid-template-columns:22px 1fr;gap:10px;padding:12px;border-bottom:1px solid var(--alr-border);font-size:12.5px;color:var(--alr-text-2);line-height:1.5}
+.pg-fd:last-child{border-bottom:0}
+.pg-fd b{color:var(--alr-text)}
+.pg-fd .pg-num{position:static;margin:0}
+.pg-fd-btns{display:flex;gap:6px;margin-top:8px;align-items:center}
+.pg-fd-btns button{min-height:30px!important;padding:0 11px!important;font-size:12px!important;width:auto!important}
+.pg-fd-ok{font-size:11.5px;color:var(--alr-muted)}
+.pg-empty{padding:14px 12px;font-size:12.5px;color:var(--alr-text-2);line-height:1.5}
+.pg-warn{border:1px solid var(--alr-accent);border-radius:var(--alr-r-sm);background:color-mix(in srgb,var(--alr-accent) 8%,transparent);padding:9px 11px;font-size:12px;color:var(--alr-accent-text);line-height:1.5}
+.pg-now{font-size:12px;color:var(--alr-text-2)}
+.pg-now b{color:var(--alr-text)}
+.pg-lb-box{max-width:min(92vw,1500px);max-height:90vh;background:var(--alr-surface);border:1px solid var(--alr-border-strong);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.pg-lb-h{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:14px}
+.pg-lb-img{overflow:auto;min-height:0}
+.pg-lb-in{position:relative;display:inline-block}
+.pg-lb-in img{display:block}
+/* grade odds + worth grading */
+.pg-odds{display:flex;height:24px;border-radius:6px;overflow:hidden;gap:2px;min-width:0}
+.pg-odds i{display:flex;align-items:center;justify-content:center;font:700 10.5px var(--bodyFont);font-style:normal;white-space:nowrap;overflow:hidden;min-width:3px}
+.pg-odds .o1{background:var(--alr-accent);color:var(--alr-on-accent)}
+.pg-odds .o2{background:color-mix(in srgb,var(--alr-accent) 50%,var(--alr-surface-2));color:var(--alr-text)}
+.pg-odds .o3{background:color-mix(in srgb,var(--alr-accent) 25%,var(--alr-surface-2));color:var(--alr-text)}
+.pg-odds .o4{background:var(--alr-hover);color:var(--alr-muted)}
+.pg-val{grid-template-columns:minmax(0,1fr) minmax(340px,440px)}
+.pg-val .pg-sg b{display:block;font-size:21px;font-weight:800;color:var(--alr-text)}
+.pg-val .pg-sg.low b{color:var(--alr-accent-text)}
+.pg-vw{display:flex;flex-direction:column;gap:12px}
+.pg-vcard{display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px;align-items:start}
+.pg-vcard img{width:72px;border-radius:5px;display:block}
+.pg-vcard b{font-size:14px;display:block}
+.pg-vcard span{display:block;font-size:12px;color:var(--alr-muted);margin-top:2px}
+.pg-vcard small{display:block;font-size:11px;color:var(--alr-muted);margin-top:4px}
+.pg-vin{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;font-size:12.5px;color:var(--alr-text-2)}
+.pg-vin input,.pg-pr input{width:96px;text-align:right;padding:6px 9px;min-height:0}
+.pg-pr{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border-bottom:1px solid var(--alr-border);font-size:12.5px;color:var(--alr-text-2)}
+.pg-pr:last-child{border-bottom:0}
+.pg-pr small{color:var(--alr-muted);font-size:11px;margin-left:4px}
+.pg-verd{border:1px solid var(--alr-accent);border-radius:var(--alr-r-sm);padding:12px 14px;background:var(--alr-bg)}
+.pg-verd.wait{border-color:var(--alr-border-strong)}
+.pg-verd>b{display:block;font-size:21px;font-weight:800;margin:4px 0}
+.pg-verd p{margin:4px 0 0;font-size:12.5px;color:var(--alr-text-2);line-height:1.55}
+.pg-verd p b{color:var(--alr-text)}
+.pg-verd em{font-style:normal;font-weight:700}
+.pg-verd em.up{color:var(--alr-accent-text)}
+.pg-cmp{display:grid;grid-template-columns:44px minmax(0,1fr) 84px;gap:10px;align-items:center;font-size:12.5px;color:var(--alr-text-2);padding:5px 0}
+.pg-cmp b{color:var(--alr-text)}
+.pg-cmp span{text-align:right}
+.pg-cmp span.down,.pg-verd em.down{color:var(--alr-muted)}
+.pg-cb{height:8px;border-radius:999px;background:var(--alr-hover);position:relative}
+.pg-cb i{position:absolute;top:0;bottom:0;left:0;border-radius:999px;background:var(--alr-accent)}
 /* account chip + sign-in */
 .app-who:empty{display:none}
 .app-who{display:flex;align-items:center;gap:7px;border:1px solid var(--alr-border-strong);border-radius:999px;padding:3px 10px 3px 3px;font-size:12px;white-space:nowrap}
@@ -178,10 +266,11 @@ button,input{font:inherit}
     <div class="pg-wrap">
       <div class="alr-lc-topbar pg-top">
         <span class="alr-lc-topbar-title">ALR INITIATIVE PRE-GRADE<span class="pg-stamp">ESTIMATE</span></span>
+        <div class="pg-seg" id="pg-views"><button type="button" data-pgview="measure" class="on">Measure</button><button type="button" data-pgview="closeups">Close-ups</button><button type="button" data-pgview="value">Worth it?</button></div>
         <span class="alr-lc-topbar-sub pg-cert" id="pg-cert"></span>
         <button type="button" class="alr-lc-btn-ghost pg-newbtn" id="pg-new">New pre-grade</button>
       </div>
-      <div class="pg-grid">
+      <div class="pg-grid" id="pg-measure">
         <section class="pg-col">
           <div class="alr-lc-section-label">Card</div>
           <div class="alr-lc-games" id="pg-games">
@@ -198,6 +287,7 @@ button,input{font:inherit}
             <label class="pg-ph" id="pg-ph-back"><input type="file" id="pg-file-back" accept="image/*" hidden /><span class="pg-ph-in" id="pg-phin-back"></span></label>
           </div>
           <div class="pg-msg" id="pg-ph-msg"></div>
+          <div id="pg-check"></div>
         </section>
         <section class="pg-col">
           <div class="alr-lc-section-label">Centering</div>
@@ -227,8 +317,32 @@ button,input{font:inherit}
           <div class="pg-disc">Estimates only, based on each company’s published standards as we understand them. ALR Initiative is not affiliated with PSA, TAG, Beckett or CGC, and their grades can differ.</div>
         </section>
       </div>
+      <div class="pg-grid pg-cu" id="pg-closeups" hidden>
+        <section class="pg-col">
+          <div class="alr-lc-section-label">Defect map</div>
+          <div class="pg-sub">Corners and edges are scanned for white spots (wear showing through the ink). Anything found is circled.</div>
+          <div class="pg-seg pg-cu-sides" id="pg-cu-sides"><button type="button" data-side="front" class="on">Front</button><button type="button" data-side="back">Back</button></div>
+          <div id="pg-map"></div>
+        </section>
+        <section class="pg-col">
+          <div class="pg-cu-head"><div class="alr-lc-section-label">Close-ups</div><span class="pg-sub">Cropped from your full-size photo. Click one to open it larger.</span></div>
+          <div id="pg-tiles"></div>
+        </section>
+        <section class="pg-col">
+          <div class="alr-lc-section-label">What it found</div>
+          <div id="pg-found"></div>
+          <div class="pg-sub">The finder only suggests. Your ratings in Inspection are what the estimate uses, so dust or a reflection can be ignored.</div>
+          <div class="pg-weak">Catches whitening on corners and edges. It can’t reliably catch surface scratches, print lines or dents. Check those yourself with the loupe under a side light.</div>
+          <div class="pg-disc">The close-ups and marks are added to the pre-grade report PDF.</div>
+        </section>
+      </div>
+      <div class="pg-grid pg-val" id="pg-value" hidden>
+        <section class="pg-col" id="pg-v-odds"></section>
+        <section class="pg-col"><div class="alr-lc-section-label">Worth grading?</div><div id="pg-v-worth" class="pg-vw"></div></section>
+      </div>
     </div>
   </main>
+  <div class="app-modal pg-lb" id="pg-lb" hidden><div class="pg-lb-box"><div class="pg-lb-h"><b id="pg-lb-t"></b><button type="button" class="app-btn-ghost" id="pg-lb-x">Close</button></div><div class="pg-lb-img" id="pg-lb-img"></div></div></div>
   <main class="app-main app-cards" id="app-cards" hidden>
     <div class="app-cards-wrap">
       <div class="app-cards-head">
@@ -260,6 +374,8 @@ button,input{font:inherit}
   <script src="alr-graded.js"></script>
   <script src="vendor/tesseract/tesseract.min.js"></script>
   <script src="recognize.js"></script>
+  <script src="photocheck.js"></script>
+  <script src="defects.js"></script>
   <script src="pregrade.js"></script>
 </body>
 </html>
