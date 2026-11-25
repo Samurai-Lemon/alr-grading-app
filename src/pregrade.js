@@ -27,6 +27,7 @@
       surface: { front: {}, back: {} },
       override: {},                                   // sub-grades typed in by hand
       ignored: {},                                    // finder suggestions waved off, 'front.tl'
+      real: null,                                     // the real grade, entered in My Cards (kept on save)
       value: { raw: null, rawSrc: null, co: 'psa', prices: { psa: {}, tag: {}, bgs: {}, cgc: {} } },
       notes: ''
     };
@@ -162,7 +163,9 @@
   function renderCertBar() {
     var el = $('pg-cert');
     if (!el) return;
-    el.textContent = S.cert ? (S.dirty ? S.cert + ' · unsaved changes' : S.cert + ' · saved') : 'New pre-grade · not saved';
+    el.textContent = S.cert ? (S.dirty ? S.cert + ' · unsaved changes' : S.cert + ' · saved') + (S.real ? ' · graded ' + (S.real.co === 'bgs' ? 'BGS' : String(S.real.co).toUpperCase()) + ' ' + S.real.g : '') : 'New pre-grade · not saved';
+    var gb = $('pg-gotback');
+    if (gb) { gb.hidden = !S.id || !window.ALRRealGrade; gb.textContent = S.real ? 'Real grade' : 'Got it back?'; }
   }
 
   // card lookup (same databases as the editor)
@@ -214,22 +217,29 @@
   }
 
   // ── recognise the card from the front photo ──────────────────────────────
+  // Read the card in the current card's front photo: Promise of { read, game, items }.
+  function recognise() {
+    var T = S, src = T.photos.front && (T.photos.front.orig || photoSrc('front'));
+    if (!src || !window.ALRRecognize) return Promise.reject(new Error(src ? 'unavailable' : 'no photo'));
+    return window.ALRRecognize.identify(src, T.guides.front.set ? T.guides.front.outer : null, lookup.game);
+  }
   function identify() {
     var src = S.photos.front && (S.photos.front.orig || photoSrc('front'));
     if (!src) { renderLookup('Add a front photo first.'); return; }
     if (!window.ALRRecognize) { renderLookup('Card recognition isn’t available.'); return; }
     lookup.busy = true; lookup.items = []; lookup.heading = '';
     renderLookup('Reading the card in your photo… this takes about 10–20 seconds.');
-    window.ALRRecognize.identify(src, S.guides.front.set ? S.guides.front.outer : null, lookup.game).then(function (res) {
+    recognise().then(function (res) {
       lookup.busy = false;
       var r = res.read, said = r.code || (r.number ? r.number + (r.total ? '/' + r.total : '') : '') || '';
       if (res.game) lookup.game = res.game;
       lookup.items = res.items;
+      if (r.back) { renderLookup('That looks like the back of the card. Card recognition uses the front photo.'); return; }
       if (!res.items.length) {
         renderLookup('Couldn’t recognise this card' + (said ? ' (read “' + said + '”)' : '') + '. Search by name or number above.');
         return;
       }
-      lookup.heading = 'From your photo' + (said ? ' (read ' + said + ')' : '') + '. Best match first. Pick your card:';
+      lookup.heading = (r.byArt ? 'Matched by the artwork' : 'From your photo' + (said ? ' (read ' + said + ')' : '')) + '. Best match first. Pick your card:';
       renderLookup();
     }).catch(function () {
       lookup.busy = false;
@@ -254,30 +264,33 @@
   }
   // New photo: check it and straighten it (photocheck.js), then measure. If the card can't be found
   // the photo is used as it is and the guides are placed by hand.
+  // Returns a Promise that settles once the photo is in and the guides are placed.
   function takePhoto(side, file) {
     var st = $('pg-ph-msg');
     if (st) st.textContent = 'Checking photo…';
+    var T = S;
     var run = window.ALRPhoto
-      ? window.ALRPhoto.process(file, { game: S.card.game || null }).catch(function () { return { ok: false, checks: [] }; })
+      ? window.ALRPhoto.process(file, { game: T.card.game || lookup.game || null }).catch(function () { return { ok: false, checks: [] }; })
       : Promise.resolve({ ok: false, checks: [] });
-    run.then(function (chk) { usePhoto(side, file, chk, !chk.ok); });
+    return run.then(function (chk) { return usePhoto(side, file, chk, !chk.ok, T); });
   }
   // raw = use the photo as taken instead of the straightened copy
-  function usePhoto(side, file, chk, raw) {
+  // T = the card this photo belongs to (batch mode can move on while a photo is being read)
+  function usePhoto(side, file, chk, raw, T) {
+    T = T || S;
     var st = $('pg-ph-msg');
     if (st) st.textContent = 'Preparing photo…';
-    G().shrinkPhoto(raw ? file : chk.blob).then(function (p) {
+    return G().shrinkPhoto(raw ? file : chk.blob).then(function (p) {
       // full-quality copy stays in memory for reading the card (never uploaded)
-      S.photos[side] = { data: p.data, blob: p.blob, orig: raw ? URL.createObjectURL(file) : chk.url, file: file, check: chk, raw: raw, outer: raw ? null : chk.outer };
-      S.guides[side] = blankSide();
-      clearIgnored(side);
-      if (side === 'front' && !S.card.game) S.wantIdentify = true;
+      T.photos[side] = { data: p.data, blob: p.blob, orig: raw ? URL.createObjectURL(file) : chk.url, file: file, check: chk, raw: raw, outer: raw ? null : chk.outer };
+      T.guides[side] = blankSide();
+      Object.keys(T.ignored).forEach(function (k) { if (k.indexOf(side + '.') === 0) delete T.ignored[k]; });
+      if (side === 'front' && !T.card.game && !T.batch) T.wantIdentify = true;
       if (st) st.textContent = '';
-      S.side = side;
-      renderPhotos(); renderStage();
-      autoDetect(side);
-      touched();
-    }).catch(function (e) { if (st) st.textContent = (e && e.message) || 'Couldn’t read that photo.'; });
+      T.side = side; T.dirty = true;
+      if (S === T) { renderPhotos(); renderStage(); touched(); }
+      return autoDetect(side, T);
+    }).catch(function (e) { if (st) st.textContent = (e && e.message) || 'Couldn’t read that photo.'; throw e; });
   }
   var ICON_OK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
   var ICON_BAD = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5v.5"/></svg>';
@@ -395,11 +408,13 @@
   }
 
   // auto-detect: strongest brightness change near each side = card edge; next one inward = border
-  function autoDetect(side) {
-    var src = photoSrc(side), st = $('pg-auto-msg');
-    if (!src) return;
+  function autoDetect(side, T) {
+    T = T || S;
+    var ph = T.photos[side], src = ph ? (ph.data || ph.url) : null, st = $('pg-auto-msg');
+    if (!src) return Promise.resolve();
     if (st) st.textContent = 'Finding edges…';
-    var img = new Image();
+    var img = new Image(), done;
+    var settled = new Promise(function (res) { done = res; });
     img.crossOrigin = 'anonymous';
     img.onload = function () {
       try {
@@ -429,7 +444,7 @@
         var mx0 = Math.max(2, Math.round(W * 0.015)), my0 = Math.max(2, Math.round(H * 0.015));
         // the table around a card is usually plain, so the first real rise is the card's edge
         // a straightened photo already knows exactly where the card's edge is
-        var known = S.photos[side] && S.photos[side].outer, oL, oR, oT, oB;
+        var known = T.photos[side] && T.photos[side].outer, oL, oR, oT, oB;
         if (known) { oL = Math.round(known.l * W); oR = Math.round(known.r * W); oT = Math.round(known.t * H); oB = Math.round(known.b * H); }
         else {
           oL = first(colScore, mx0, Math.round(W * 0.22), 0.3); oR = first(colScore, W - 1 - mx0, Math.round(W * 0.78), 0.3) + 1;
@@ -441,14 +456,16 @@
         var iR = first(colScore, oR - Math.max(4, Math.round(cw * 0.018)), oR - Math.round(cw * 0.085)) + 1;
         var iT = first(rowScore, oT + Math.max(3, Math.round(ch * 0.015)), oT + Math.round(ch * 0.075));
         var iB = first(rowScore, oB - Math.max(4, Math.round(ch * 0.015)), oB - Math.round(ch * 0.075)) + 1;
-        S.guides[side] = { outer: known ? { l: known.l, r: known.r, t: known.t, b: known.b } : { l: oL / W, r: oR / W, t: oT / H, b: oB / H }, inner: { l: iL / W, r: iR / W, t: iT / H, b: iB / H }, set: true };
+        T.guides[side] = { outer: known ? { l: known.l, r: known.r, t: known.t, b: known.b } : { l: oL / W, r: oR / W, t: oT / H, b: oB / H }, inner: { l: iL / W, r: iR / W, t: iT / H, b: iB / H }, set: true };
         if (st) st.textContent = 'Guides placed. Drag any line to fine-tune.';
-        if (side === 'front' && S.wantIdentify) { S.wantIdentify = false; setTimeout(identify, 0); }
+        if (side === 'front' && T.wantIdentify && S === T) { T.wantIdentify = false; setTimeout(identify, 0); }
       } catch (e) { if (st) st.textContent = 'Couldn’t read this photo automatically. Drag the guides by hand.'; }
-      if (S.side === side) renderStage(); renderResult(); touched();
+      if (S === T) { if (S.side === side) renderStage(); renderResult(); touched(); }
+      done();
     };
-    img.onerror = function () { if (st) st.textContent = 'Couldn’t read this photo automatically. Drag the guides by hand.'; };
+    img.onerror = function () { if (st) st.textContent = 'Couldn’t read this photo automatically. Drag the guides by hand.'; done(); };
     img.src = src;
+    return settled;
   }
 
   // inspection controls
@@ -612,8 +629,28 @@
     $('pg-measure').hidden = v !== 'measure';
     $('pg-closeups').hidden = v !== 'closeups';
     $('pg-value').hidden = v !== 'value';
+    $('pg-batch').hidden = v !== 'batch';
     Array.prototype.forEach.call(document.querySelectorAll('#pg-views [data-pgview]'), function (b) { b.classList.toggle('on', b.getAttribute('data-pgview') === v); });
-    if (v === 'closeups') renderCloseups(); else if (v === 'value') renderValue(); else renderStage();
+    if (v === 'closeups') renderCloseups(); else if (v === 'value') renderValue(); else if (v === 'batch') { if (window.ALRBatch) window.ALRBatch.render(); } else renderStage();
+  }
+  // What needs a look on the card on screen: photo check problems and finder suggestions.
+  function flags() {
+    var T = S, out = { photo: [], finder: [] };
+    ['front', 'back'].forEach(function (side) {
+      var p = T.photos[side];
+      if (p && p.check && p.check.checks) p.check.checks.forEach(function (ch) { if (!ch.ok) out.photo.push({ side: side, label: ch.label }); });
+    });
+    if (!window.ALRDefects) return Promise.resolve(out);
+    var sides = ['front', 'back'].filter(function (sd) { return scanKey(sd); });
+    return Promise.all(sides.map(scanSide)).then(function (rs) {
+      rs.forEach(function (res, i) {
+        if (!res || !res.ok || S !== T) return;
+        window.ALRDefects.AREAS.forEach(function (k) {
+          if (flagged(sides[i], res, k)) out.finder.push({ side: sides[i], k: k, kind: res.areas[k].kind, suggest: res.areas[k].suggest, name: window.ALRDefects.NAMES[k], level: LEVEL[res.areas[k].kind][res.areas[k].suggest] });
+        });
+      });
+      return out;
+    });
   }
   // close-ups for the report PDF, marks drawn in
   function closeupsForReport() {
@@ -670,8 +707,8 @@
   function readMoney(el) { var v = parseFloat(String(el.value).replace(/[$,\s]/g, '')); return isFinite(v) && v >= 0 ? Math.round(v * 100) / 100 : null; }
   function coName(co) { return co === 'bgs' ? 'BGS' : co.toUpperCase(); }
   // expected outcome for one company; grades without a typed price count as the raw price
-  function worth(c, co) {
-    var V = S.value, raw = V.raw, fee = fees()[co], pr = V.prices[co] || {}, typed = Object.keys(pr).filter(function (g) { return pr[g] != null; }).length;
+  function worth(c, co, st) {
+    var V = (st || S).value, raw = V.raw, fee = fees()[co], pr = V.prices[co] || {}, typed = Object.keys(pr).filter(function (g) { return pr[g] != null; }).length;
     if (raw == null || fee == null || !typed) return { ready: false, raw: raw, fee: fee, typed: typed };
     var ev = c.est[co].odds.reduce(function (a, o) { var v = pr[fmt(o[0])]; return a + o[1] * (v != null ? v : raw); }, 0);
     var net = ev - fee, gain = net - raw;
@@ -762,7 +799,8 @@
     return {
       v: 1, centering: { front: c.centering.front, back: c.centering.back }, guides: { front: S.guides.front, back: S.guides.back },
       corners: S.corners, edges: S.edges, surface: S.surface, sub: c.sub, est: c.est, weak: c.weak, override: S.override, ignored: S.ignored,
-      value: { raw: S.value.raw, rawSrc: S.value.rawSrc, co: S.value.co, prices: S.value.prices, fees: fees() }
+      value: { raw: S.value.raw, rawSrc: S.value.rawSrc, co: S.value.co, prices: S.value.prices, fees: fees() },
+      real: S.real || undefined
     };
   }
   function labelFields(c) {
@@ -781,11 +819,13 @@
   function status(msg) { var el = $('pg-status'); if (el) el.textContent = msg || ''; }
   function needCard() { if (!(S.card.name || '').trim()) { status('Add the card name first (search or type it).'); return true; } return false; }
 
+  // Promise of true when saved. (Batch mode saves the card on screen, so S is that card.)
   function save() {
-    if (needCard()) return;
-    window.ALR_supabase().then(function (sb) {
+    if (needCard()) return Promise.resolve(false);
+    var T = S;
+    return window.ALR_supabase().then(function (sb) {
       return sb.auth.getSession().then(function (res) {
-        if (!res.data || !res.data.session) { status('Sign in to save pre-grades to your account.'); if (window.ALR_signIn) window.ALR_signIn(); return; }
+        if (!res.data || !res.data.session) { status('Sign in to save pre-grades to your account.'); if (window.ALR_signIn) window.ALR_signIn(); return false; }
         var c = compute(), lf = labelFields(c), col = colours(), pg = snapshot();
         var payload = {
           kind: 'pregrade', card_name: lf.name.slice(0, 120), grade: Math.max(1, Math.min(10, Math.round(c.est.psa.g))), grade_label: 'PRE-GRADE',
@@ -806,25 +846,29 @@
           : sb.from('graded_cards').insert(payload).select('id, cert, cert_no').single();
         return q.then(function (r) {
           if (r.error) throw r.error;
-          S.id = r.data.id; S.cert = r.data.cert; S.cert_no = r.data.cert_no;
-          return uploadPhotos(sb);
+          T.id = r.data.id; T.cert = r.data.cert; T.cert_no = r.data.cert_no;
+          return uploadPhotos(sb, T);
         }).then(function () {
-          S.dirty = false; renderCertBar(); renderPhotos();
-          status('Saved as ' + S.cert + '. It’s on your Account page, and the report page is live.');
+          T.dirty = false;
+          if (S === T) { renderCertBar(); renderPhotos(); }
+          status('Saved as ' + T.cert + '. It’s on your Account page, and the report page is live.');
+          return true;
         });
       });
-    }).catch(function (e) { status('Couldn’t save: ' + ((e && e.message) || 'check your connection and try again.')); });
+    }).catch(function (e) { status('Couldn’t save: ' + ((e && e.message) || 'check your connection and try again.')); return false; });
   }
-  function uploadPhotos(sb) {
+  // Uploaded photos keep their full-quality copy and check in memory, so close-ups still work.
+  function uploadPhotos(sb, T) {
+    T = T || S;
     var jobs = ['front', 'back'].map(function (side) {
-      var p = S.photos[side];
+      var p = T.photos[side];
       if (!p || !p.blob) return Promise.resolve();
-      var path = S.id + '/' + side + '.jpg';
+      var path = T.id + '/' + side + '.jpg';
       return sb.storage.from('card-photos').upload(path, p.blob, { upsert: true, contentType: 'image/jpeg', cacheControl: '60' }).then(function (r) {
         if (r.error) throw r.error;
         var u = {}; u[side + '_photo_path'] = path;
-        return sb.from('graded_cards').update(u).eq('id', S.id);
-      }).then(function () { S.photos[side] = { url: G().photoUrl(path) + '?v=' + Date.now() }; });
+        return sb.from('graded_cards').update(u).eq('id', T.id);
+      }).then(function () { T.photos[side] = { url: G().photoUrl(path) + '?v=' + Date.now(), data: p.data, orig: p.orig, check: p.check, raw: p.raw, outer: p.outer }; });
     });
     return Promise.all(jobs);
   }
@@ -881,6 +925,7 @@
       S.card = { game: row.game !== 'other' ? row.game : null, name: row.card_name, number: row.card_number || '', setName: row.set_name || '', printing: row.printing || '', official: row.official_image_url };
       if (pg.guides) { S.guides.front = pg.guides.front || blankSide(); S.guides.back = pg.guides.back || blankSide(); }
       ['corners', 'edges', 'surface', 'override', 'ignored'].forEach(function (k) { if (pg[k]) S[k] = pg[k]; });
+      S.real = pg.real || null;
       if (pg.value) { S.value = { raw: pg.value.raw != null ? pg.value.raw : null, rawSrc: pg.value.rawSrc || null, co: pg.value.co || 'psa', prices: Object.assign({ psa: {}, tag: {}, bgs: {}, cgc: {} }, pg.value.prices || {}) }; }
       if (row.front_photo_path) S.photos.front = { url: G().photoUrl(row.front_photo_path) };
       if (row.back_photo_path) S.photos.back = { url: G().photoUrl(row.back_photo_path) };
@@ -894,17 +939,17 @@
     if (!root || root._pg) return;
     root._pg = true;
     Array.prototype.forEach.call(document.querySelectorAll('#pg-games [data-game]'), function (b) {
-      b.addEventListener('click', function () { lookup.game = b.getAttribute('data-game'); lookup.items = []; renderLookup(); });
+      b.addEventListener('click', function () { lookup.game = b.getAttribute('data-game'); lookup.items = []; renderLookup(); if (window.ALRBatch) window.ALRBatch.render(); });
     });
     $('pg-q').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); runSearch(); } });
     $('pg-qbtn').addEventListener('click', runSearch);
     $('pg-identify').addEventListener('click', identify);
     ['front', 'back'].forEach(function (side) {
       var inp = $('pg-file-' + side), drop = $('pg-ph-' + side);
-      inp.addEventListener('change', function () { if (inp.files && inp.files[0]) takePhoto(side, inp.files[0]); inp.value = ''; });
+      inp.addEventListener('change', function () { if (inp.files && inp.files[0]) takePhoto(side, inp.files[0]).catch(function () {}); inp.value = ''; });
       ['dragenter', 'dragover'].forEach(function (t) { drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.add('drag'); }); });
       ['dragleave', 'drop'].forEach(function (t) { drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.remove('drag'); }); });
-      drop.addEventListener('drop', function (e) { var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) takePhoto(side, f); });
+      drop.addEventListener('drop', function (e) { var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) takePhoto(side, f).catch(function () {}); });
     });
     Array.prototype.forEach.call(document.querySelectorAll('#pg-sides [data-side]'), function (b) {
       b.addEventListener('click', function () { S.side = b.getAttribute('data-side'); renderStage(); });
@@ -931,9 +976,25 @@
     $('pg-labels').addEventListener('click', labels);
     $('pg-editor').addEventListener('click', sendToEditor);
     $('pg-new').addEventListener('click', reset);
+    $('pg-gotback').addEventListener('click', function () {
+      if (S.dirty && S.id) status('Save first, so the real grade goes on the latest version.');
+      else if (S.id) window.ALRRealGrade.open(S.id);
+    });
     renderAll();
   }
 
-  window.ALRPregrade = { load: load, reset: reset, refresh: function () { if (view === 'closeups') renderCloseups(); else if (view === 'value') renderValue(); else renderStage(); } };
+  // Batch mode (batch.js) drives the same tools, one card's state at a time.
+  var batchApi = {
+    blank: blank, state: function () { return S; },
+    use: function (st) { S = st; lookup.items = []; lookup.heading = ''; renderAll(); },
+    takePhoto: takePhoto, recognise: recognise, pick: function (it) { pick(it); }, compute: compute, worth: worth, flags: flags,
+    save: save, fees: fees, setFee: setFee, money: money, fmt: fmt, pct: pct, chance: chance, coName: coName, setView: setView,
+    game: function (g) { if (g) { lookup.game = g; renderLookup(); } return lookup.game; },
+    rate: function (k, v) { var grp = k.length === 2 ? 'corners' : 'edges'; S[grp][k] = Math.max(S[grp][k] || 0, v); renderInspect(); touched(); },
+    touched: touched
+  };
+  window.ALRPregrade = { load: load, reset: reset, _batch: batchApi,
+    // My Cards saved or removed a real grade: keep the open pre-grade in step so its next save keeps it
+    setReal: function (id, real) { if (S.id === id) { S.real = real || null; renderCertBar(); } }, refresh: function () { if (view === 'closeups') renderCloseups(); else if (view === 'value') renderValue(); else renderStage(); } };
   document.addEventListener('DOMContentLoaded', init);
 })();

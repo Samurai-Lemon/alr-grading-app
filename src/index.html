@@ -66,6 +66,8 @@ button,input{font:inherit}
 .alr-gc-tag.fin { background: #1f2a1f; color: #9fd18f; border: 1px solid #2f4a2f; }
 .alr-gc-grade.pre span { border-color: #d9a441; color: #d9a441; }
 .alr-gc-grade em { font-style: normal; font-size: 11px; color: var(--alr-muted); }
+.alr-gc-grade { flex-wrap: wrap; }
+.alr-gc-grade em.alr-gc-real { color: var(--alr-text); font-weight: 700; }
 .alr-gc-filters { display: flex; gap: 6px; padding: 14px 14px 0; }
 .alr-gc-filters button { font-family: inherit; font-size: 12px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--alr-border-strong); background: transparent; color: var(--alr-muted); cursor: pointer; }
 .alr-gc-filters button.on { background: var(--alr-text); color: var(--alr-bg); border-color: var(--alr-text); }
@@ -84,6 +86,7 @@ button,input{font:inherit}
 .pg-stamp{display:inline-block;margin-left:9px;border:1.5px solid var(--alr-accent);color:var(--alr-accent-text);border-radius:3px;padding:1px 6px;font-size:10.5px;font-weight:800;letter-spacing:.8px;vertical-align:1px}
 .pg-cert{margin-left:auto;font-family:var(--codeFont)}
 .pg-newbtn{min-height:32px!important;padding:0 14px!important;font-size:13px!important}
+.pg-newbtn[hidden]{display:none!important}
 .pg-grid{flex:1;min-height:0;display:grid;grid-template-columns:minmax(250px,.85fr) minmax(300px,1fr) minmax(300px,1fr)}
 .pg-col{padding:20px;border-right:1px solid var(--alr-border);overflow:auto;min-height:0;display:flex;flex-direction:column;gap:10px}
 .pg-col:last-child{border-right:0}
@@ -253,6 +256,93 @@ button,input{font:inherit}
 .pg-cmp span.down,.pg-verd em.down{color:var(--alr-muted)}
 .pg-cb{height:8px;border-radius:999px;background:var(--alr-hover);position:relative}
 .pg-cb i{position:absolute;top:0;bottom:0;left:0;border-radius:999px;background:var(--alr-accent)}
+/* batch mode */
+.pg-bat{grid-template-columns:minmax(260px,320px) minmax(0,1fr) minmax(280px,340px)}
+.pg-b-prog{display:flex;align-items:center;gap:10px;font:12px var(--codeFont);color:var(--alr-muted)}
+.pg-b-bar{flex:1;height:6px;border-radius:999px;background:var(--alr-hover);position:relative;overflow:hidden}
+.pg-b-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:var(--alr-accent)}
+.pg-b-drop{border:1.5px dashed var(--alr-border-strong);border-radius:var(--alr-r-sm);padding:14px;display:flex;flex-direction:column;gap:3px;align-items:center;text-align:center;cursor:pointer;background:var(--alr-bg);font-size:12px;color:var(--alr-muted)}
+.pg-b-drop b{font-size:13px;color:var(--alr-accent-text)}
+.pg-b-drop:hover,.pg-b-drop.drag{border-color:var(--alr-accent);background:var(--alr-hover)}
+.pg-b-pairs{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--alr-text-2);line-height:1.4}
+.pg-b-list{overflow:hidden}
+.pg-b-q,.pg-b-wr{display:grid;grid-template-columns:18px 32px minmax(0,1fr) auto;gap:9px;align-items:center;width:100%;padding:7px 11px;border:0;border-bottom:1px solid var(--alr-border);background:transparent;font:inherit;font-size:12.5px;color:var(--alr-text-2);text-align:left;cursor:pointer}
+.pg-b-wr{grid-template-columns:30px minmax(0,1fr) auto}
+.pg-b-q:last-child,.pg-b-wr:last-child{border-bottom:0}
+.pg-b-q:hover:not([disabled]),.pg-b-wr:hover:not([disabled]){background:var(--alr-hover)}
+.pg-b-q[disabled],.pg-b-wr[disabled]{cursor:default}
+.pg-b-q.cur{background:color-mix(in srgb,var(--alr-accent) 10%,transparent);box-shadow:inset 2px 0 0 var(--alr-accent)}
+.pg-b-q img,.pg-b-wr img,.pg-b-blank{width:32px;aspect-ratio:63/88;border-radius:3px;display:block;object-fit:cover}
+.pg-b-wr img,.pg-b-wr .pg-b-blank{width:30px}
+.pg-b-blank{border:1.5px dashed var(--alr-border-strong);box-sizing:border-box}
+.pg-b-n{font:600 11px var(--codeFont);color:var(--alr-muted)}
+.pg-b-t{min-width:0}
+.pg-b-t b,.pg-b-wr b{color:var(--alr-text);font-weight:600}
+.pg-b-t b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pg-b-t small{display:block;font:11px var(--codeFont);color:var(--alr-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pg-b-s{font-size:11.5px;color:var(--alr-muted);white-space:nowrap}
+.pg-b-s.ac{color:var(--alr-accent-text);font-weight:700}
+.pg-b-gain{font-weight:700;color:var(--alr-accent-text);white-space:nowrap}
+.pg-b-gain.no{color:var(--alr-muted);font-weight:500}
+.pg-b-work{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;align-items:center}
+.pg-b-work img,.pg-b-work .pg-b-blank{width:120px;border-radius:8px}
+.pg-b-work b{display:block;font-size:14px}
+.pg-b-work span{display:block;font-size:12px;color:var(--alr-muted);margin-top:4px}
+.pg-b-main{display:grid;grid-template-columns:180px minmax(0,1fr);gap:16px}
+.pg-b-photo img,.pg-b-photo .pg-b-blank{width:180px;border-radius:9px;display:block;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.pg-b-side{display:flex;flex-direction:column;gap:10px;min-width:0}
+.pg-b-match{display:flex;gap:10px;padding:10px;font-size:12.5px;color:var(--alr-text-2);line-height:1.45}
+.pg-b-match.on,.pg-b-side>.pg-b-match{border-color:var(--alr-accent)}
+.pg-b-match img{width:52px;border-radius:4px;display:block;align-self:flex-start}
+.pg-b-match b{display:block;color:var(--alr-text)}
+.pg-b-yn{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pg-b-tiles{max-height:300px;overflow:auto}
+.pg-bat .pg-sg b{display:block;font-size:18px;font-weight:800;color:var(--alr-text)}
+.pg-bat .pg-sg.low b{color:var(--alr-accent-text)}
+.pg-b-flags{overflow:hidden}
+.pg-b-flag{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border-bottom:1px solid var(--alr-border);font-size:12.5px;color:var(--alr-text-2)}
+.pg-b-flag:last-child{border-bottom:0}
+.pg-b-flag b{color:var(--alr-text)}
+.pg-b-flag small{color:var(--alr-muted)}
+.pg-b-flag button{min-height:28px!important;padding:0 10px!important;font-size:12px!important;width:auto!important}
+.pg-b-btns{display:flex;gap:8px;align-items:center;margin-top:auto}
+.pg-b-btns button{width:auto}
+.pg-b-btns .alr-lc-btn-primary{margin-left:auto}
+.pg-kbd{font:600 10.5px var(--codeFont);border:1px solid var(--alr-border-strong);border-radius:4px;padding:1px 5px;color:var(--alr-text-2)}
+.pg-vw>button[disabled]{opacity:.5;cursor:default}
+/* pre-grades vs real grades (My Cards) */
+.app-cards-list[hidden],.app-rg[hidden],.app-cards-count[hidden]{display:none}
+.app-rg-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,380px)}
+.app-rg-grid .pg-col{overflow:visible}
+.app-rg-th,.app-rg-row{display:grid;grid-template-columns:40px minmax(0,1fr) 84px 92px 62px;gap:12px;align-items:center}
+.app-rg-th{font:600 10px var(--codeFont);letter-spacing:1px;color:var(--alr-muted);padding:8px 14px;border-bottom:1px solid var(--alr-border)}
+.app-rg-row{width:100%;text-align:left;font:inherit;font-size:12.5px;color:var(--alr-text-2);background:transparent;border:0;border-bottom:1px solid var(--alr-border);padding:9px 14px;cursor:pointer}
+.app-rg-row:last-child{border-bottom:0}
+.app-rg-row:hover{background:var(--alr-hover)}
+.app-rg-row.sel{background:color-mix(in srgb,var(--alr-accent) 10%,transparent)}
+.app-rg-row img,.app-rg-ph{width:40px;aspect-ratio:63/88;border-radius:4px;display:block;object-fit:cover;background:var(--alr-surface-2)}
+.app-rg-row b{color:var(--alr-text);font-weight:600}
+.app-rg-card{min-width:0}
+.app-rg-card b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-rg-mono{font:11px var(--codeFont);color:var(--alr-muted)}
+.app-rg-wait{color:var(--alr-muted);font-style:italic}
+.app-rg-hit{color:var(--alr-accent-text);font-weight:700}
+.app-rg-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.app-rg-stats .pg-sg b{display:block;font-size:20px;font-weight:800;color:var(--alr-text)}
+.app-rg-stats .pg-sg b.app-rg-tend{font-size:15px;padding-top:4px}
+.app-rg-miss{padding:12px 14px}
+.app-rg-miss .pg-cmp{grid-template-columns:72px minmax(0,1fr) 30px}
+.pg-vcard .app-rg-ph{width:72px}
+.app-rg-fld{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--alr-text-2)}
+.app-rg-fld small{color:var(--alr-muted)}
+.app-rg-cos{display:grid;grid-template-columns:repeat(4,1fr)}
+.app-rg-subs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.app-rg-subs label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--alr-muted)}
+.app-rg-subs input{text-align:center;padding:6px}
+.app-rg-cmp{padding:12px 14px;font-size:12.5px;color:var(--alr-text-2);line-height:1.55}
+.app-rg-cmp p{margin:0}
+.app-rg-cmp b{color:var(--alr-text)}
+.app-rg-mono.alr-lc-input,.app-rg-fld .app-rg-mono{font-family:var(--codeFont)}
 /* account chip + sign-in */
 .app-who:empty{display:none}
 .app-who{display:flex;align-items:center;gap:7px;border:1px solid var(--alr-border-strong);border-radius:999px;padding:3px 10px 3px 3px;font-size:12px;white-space:nowrap}
@@ -436,8 +526,9 @@ button,input{font:inherit}
     <div class="pg-wrap">
       <div class="alr-lc-topbar pg-top">
         <span class="alr-lc-topbar-title">ALR INITIATIVE PRE-GRADE<span class="pg-stamp">ESTIMATE</span></span>
-        <div class="pg-seg" id="pg-views"><button type="button" data-pgview="measure" class="on">Measure</button><button type="button" data-pgview="closeups">Close-ups</button><button type="button" data-pgview="value">Worth it?</button></div>
+        <div class="pg-seg" id="pg-views"><button type="button" data-pgview="measure" class="on">Measure</button><button type="button" data-pgview="closeups">Close-ups</button><button type="button" data-pgview="value">Worth it?</button><button type="button" data-pgview="batch">Batch</button></div>
         <span class="alr-lc-topbar-sub pg-cert" id="pg-cert"></span>
+        <button type="button" class="alr-lc-btn-ghost pg-newbtn" id="pg-gotback" hidden>Got it back?</button>
         <button type="button" class="alr-lc-btn-ghost pg-newbtn" id="pg-new">New pre-grade</button>
       </div>
       <div class="pg-grid" id="pg-measure">
@@ -510,17 +601,25 @@ button,input{font:inherit}
         <section class="pg-col" id="pg-v-odds"></section>
         <section class="pg-col"><div class="alr-lc-section-label">Worth grading?</div><div id="pg-v-worth" class="pg-vw"></div></section>
       </div>
+      <div class="pg-grid pg-bat" id="pg-batch" hidden>
+        <section class="pg-col"><div class="alr-lc-section-label">Stack</div><div id="pg-b-stack" class="pg-vw"></div></section>
+        <section class="pg-col" id="pg-b-card"></section>
+        <section class="pg-col"><div class="alr-lc-section-label">Worth submitting</div><div id="pg-b-worth" class="pg-vw"></div></section>
+      </div>
     </div>
   </main>
   <div class="app-modal pg-lb" id="pg-lb" hidden><div class="pg-lb-box"><div class="pg-lb-h"><b id="pg-lb-t"></b><button type="button" class="app-btn-ghost" id="pg-lb-x">Close</button></div><div class="pg-lb-img" id="pg-lb-img"></div></div></div>
   <main class="app-main app-cards" id="app-cards" hidden>
     <div class="app-cards-wrap">
       <div class="app-cards-head">
-        <div><div class="app-eb">YOUR ACCOUNT</div><h2>My Graded Cards</h2></div>
+        <div><div class="app-eb">YOUR ACCOUNT</div><h2 id="app-cards-title">My Graded Cards</h2></div>
+        <div class="pg-seg" id="app-cards-views"><button type="button" data-cv="all" class="on">All cards</button><button type="button" data-cv="real">Pre-grades vs real grades</button></div>
         <span class="app-cards-count" id="alr-account-graded-count"></span>
+        <span class="app-cards-count" id="app-rg-count" hidden></span>
         <button type="button" class="app-btn-ghost" id="app-cards-refresh">Refresh</button>
       </div>
       <div class="app-cards-list" id="alr-account-graded"></div>
+      <div class="app-rg" id="app-rg" hidden></div>
     </div>
   </main>
   <div class="app-modal" id="app-signin" hidden>
@@ -547,5 +646,7 @@ button,input{font:inherit}
   <script src="photocheck.js"></script>
   <script src="defects.js"></script>
   <script src="pregrade.js"></script>
+  <script src="realgrade.js"></script>
+  <script src="batch.js"></script>
 </body>
 </html>
