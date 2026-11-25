@@ -4,42 +4,72 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>ALR Grading</title>
+<script>try{var t=localStorage.getItem('alr-theme')||'light';if(t==='system')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <style>
 @font-face{font-family:Inter;src:url(fonts/inter-latin.woff2) format("woff2");font-weight:100 900}
 @font-face{font-family:"JetBrains Mono";src:url(fonts/jetbrains-mono-latin.woff2) format("woff2");font-weight:400}
 :root{
   --bodyFont:Inter,-apple-system,"Segoe UI",sans-serif;--codeFont:"JetBrains Mono",ui-monospace,monospace;
+  --alr-r-lg:20px;--alr-r-md:16px;--alr-r-sm:12px;--alr-r-xs:8px;--dark:var(--alr-text);--gray:var(--alr-muted);
+}
+/* the website's palettes (alrinitiative.com custom.scss), light by default */
+:root,html[data-theme="light"]{
+  --alr-bg:#f6f3ec;--alr-surface:#fffdf8;--alr-surface-2:#efeae0;--alr-hover:#ece6da;--alr-border:#e3ddd1;--alr-border-strong:#d4ccbd;
+  --alr-text:#1f1b17;--alr-text-2:#4f4740;--alr-muted:#6b6258;--alr-accent:#a85c42;--alr-accent-text:#96503a;--alr-accent-soft:rgba(168,92,66,.1);--alr-on-accent:#ffffff;
+  --alr-header-bg:rgba(246,243,236,.92);--alr-pill:#1f1b17;--alr-pill-text:#f6f3ec;--alr-beige:#e8e1d3;--alr-beige-hover:#ddd4c3;--alr-input:#f1ece2;--alr-ok:#3f7d55;--alr-gold:#8a5f0c;
+  color-scheme:light;
+}
+html[data-theme="dark"]{
   --alr-bg:#121110;--alr-surface:#1a1917;--alr-surface-2:#221f1c;--alr-hover:#24221f;--alr-border:#262420;--alr-border-strong:#34312c;
-  --alr-text:#ede8de;--alr-text-2:#b3ada2;--alr-muted:#9a9488;--alr-accent:#cc785c;--alr-accent-text:#e09a7e;--alr-on-accent:#1a1210;
-  --alr-r-lg:16px;--alr-r-md:14px;--alr-r-sm:10px;--alr-r-xs:8px;--dark:var(--alr-text);--gray:var(--alr-muted);
+  --alr-text:#ede8de;--alr-text-2:#b3ada2;--alr-muted:#9a9488;--alr-accent:#cc785c;--alr-accent-text:#e09a7e;--alr-accent-soft:rgba(204,120,92,.12);--alr-on-accent:#1a1210;
+  --alr-header-bg:rgba(18,17,16,.9);--alr-pill:#ede8de;--alr-pill-text:#121110;--alr-beige:#2a2622;--alr-beige-hover:#34302b;--alr-input:#121110;--alr-ok:#6fae86;--alr-gold:#d9a441;
   color-scheme:dark;
 }
-@media (prefers-color-scheme: light){:root{
-  --alr-bg:#f6f3ec;--alr-surface:#fffdf8;--alr-surface-2:#efeae0;--alr-hover:#ece6da;--alr-border:#e3ddd1;--alr-border-strong:#d4ccbd;
-  --alr-text:#1f1b17;--alr-text-2:#4f4740;--alr-muted:#6b6258;--alr-accent:#a85c42;--alr-accent-text:#96503a;--alr-on-accent:#ffffff;color-scheme:light;
-}}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--alr-bg);color:var(--alr-text);font-family:var(--bodyFont);-webkit-font-smoothing:antialiased}
 body{display:flex;flex-direction:column;overflow:hidden}
 button,input{font:inherit}
-/* Save To bar */
-.app-save{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--alr-border);background:var(--alr-surface)}
-.app-save-lab{font:600 11px var(--codeFont);letter-spacing:1px;color:var(--alr-muted)}
-.app-save-path{flex:1;min-width:0;background:var(--alr-bg);border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-xs);padding:7px 10px;font:12px var(--codeFont);color:var(--alr-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:rtl;text-align:left}
-.app-save-btn{border:1px solid var(--alr-accent);color:var(--alr-accent-text);background:transparent;border-radius:var(--alr-r-xs);padding:6px 14px;font-weight:600;font-size:13px;cursor:pointer}
-.app-save-btn:hover{background:var(--alr-hover)}
-/* The tool fills the window: settings scroll on their own, preview and buttons stay in view. */
-.app-main{flex:1;min-height:0;padding:16px;display:flex;flex-direction:column}
-/* Editor | My Cards */
-.app-tabs{display:flex;gap:2px;border:1px solid var(--alr-border-strong);border-radius:9px;padding:2px;margin-right:6px}
-.app-tabs button{font:inherit;font-size:12.5px;font-weight:600;border:0;border-radius:7px;padding:5px 12px;background:transparent;color:var(--alr-muted);cursor:pointer}
-.app-tabs button.on{background:var(--alr-hover);color:var(--alr-text)}
+/* header + icon rail (same as alrinitiative.com) */
+.app-head{height:60px;flex:none;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--alr-header-bg);border-bottom:1px solid var(--alr-border)}
+.app-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;letter-spacing:-.2px;color:var(--alr-text);text-decoration:none;cursor:pointer;background:none;border:0;padding:0}
+.app-badge{font:600 10.5px var(--codeFont);letter-spacing:1px;color:var(--alr-muted);border:1px solid var(--alr-border-strong);border-radius:6px;padding:3px 7px}
+.app-search{margin-left:auto;display:flex;align-items:center;gap:10px;width:300px;height:38px;padding:0 14px;border:1px solid var(--alr-border-strong);border-radius:10px;background:var(--alr-surface);color:var(--alr-muted)}
+.app-search input{flex:1;min-width:0;border:0;background:transparent;outline:none;font-size:14px;color:var(--alr-text)}
+.app-body{flex:1;min-height:0;display:flex}
+.app-rail{width:84px;flex:none;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;border-right:1px solid var(--alr-border);background:var(--alr-bg)}
+.app-rail button{width:64px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 0 9px;border:0;border-radius:12px;background:transparent;color:var(--alr-muted);font-size:11px;font-weight:600;cursor:pointer}
+.app-rail button:hover{color:var(--alr-text);background:var(--alr-hover)}
+.app-rail button.on{background:var(--alr-accent-soft);color:var(--alr-accent-text)}
+.app-rail-gap{flex:1}
+.app-rail-line{width:44px;height:1px;background:var(--alr-border);margin:6px 0}
+.app-views{flex:1;min-width:0;display:flex;flex-direction:column}
+/* every page opens with the site's hero card */
+.app-hero{flex:none;display:flex;gap:24px;align-items:flex-start;padding:20px 28px;margin-bottom:16px;background:var(--alr-surface);border:1px solid var(--alr-border);border-radius:var(--alr-r-lg)}
+.app-hero-main{flex:1;min-width:0}
+.app-hero h1{margin:6px 0 0;font-size:30px;font-weight:800;letter-spacing:-.8px;line-height:1.1}
+.app-hero.big h1{font-size:42px;letter-spacing:-1.2px}
+.app-hero p{margin:6px 0 0;font-size:14.5px;color:var(--alr-text-2);line-height:1.5;max-width:680px}
+.app-hero.big p{font-size:16px}
+.app-eb{font:600 11px var(--codeFont);letter-spacing:1.4px;color:var(--alr-accent-text)}
+.app-meta{font:600 11px var(--codeFont);letter-spacing:1px;color:var(--alr-muted);text-align:right;line-height:1.9;white-space:nowrap}
+.app-acts{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.app-b{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:10px;font:600 15px var(--bodyFont);border:0;cursor:pointer;text-decoration:none}
+.app-b.pri{background:var(--alr-accent);color:var(--alr-on-accent)}
+.app-b.pri:hover{filter:brightness(1.06)}
+.app-b.sec{background:var(--alr-beige);color:var(--alr-text)}
+.app-b.sec:hover{background:var(--alr-beige-hover)}
+.app-b.sm{min-height:36px;padding:0 14px;font-size:13.5px}
+.app-pills{display:inline-flex;gap:6px;flex-wrap:wrap}
+.app-pills button{font:600 13px var(--bodyFont);border:1px solid var(--alr-border-strong);border-radius:999px;padding:7px 14px;background:transparent;color:var(--alr-text-2);cursor:pointer}
+.app-pills button.on{background:var(--alr-pill);color:var(--alr-pill-text);border-color:var(--alr-pill)}
+.app-card{background:var(--alr-surface);border:1px solid var(--alr-border);border-radius:var(--alr-r-lg)}
+/* the page fills the window; long pages scroll inside */
+.app-main{flex:1;min-height:0;padding:22px 28px;display:flex;flex-direction:column;overflow:auto}
 .app-main[hidden]{display:none}
-.app-cards{overflow:auto;display:block}
-.app-cards-wrap{max-width:1240px;margin:0 auto;border:1px solid var(--alr-border);border-radius:var(--alr-r-lg);background:var(--alr-surface);min-height:100%}
+.app-cards{display:block}
+.app-cards-wrap{border:1px solid var(--alr-border);border-radius:var(--alr-r-lg);background:var(--alr-surface)}
 .app-cards-head{display:flex;align-items:center;gap:14px;padding:18px 20px;border-bottom:1px solid var(--alr-border)}
-.app-cards-head h2{margin:2px 0 0;font-size:19px}
-.app-eb{font:600 10.5px var(--codeFont);letter-spacing:1.3px;color:var(--alr-accent-text)}
+.app-cards-head h2{display:none}
 .app-cards-count{margin-left:auto;font-size:13px;color:var(--alr-muted)}
 .app-cards-list .alr-reg-empty{padding:40px 20px;text-align:center;color:var(--alr-muted);font-size:14px}
 .app-cards-list .alr-reg-empty button{margin-top:12px}
@@ -80,7 +110,7 @@ button,input{font:inherit}
 .alr-cert-app { margin-top: 14px; font-size: 12.5px; color: var(--alr-text-2); background: var(--alr-surface-2); border: 1px dashed var(--alr-border-strong); border-radius: 10px; padding: 10px 12px; line-height: 1.5; }
 
 /* Pre-grade (app only) — built from the Editor's look: same surfaces, type and accent */
-.app-pg{overflow:hidden}
+.app-pg .pg-wrap{flex:1 1 0;min-height:640px}
 .pg-wrap{flex:1;min-height:0;display:flex;flex-direction:column;max-width:1400px;width:100%;margin:0 auto;border:1px solid var(--alr-border);border-radius:var(--alr-r-lg);background:var(--alr-surface);overflow:hidden}
 .pg-top{display:flex;align-items:center;gap:14px}
 .pg-stamp{display:inline-block;margin-left:9px;border:1.5px solid var(--alr-accent);color:var(--alr-accent-text);border-radius:3px;padding:1px 6px;font-size:10.5px;font-weight:800;letter-spacing:.8px;vertical-align:1px}
@@ -154,7 +184,7 @@ button,input{font:inherit}
 .pg-sg.low{border-color:var(--alr-accent)}.pg-sg.low input{color:var(--alr-accent-text)}
 .pg-sg.set{border-style:dashed}
 .pg-est{border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-sm);overflow:hidden;background:var(--alr-bg)}
-.pg-er{display:grid;grid-template-columns:92px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--alr-border)}
+.pg-er{display:grid;grid-template-columns:84px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--alr-border)}
 .pg-er:last-child{border-bottom:0}
 .pg-co{font-weight:700;font-size:13px;color:var(--alr-text)}.pg-co small{display:block;font-weight:400;font-size:11px;color:var(--alr-muted)}
 .pg-bar{height:6px;border-radius:999px;background:var(--alr-hover);position:relative}
@@ -163,8 +193,80 @@ button,input{font:inherit}
 .pg-gv small{display:block;font-size:11px;font-weight:500;color:var(--alr-muted)}
 .pg-weak{border:1px solid var(--alr-border-strong);border-radius:var(--alr-r-sm);background:var(--alr-bg);padding:10px 12px;font-size:12.5px;color:var(--alr-text-2);line-height:1.5}
 .pg-weak b{color:var(--alr-text)}
-.pg-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
-.pg-actions button{width:100%;white-space:nowrap}
+/* pre-grade hero, step chips and the bottom bar */
+.pg-steps{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.pg-steps[hidden]{display:none}
+.pg-step{display:flex;align-items:center;gap:7px;font:600 13px var(--bodyFont);color:var(--alr-muted);padding:6px 12px;border-radius:999px;border:1px solid var(--alr-border-strong);background:transparent;cursor:pointer}
+.pg-step i{font-style:normal;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;background:var(--alr-surface-2)}
+.pg-step:hover{color:var(--alr-text)}
+.pg-step.done{color:var(--alr-text-2)}.pg-step.done i{background:var(--alr-accent-soft);color:var(--alr-accent-text)}
+.pg-step.on{border-color:var(--alr-accent);color:var(--alr-text);background:var(--alr-accent-soft)}.pg-step.on i{background:var(--alr-accent);color:var(--alr-on-accent)}
+.pg-h1sub{font-size:18px;font-weight:600;letter-spacing:0;color:var(--alr-text-2)}
+.pg-hmeta[hidden],.pg-hbtns[hidden]{display:none}
+.pg-hmeta{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.pg-hmeta .app-meta{text-transform:uppercase}
+.pg-hbtns{display:flex;gap:8px}
+.pg-hbtns [hidden]{display:none}
+.pg-colh{display:flex;align-items:center;gap:10px}
+.pg-step-v{flex:1;min-height:0;overflow:auto;padding:24px 28px}
+.pg-step-v[hidden]{display:none}
+.pg-s-photos{display:grid;grid-template-columns:minmax(0,500px) minmax(320px,1fr);gap:36px;align-items:start}
+.pg-s-left{display:flex;flex-direction:column;gap:12px}
+.pg-s-photos .pg-s-side{max-width:720px;gap:12px}
+.pg-s-photos .alr-lc-games{max-width:420px}
+.pg-s-photos .alr-lc-findrow{display:flex;gap:8px}
+.pg-s-photos .alr-lc-findrow input{flex:1;min-width:0}
+#pg-tips[hidden]{display:none}
+#pg-tips{display:flex;flex-direction:column;gap:12px;padding-bottom:18px;margin-bottom:4px;border-bottom:1px solid var(--alr-border)}
+.pg-s-photos .pg-photos{grid-template-columns:1fr 1fr;gap:16px}
+.pg-slot{display:flex;flex-direction:column;gap:8px}
+.pg-slot-h{font-size:14px;font-weight:700}
+.pg-slot-h span{font-weight:400;font-size:12px;color:var(--alr-muted);margin-left:4px}
+.pg-s-side{display:flex;flex-direction:column;gap:14px;padding-top:4px}
+.pg-s-h{font-size:15px;font-weight:700;margin-top:4px}
+.pg-tip{display:flex;gap:12px;align-items:flex-start;font-size:13px;color:var(--alr-text-2);line-height:1.5}
+.pg-tip span{width:26px;height:26px;flex:none;border-radius:8px;background:var(--alr-accent-soft);color:var(--alr-accent-text);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
+.pg-tip b{display:block;color:var(--alr-text);font-weight:600}
+.pg-s-note{border-top:1px solid var(--alr-border);padding-top:12px;line-height:1.5}
+.pg-s-card{display:grid;grid-template-columns:220px minmax(0,1fr);gap:32px;align-items:start}
+.pg-s-card .pg-s-main{display:flex;flex-direction:column;gap:12px;max-width:760px}
+.pg-s-title{font-size:22px;font-weight:800;letter-spacing:-.4px}
+.pg-s-card .alr-lc-games{max-width:420px}
+.pg-s-card .alr-lc-findrow{display:flex;gap:8px;max-width:620px}
+.pg-s-card .alr-lc-findrow input{flex:1;min-width:0}
+.pg-cphoto img,.pg-cphoto .pg-cph{width:220px;aspect-ratio:63/88;object-fit:cover;border-radius:12px;display:block;background:var(--alr-surface-2)}
+.pg-cphoto .pg-cph{display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;font-size:12.5px;color:var(--alr-muted);box-sizing:border-box}
+.pg-cphoto figcaption{font-size:12px;color:var(--alr-muted);text-align:center;margin-top:6px}
+.pg-cond{grid-template-columns:minmax(300px,.9fr) minmax(0,1.1fr)!important}
+.pg-cen-tools{justify-content:flex-end}
+.pg-cen-tools .pg-msg{margin-right:auto}
+.pg-cgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.pg-ct{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pg-ct-img{position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--alr-border-strong);background:var(--alr-surface-2);aspect-ratio:1}
+.pg-ct-img.flag{border-color:var(--alr-accent);box-shadow:0 0 0 1px var(--alr-accent)}
+.pg-ct-img img{width:100%;height:100%;object-fit:cover;display:block}
+.pg-ct-img svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.pg-ct-img .pg-ct-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--alr-muted);text-align:center;padding:6px}
+.pg-ct b{font-size:12px;font-weight:600}
+.pg-egrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.pg-egrid label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;color:var(--alr-text)}
+.pg-sel{width:100%;appearance:none;-webkit-appearance:none;border:1px solid var(--alr-border-strong);border-radius:8px;background:var(--alr-surface);padding:6px 26px 6px 10px;font:500 12.5px var(--bodyFont);color:var(--alr-text);cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23887f74' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center}
+.pg-sel.warn{border-color:var(--alr-accent);color:var(--alr-accent-text);font-weight:600}
+.pg-sec{display:flex;flex-direction:column;gap:8px;padding-top:12px;border-top:1px solid var(--alr-border)}
+.pg-sech{font-size:13.5px;font-weight:700;display:flex;align-items:baseline;gap:8px}
+.pg-sech small{font-weight:400;font-size:12px;color:var(--alr-muted)}
+.pg-colh .pg-tool{margin-left:auto}
+.pg-foot{flex:none;display:flex;align-items:center;gap:12px;padding:14px 22px;border-top:1px solid var(--alr-border);background:var(--alr-bg)}
+.pg-foot[hidden]{display:none}
+.pg-foot-eb{color:var(--alr-muted)}
+.pg-foot-g{font:700 20px var(--codeFont);white-space:nowrap}
+.pg-foot-t{font-size:13.5px;color:var(--alr-text-2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pg-foot-go{margin-left:auto}
+.pg-foot button{white-space:nowrap}
+.pg-flag{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--alr-r-sm);background:var(--alr-accent-soft);font-size:12.5px;color:var(--alr-text)}
+.pg-flag span{flex:1 1 100%}
+.pg-flag button{min-height:30px!important;padding:0 11px!important;font-size:12px!important;width:auto!important}
+.pg-flagok{font-size:12.5px;color:var(--alr-ok)}
 .pg-disc{font-size:11px;color:var(--alr-muted);line-height:1.5}
 .pg-idbtn{align-self:flex-start}
 #pg-check:empty{display:none}
@@ -224,12 +326,15 @@ button,input{font:inherit}
 .pg-lb-in img{display:block}
 /* grade odds + worth grading */
 .pg-odds{display:flex;height:24px;border-radius:6px;overflow:hidden;gap:2px;min-width:0}
-.pg-odds i{display:flex;align-items:center;justify-content:center;font:700 10.5px var(--bodyFont);font-style:normal;white-space:nowrap;overflow:hidden;min-width:3px}
+.pg-odds i{display:flex;align-items:center;justify-content:center;font:700 11px var(--bodyFont);font-style:normal;white-space:nowrap;overflow:hidden;min-width:3px}
+.pg-oddw{min-width:0;display:flex;flex-direction:column;gap:4px}
+.pg-pcts{font-size:11px;color:var(--alr-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pg-pcts b{color:var(--alr-text-2);font-weight:600}
 .pg-odds .o1{background:var(--alr-accent);color:var(--alr-on-accent)}
 .pg-odds .o2{background:color-mix(in srgb,var(--alr-accent) 50%,var(--alr-surface-2));color:var(--alr-text)}
 .pg-odds .o3{background:color-mix(in srgb,var(--alr-accent) 25%,var(--alr-surface-2));color:var(--alr-text)}
 .pg-odds .o4{background:var(--alr-hover);color:var(--alr-muted)}
-.pg-val{grid-template-columns:minmax(0,1fr) minmax(340px,440px)}
+.pg-val{grid-template-columns:minmax(240px,.8fr) minmax(0,1.25fr) minmax(320px,1fr)}
 .pg-val .pg-sg b{display:block;font-size:21px;font-weight:800;color:var(--alr-text)}
 .pg-val .pg-sg.low b{color:var(--alr-accent-text)}
 .pg-vw{display:flex;flex-direction:column;gap:12px}
@@ -257,7 +362,9 @@ button,input{font:inherit}
 .pg-cb{height:8px;border-radius:999px;background:var(--alr-hover);position:relative}
 .pg-cb i{position:absolute;top:0;bottom:0;left:0;border-radius:999px;background:var(--alr-accent)}
 /* batch mode */
-.pg-bat{grid-template-columns:minmax(260px,320px) minmax(0,1fr) minmax(280px,340px)}
+.pg-bat{grid-template-columns:minmax(260px,320px) minmax(0,1fr)}
+.pg-bat [hidden]{display:none}
+#pg-b-worthcol{max-width:760px}
 .pg-b-prog{display:flex;align-items:center;gap:10px;font:12px var(--codeFont);color:var(--alr-muted)}
 .pg-b-bar{flex:1;height:6px;border-radius:999px;background:var(--alr-hover);position:relative;overflow:hidden}
 .pg-b-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:var(--alr-accent)}
@@ -343,12 +450,50 @@ button,input{font:inherit}
 .app-rg-cmp p{margin:0}
 .app-rg-cmp b{color:var(--alr-text)}
 .app-rg-mono.alr-lc-input,.app-rg-fld .app-rg-mono{font-family:var(--codeFont)}
+/* home */
+.hm-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}
+.hm-stat{padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.hm-stat span{font-size:13px;color:var(--alr-text-2)}
+.hm-stat b{font:700 38px var(--codeFont);letter-spacing:-1px;line-height:1.1}
+.hm-stat b.ac{color:var(--alr-accent-text)}
+.hm-stat small{font-size:12px;color:var(--alr-muted)}
+.hm-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:14px;align-items:start}
+.hm-ch{display:flex;align-items:baseline;gap:10px;padding:16px 20px 12px}
+.hm-ch h2{margin:0;font-size:15px;font-weight:700}
+.hm-ch .r{margin-left:auto;font-size:13px;color:var(--alr-muted)}
+.hm-link{margin-left:auto;font-size:13px;color:var(--alr-accent-text);background:none;border:0;padding:0;cursor:pointer;font-weight:500}
+.hm-link:hover{text-decoration:underline}
+.hm-resume{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:14px;align-items:center;padding:0 20px 16px}
+.hm-resume img,.hm-ph{width:54px;aspect-ratio:63/88;border-radius:6px;display:block;object-fit:cover;background:var(--alr-surface-2)}
+.hm-resume b{display:block;font-size:14px}
+.hm-resume span{display:block;font-size:12.5px;color:var(--alr-muted);margin-top:3px}
+.hm-tiles{padding:0 20px 18px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.hm-tile{display:flex;flex-direction:column;gap:6px;min-width:0;background:none;border:0;padding:0;text-align:left;cursor:pointer;font:inherit;font-size:12px;color:var(--alr-text-2)}
+.hm-tile img,.hm-tile .hm-ph{width:100%;border-radius:8px}
+.hm-tile b{color:var(--alr-text);font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hm-tile:hover b{color:var(--alr-accent-text)}
+.hm-row{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 20px;border-top:1px solid var(--alr-border);font-size:13px;color:var(--alr-text-2)}
+.hm-row img,.hm-row .hm-ph{width:38px;border-radius:4px}
+.hm-row b{display:block;color:var(--alr-text);font-weight:600}
+.hm-mono{font:500 11.5px var(--codeFont);color:var(--alr-muted)}
+.hm-empty{padding:4px 20px 18px;font-size:13px;color:var(--alr-muted);line-height:1.5}
+.hm-ok{color:var(--alr-ok)}
+/* settings */
+.st-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.st-col{display:flex;flex-direction:column;gap:16px}
+.st-gh{padding:14px 22px 10px;font:600 11px var(--codeFont);letter-spacing:1.4px;color:var(--alr-muted)}
+.st-set{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;padding:16px 22px;border-top:1px solid var(--alr-border)}
+.st-set b{display:block;font-size:14.5px;font-weight:600}
+.st-set .d{display:block;font-size:13px;color:var(--alr-muted);margin-top:3px;line-height:1.45}
+.st-path{font:12px var(--codeFont)!important;word-break:break-all}
+.st-fees{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:0 22px 18px}
+.st-fees label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--alr-muted)}
+.st-in{width:100%;height:38px;border:1px solid var(--alr-border-strong);border-radius:8px;background:var(--alr-input);padding:0 10px;font-size:13.5px;font-weight:600;color:var(--alr-text);text-align:right}
 /* account chip + sign-in */
-.app-who:empty{display:none}
-.app-who{display:flex;align-items:center;gap:7px;border:1px solid var(--alr-border-strong);border-radius:999px;padding:3px 10px 3px 3px;font-size:12px;white-space:nowrap}
-.app-av{width:22px;height:22px;border-radius:50%;background:var(--alr-accent);color:var(--alr-on-accent);font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center}
-.app-who button{border:0;background:none;color:var(--alr-muted);font:inherit;font-size:11px;cursor:pointer;padding:0 0 0 4px}
-.app-who button:hover{color:var(--alr-accent-text)}
+.app-who{display:flex;align-items:center;gap:8px;height:38px;padding:0 14px 0 6px;border:0;border-radius:10px;background:var(--alr-pill);color:var(--alr-pill-text);font-weight:600;font-size:14px;white-space:nowrap;cursor:pointer;max-width:240px}
+.app-who.out{padding:0 16px}
+.app-who .app-name{overflow:hidden;text-overflow:ellipsis}
+.app-av{width:26px;height:26px;flex:none;border-radius:7px;background:#cc785c;color:#1a1210;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
 .app-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:50}
 .app-modal[hidden]{display:none}
 .app-modal-box{width:340px;background:var(--alr-surface);border:1px solid var(--alr-border-strong);border-radius:16px;padding:22px;box-shadow:0 24px 60px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:10px}
@@ -363,8 +508,8 @@ button,input{font:inherit}
 .app-btn[disabled]{opacity:.6}
 .app-btn-ghost{background:transparent;border:1px solid var(--alr-border-strong);color:var(--alr-text)}
 .app-modal-link{font-size:12px;color:var(--alr-accent-text);text-align:center;text-decoration:none}
-.app-main #alr-lc-tool{flex:1;min-height:0;display:flex}
-.app-main .alr-lc-wrap{flex:1;min-height:0;display:flex;flex-direction:column;margin:0 auto!important;width:100%;max-width:1240px}
+.app-main #alr-lc-tool{flex:1 1 0;min-height:700px;display:flex}
+.app-main .alr-lc-wrap{flex:1;min-height:0;display:flex;flex-direction:column;margin:0!important;width:100%;max-width:none}
 .app-main .alr-lc-body{flex:1;min-height:0}
 .app-main .alr-lc-left{max-height:none;overflow:auto}
 .app-main .alr-lc-right{min-height:0}
@@ -510,73 +655,134 @@ button,input{font:inherit}
 </style>
 </head>
 <body>
-  <div class="app-save">
-    <nav class="app-tabs" role="tablist">
-      <button type="button" role="tab" class="on" id="app-tab-editor" data-view="editor">Editor</button>
-      <button type="button" role="tab" id="app-tab-pregrade" data-view="pregrade">Pre-grade</button>
-      <button type="button" role="tab" id="app-tab-cards" data-view="cards">My Cards</button>
-    </nav>
-    <span class="app-save-lab">SAVE TO</span>
-    <span class="app-save-path" id="app-save-path" title="">…</span>
-    <button class="app-save-btn" id="app-save-change" type="button">Change…</button>
-    <span class="app-who" id="app-who"></span>
-  </div>
-  <main class="app-main" id="app-editor"><div id="alr-lc-tool"><div class="alr-lc-wrap"><div class="alr-lc-topbar"><span class="alr-lc-topbar-title">ALR INITIATIVE GRADING</span><span class="alr-lc-topbar-sub">2.65 × 0.78 in · fits a 2.68 × 0.79 in slab slot</span></div><div class="alr-lc-body"><div class="alr-lc-left"><div class="alr-lc-section-label">Preset</div><div class="alr-lc-preset-row"><button id="alr-lc-preset-dark" class="alr-lc-preset-btn alr-lc-preset-active">ALR Dark</button><button id="alr-lc-preset-light" class="alr-lc-preset-btn">ALR Light</button></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Find Card <span class="alr-lc-opt">optional · fills in the details</span></div><div id="alr-lc-find"><div class="alr-lc-games" id="alr-lc-games" role="group" aria-label="Card game"><button type="button" data-game="one-piece" class="on">One Piece</button><button type="button" data-game="pokemon">Pokémon</button><button type="button" data-game="yugioh">Yu-Gi-Oh!</button></div><div class="alr-lc-findrow"><input class="alr-lc-input" id="alr-lc-q" type="search" autocomplete="off" placeholder="Name or card number"/><button type="button" class="alr-lc-qbtn" id="alr-lc-qbtn">Search</button></div><div id="alr-lc-results"></div><div id="alr-lc-picked"></div></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Card Identity</div><div class="alr-lc-field"><div class="alr-lc-label">Card Name <span class="alr-lc-req">*</span></div><input class="alr-lc-input" id="alr-lc-name" value="CARD NAME" maxlength="120"/></div><div class="alr-lc-field"><div class="alr-lc-label">Set / Series</div><input class="alr-lc-input" id="alr-lc-set" value="SET - SERIES - EN - YEAR" maxlength="120"/></div><div class="alr-lc-field"><div class="alr-lc-label">Variant / Edition</div><input class="alr-lc-input" id="alr-lc-variant" value="VARIANT / EDITION" maxlength="120"/></div><div class="alr-lc-field"><div class="alr-lc-label">Cert Number</div><div class="alr-lc-cert-row"><input class="alr-lc-input" id="alr-lc-cert" value="0000-ALR"/><button class="alr-lc-cert-gen" id="alr-lc-cert-gen" title="Generate">↻</button></div></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Grade</div><div class="alr-lc-two"><div class="alr-lc-field"><div class="alr-lc-label">Grade</div><input class="alr-lc-input" id="alr-lc-grade" type="number" min="1" max="10" step="1" inputmode="numeric" value="10"/></div><div class="alr-lc-field"><div class="alr-lc-label">Grade Label</div><input class="alr-lc-input" id="alr-lc-gl" value="GEM MINT" maxlength="40"/></div></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Report <span class="alr-lc-opt">optional · not printed on the label</span></div><div class="alr-lc-field"><div class="alr-lc-label">Date Graded</div><input class="alr-lc-input" id="alr-lc-rdate" type="date"/></div><div class="alr-lc-two"><div class="alr-lc-field"><div class="alr-lc-label">Centering</div><input class="alr-lc-input" id="alr-lc-rcen" placeholder="55/45" maxlength="40"/></div><div class="alr-lc-field"><div class="alr-lc-label">Corners</div><input class="alr-lc-input" id="alr-lc-rcor" placeholder="Sharp" maxlength="40"/></div></div><div class="alr-lc-two"><div class="alr-lc-field"><div class="alr-lc-label">Edges</div><input class="alr-lc-input" id="alr-lc-redg" placeholder="Clean" maxlength="40"/></div><div class="alr-lc-field"><div class="alr-lc-label">Surface</div><input class="alr-lc-input" id="alr-lc-rsur" placeholder="No marks" maxlength="40"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Grader Notes</div><textarea class="alr-lc-input alr-lc-notes" id="alr-lc-rnotes" rows="3" maxlength="2000" placeholder="Anything worth noting about the card"></textarea></div><div class="alr-lc-rule"></div><div id="alr-lc-colours-front"><div class="alr-lc-section-label">Front Colours</div><div class="alr-lc-sub">Text</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Primary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-ctxt" value="#ede8de"/><input class="alr-lc-hex" id="alr-lc-htxt" value="#ede8de"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Secondary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cmut" value="#b7b1a6"/><input class="alr-lc-hex" id="alr-lc-hmut" value="#b7b1a6"/></div></div></div><div class="alr-lc-sub">Accent</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Accent</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cacc" value="#cc785c"/><input class="alr-lc-hex" id="alr-lc-hacc" value="#cc785c"/></div></div></div><div class="alr-lc-sub">Panels</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 1 · Logo</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp1" value="#121110"/><input class="alr-lc-hex" id="alr-lc-hp1" value="#121110"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Panel 2 · Card Info</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp2" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-hp2" value="#1a1917"/></div></div></div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 3 · Grade</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp3" value="#121110"/><input class="alr-lc-hex" id="alr-lc-hp3" value="#121110"/></div></div></div></div><div id="alr-lc-colours-back" style="display:none"><div class="alr-lc-section-label">Back Colours</div><div class="alr-lc-sub">Text</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Primary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bctxt" value="#ede8de"/><input class="alr-lc-hex" id="alr-lc-bhtxt" value="#ede8de"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Secondary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcmut" value="#b7b1a6"/><input class="alr-lc-hex" id="alr-lc-bhmut" value="#b7b1a6"/></div></div></div><div class="alr-lc-sub">Accent</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Accent</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcacc" value="#cc785c"/><input class="alr-lc-hex" id="alr-lc-bhacc" value="#cc785c"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Scale Boxes</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcsbox" value="#44423f"/><input class="alr-lc-hex" id="alr-lc-bhsbox" value="#44423f"/></div></div></div><div class="alr-lc-sub">Panels</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 1 · Logo</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp1" value="#121110"/><input class="alr-lc-hex" id="alr-lc-bhp1" value="#121110"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Panel 2 · Grade Scale</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp2" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-bhp2" value="#1a1917"/></div></div></div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 3 · Cert</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp3" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-bhp3" value="#1a1917"/></div></div></div></div></div><div class="alr-lc-right"><div class="alr-lc-tabs"><button class="alr-lc-tab alr-lc-tab-active" id="alr-lc-tab-front">Front</button><button class="alr-lc-tab" id="alr-lc-tab-back">Back</button><button class="alr-lc-tab" id="alr-lc-tab-fold">Fold Sheet</button></div><div class="alr-lc-preview" id="alr-lc-preview"></div><div class="alr-lc-actions"><button class="alr-lc-btn-primary" id="alr-lc-dl-front">Download Front</button><button class="alr-lc-btn-ghost" id="alr-lc-dl-back">Download Back</button><button class="alr-lc-btn-ghost" id="alr-lc-dl-fold">Download Fold</button><button class="alr-lc-btn-ghost" id="alr-lc-dl-report">Download Report</button><span class="alr-lc-status" id="alr-lc-status">Ready</span></div><div class="alr-lc-account" id="alr-lc-account" hidden></div></div></div></div></div></main>
-  <main class="app-main app-pg" id="app-pregrade" hidden>
-    <div class="pg-wrap">
-      <div class="alr-lc-topbar pg-top">
-        <span class="alr-lc-topbar-title">ALR INITIATIVE PRE-GRADE<span class="pg-stamp">ESTIMATE</span></span>
-        <div class="pg-seg" id="pg-views"><button type="button" data-pgview="measure" class="on">Measure</button><button type="button" data-pgview="closeups">Close-ups</button><button type="button" data-pgview="value">Worth it?</button><button type="button" data-pgview="batch">Batch</button></div>
-        <span class="alr-lc-topbar-sub pg-cert" id="pg-cert"></span>
-        <button type="button" class="alr-lc-btn-ghost pg-newbtn" id="pg-gotback" hidden>Got it back?</button>
-        <button type="button" class="alr-lc-btn-ghost pg-newbtn" id="pg-new">New pre-grade</button>
+  <header class="app-head">
+    <button type="button" class="app-brand" data-view="home"><svg width="28" height="28" viewBox="0 0 560 480" aria-hidden="true"><path d="M 531.0 468.5 L 384.0 467.5 L 283.0 400.5 L 271.0 403.5 L 184.0 463.5 L 172.0 468.5 L 26.0 468.5 L 14.5 461.0 L 11.5 454.0 L 14.5 439.0 L 250.5 39.0 L 269.0 13.5 L 285.0 11.5 L 298.5 24.0 L 542.5 438.0 L 545.5 446.0 L 544.5 458.0 L 531.0 468.5 Z M 448.5 429.0 L 480.0 428.5 L 484.5 425.0 L 484.5 419.0 L 287.5 85.0 L 282.0 78.5 L 276.0 78.5 L 77.5 411.0 L 73.5 425.0 L 78.0 428.5 L 96.0 429.5 L 159.0 428.5 L 237.5 376.0 L 237.5 371.0 L 232.0 365.5 L 175.0 328.5 L 170.5 324.0 L 169.5 317.0 L 262.5 155.0 L 271.0 145.5 L 283.0 143.5 L 293.5 151.0 L 389.5 316.0 L 388.5 323.0 L 382.0 329.5 L 325.0 366.5 L 321.5 370.0 L 322.5 377.0 L 395.0 426.5 L 409.0 429.5 L 448.5 429.0 Z M 283.5 345.0 L 332.0 311.5 L 335.5 303.0 L 284.5 217.0 L 276.0 215.5 L 222.5 308.0 L 274.0 344.5 L 283.5 345.0 Z" fill="#cc785c" fill-rule="evenodd"></path></svg>ALR Initiative — Grading</button>
+    <span class="app-badge">DESKTOP APP</span>
+    <label class="app-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="app-search" type="search" placeholder="Search your cards or cert numbers" aria-label="Search your cards or cert numbers" autocomplete="off" /></label>
+    <button type="button" class="app-who out" id="app-who">Sign in</button>
+  </header>
+  <div class="app-body">
+  <nav class="app-rail" aria-label="Main"><button type="button" data-view="home" id="app-tab-home"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</button><button type="button" data-view="pregrade" id="app-tab-pregrade"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM9 8h6M9 12h6M9 16h3"/></svg>Pre-grade</button><button type="button" data-view="batch" id="app-tab-batch"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h9a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zM4 16V5a2 2 0 0 1 2-2h9"/></svg>Batch</button><button type="button" data-view="editor" id="app-tab-editor"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V5a2 2 0 0 1 2-2h7l9 9-9 9zM8 8h.01"/></svg>Labels</button><button type="button" data-view="cards" id="app-tab-cards"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>My Cards</button><div class="app-rail-gap"></div><div class="app-rail-line"></div>
+    <button type="button" data-view="settings" id="app-tab-settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Settings</button>
+    <button type="button" id="app-theme-btn" aria-label="Switch light or dark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>Theme</button>
+  </nav>
+  <div class="app-views">
+  <main class="app-main" id="app-home">
+    <section class="app-hero big">
+      <div class="app-hero-main">
+        <div class="app-eb">ALR INITIATIVE — GRADING DESK</div>
+        <h1>Grading Desk</h1>
+        <p>Pre-grade cards from photos, keep track of what you send to PSA, TAG, Beckett and CGC, and print ALR slab labels.</p>
+        <div class="app-acts">
+          <button type="button" class="app-b pri" data-view="pregrade">Pre-grade a card</button>
+          <button type="button" class="app-b sec" data-view="batch">Pre-grade a stack</button>
+          <button type="button" class="app-b sec" data-view="editor">Make a label</button>
+        </div>
       </div>
-      <div class="pg-grid" id="pg-measure">
-        <section class="pg-col">
-          <div class="alr-lc-section-label">Card</div>
-          <div class="alr-lc-games" id="pg-games">
-            <button type="button" data-game="one-piece" class="on">One Piece</button><button type="button" data-game="pokemon">Pokémon</button><button type="button" data-game="yugioh">Yu-Gi-Oh!</button>
-          </div>
-          <div class="alr-lc-findrow"><input class="alr-lc-input" id="pg-q" type="search" placeholder="Name or card number" autocomplete="off" /><button type="button" class="alr-lc-qbtn" id="pg-qbtn">Search</button></div>
-          <button type="button" class="alr-lc-btn-ghost pg-tool pg-idbtn" id="pg-identify">Identify from photo</button>
-          <div id="pg-results"></div>
-          <div id="pg-picked"></div>
-          <div class="alr-lc-section-label pg-gap">Photos <span class="alr-lc-opt">front and back</span></div>
-          <div class="pg-sub">Out of the sleeve, flat, even light, straight down. The front photo is also used to recognise the card.</div>
+      <div class="app-meta" id="hm-meta"></div>
+    </section>
+    <div class="hm-stats" id="hm-stats"></div>
+    <div class="hm-grid">
+      <div class="app-card">
+        <div class="hm-ch"><h2>Pick up where you left off</h2></div>
+        <div id="hm-resume"></div>
+        <div class="hm-ch" style="border-top:1px solid var(--alr-border)"><h2>Recent cards</h2><button type="button" class="hm-link" data-view="cards" id="hm-all">All cards</button></div>
+        <div id="hm-recent"></div>
+      </div>
+      <div class="app-card">
+        <div class="hm-ch"><h2>Waiting on a grade</h2><span class="r" id="hm-wait-n"></span></div>
+        <div id="hm-wait"></div>
+      </div>
+    </div>
+  </main>
+  <main class="app-main" id="app-editor" hidden>
+    <section class="app-hero">
+      <div class="app-hero-main">
+        <div class="app-eb">ALR INITIATIVE — LABEL FORGE</div>
+        <h1>Label Creator</h1>
+        <p>Print-ready grading labels for any card, at exact size (2.65 × 0.78 in).</p>
+      </div>
+      <div class="app-meta"><span style="color:var(--alr-accent-text)">FORMAT · SVG, CRICUT-READY</span><br>SIZE · 2.65 × 0.78 IN<br>FITS A 2.68 × 0.79 IN SLOT</div>
+    </section>
+    <div id="alr-lc-tool"><div class="alr-lc-wrap"><div class="alr-lc-topbar"><span class="alr-lc-topbar-title">ALR INITIATIVE GRADING</span><span class="alr-lc-topbar-sub">2.65 × 0.78 in · fits a 2.68 × 0.79 in slab slot</span></div><div class="alr-lc-body"><div class="alr-lc-left"><div class="alr-lc-section-label">Preset</div><div class="alr-lc-preset-row"><button id="alr-lc-preset-dark" class="alr-lc-preset-btn alr-lc-preset-active">ALR Dark</button><button id="alr-lc-preset-light" class="alr-lc-preset-btn">ALR Light</button></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Find Card <span class="alr-lc-opt">optional · fills in the details</span></div><div id="alr-lc-find"><div class="alr-lc-games" id="alr-lc-games" role="group" aria-label="Card game"><button type="button" data-game="one-piece" class="on">One Piece</button><button type="button" data-game="pokemon">Pokémon</button><button type="button" data-game="yugioh">Yu-Gi-Oh!</button></div><div class="alr-lc-findrow"><input class="alr-lc-input" id="alr-lc-q" type="search" autocomplete="off" placeholder="Name or card number"/><button type="button" class="alr-lc-qbtn" id="alr-lc-qbtn">Search</button></div><div id="alr-lc-results"></div><div id="alr-lc-picked"></div></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Card Identity</div><div class="alr-lc-field"><div class="alr-lc-label">Card Name <span class="alr-lc-req">*</span></div><input class="alr-lc-input" id="alr-lc-name" value="CARD NAME" maxlength="120"/></div><div class="alr-lc-field"><div class="alr-lc-label">Set / Series</div><input class="alr-lc-input" id="alr-lc-set" value="SET - SERIES - EN - YEAR" maxlength="120"/></div><div class="alr-lc-field"><div class="alr-lc-label">Variant / Edition</div><input class="alr-lc-input" id="alr-lc-variant" value="VARIANT / EDITION" maxlength="120"/></div><div class="alr-lc-field"><div class="alr-lc-label">Cert Number</div><div class="alr-lc-cert-row"><input class="alr-lc-input" id="alr-lc-cert" value="0000-ALR"/><button class="alr-lc-cert-gen" id="alr-lc-cert-gen" title="Generate">↻</button></div></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Grade</div><div class="alr-lc-two"><div class="alr-lc-field"><div class="alr-lc-label">Grade</div><input class="alr-lc-input" id="alr-lc-grade" type="number" min="1" max="10" step="1" inputmode="numeric" value="10"/></div><div class="alr-lc-field"><div class="alr-lc-label">Grade Label</div><input class="alr-lc-input" id="alr-lc-gl" value="GEM MINT" maxlength="40"/></div></div><div class="alr-lc-rule"></div><div class="alr-lc-section-label">Report <span class="alr-lc-opt">optional · not printed on the label</span></div><div class="alr-lc-field"><div class="alr-lc-label">Date Graded</div><input class="alr-lc-input" id="alr-lc-rdate" type="date"/></div><div class="alr-lc-two"><div class="alr-lc-field"><div class="alr-lc-label">Centering</div><input class="alr-lc-input" id="alr-lc-rcen" placeholder="55/45" maxlength="40"/></div><div class="alr-lc-field"><div class="alr-lc-label">Corners</div><input class="alr-lc-input" id="alr-lc-rcor" placeholder="Sharp" maxlength="40"/></div></div><div class="alr-lc-two"><div class="alr-lc-field"><div class="alr-lc-label">Edges</div><input class="alr-lc-input" id="alr-lc-redg" placeholder="Clean" maxlength="40"/></div><div class="alr-lc-field"><div class="alr-lc-label">Surface</div><input class="alr-lc-input" id="alr-lc-rsur" placeholder="No marks" maxlength="40"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Grader Notes</div><textarea class="alr-lc-input alr-lc-notes" id="alr-lc-rnotes" rows="3" maxlength="2000" placeholder="Anything worth noting about the card"></textarea></div><div class="alr-lc-rule"></div><div id="alr-lc-colours-front"><div class="alr-lc-section-label">Front Colours</div><div class="alr-lc-sub">Text</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Primary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-ctxt" value="#ede8de"/><input class="alr-lc-hex" id="alr-lc-htxt" value="#ede8de"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Secondary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cmut" value="#b7b1a6"/><input class="alr-lc-hex" id="alr-lc-hmut" value="#b7b1a6"/></div></div></div><div class="alr-lc-sub">Accent</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Accent</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cacc" value="#cc785c"/><input class="alr-lc-hex" id="alr-lc-hacc" value="#cc785c"/></div></div></div><div class="alr-lc-sub">Panels</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 1 · Logo</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp1" value="#121110"/><input class="alr-lc-hex" id="alr-lc-hp1" value="#121110"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Panel 2 · Card Info</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp2" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-hp2" value="#1a1917"/></div></div></div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 3 · Grade</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-cp3" value="#121110"/><input class="alr-lc-hex" id="alr-lc-hp3" value="#121110"/></div></div></div></div><div id="alr-lc-colours-back" style="display:none"><div class="alr-lc-section-label">Back Colours</div><div class="alr-lc-sub">Text</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Primary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bctxt" value="#ede8de"/><input class="alr-lc-hex" id="alr-lc-bhtxt" value="#ede8de"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Secondary Text</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcmut" value="#b7b1a6"/><input class="alr-lc-hex" id="alr-lc-bhmut" value="#b7b1a6"/></div></div></div><div class="alr-lc-sub">Accent</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Accent</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcacc" value="#cc785c"/><input class="alr-lc-hex" id="alr-lc-bhacc" value="#cc785c"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Scale Boxes</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcsbox" value="#44423f"/><input class="alr-lc-hex" id="alr-lc-bhsbox" value="#44423f"/></div></div></div><div class="alr-lc-sub">Panels</div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 1 · Logo</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp1" value="#121110"/><input class="alr-lc-hex" id="alr-lc-bhp1" value="#121110"/></div></div><div class="alr-lc-field"><div class="alr-lc-label">Panel 2 · Grade Scale</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp2" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-bhp2" value="#1a1917"/></div></div></div><div class="alr-lc-color-row"><div class="alr-lc-field"><div class="alr-lc-label">Panel 3 · Cert</div><div class="alr-lc-color-wrap"><input type="color" id="alr-lc-bcp3" value="#1a1917"/><input class="alr-lc-hex" id="alr-lc-bhp3" value="#1a1917"/></div></div></div></div></div><div class="alr-lc-right"><div class="alr-lc-tabs"><button class="alr-lc-tab alr-lc-tab-active" id="alr-lc-tab-front">Front</button><button class="alr-lc-tab" id="alr-lc-tab-back">Back</button><button class="alr-lc-tab" id="alr-lc-tab-fold">Fold Sheet</button></div><div class="alr-lc-preview" id="alr-lc-preview"></div><div class="alr-lc-actions"><button class="alr-lc-btn-primary" id="alr-lc-dl-front">Download Front</button><button class="alr-lc-btn-ghost" id="alr-lc-dl-back">Download Back</button><button class="alr-lc-btn-ghost" id="alr-lc-dl-fold">Download Fold</button><button class="alr-lc-btn-ghost" id="alr-lc-dl-report">Download Report</button><span class="alr-lc-status" id="alr-lc-status">Ready</span></div><div class="alr-lc-account" id="alr-lc-account" hidden></div></div></div></div></div>
+  </main>
+  <main class="app-main app-pg" id="app-pregrade" hidden>
+    <section class="app-hero" id="pg-hero">
+      <div class="app-hero-main">
+        <div class="app-eb" id="pg-eb">ALR INITIATIVE — PRE-GRADE · ESTIMATE</div>
+        <h1 id="pg-title">New pre-grade</h1>
+        <p id="pg-hp" hidden></p>
+        <div class="pg-steps" id="pg-steps"></div>
+      </div>
+      <div class="pg-hmeta">
+        <div class="app-meta" id="pg-cert"></div>
+        <div class="pg-hbtns">
+          <button type="button" class="app-b sec sm" id="pg-gotback" hidden>Got it back?</button>
+          <button type="button" class="app-b sec sm" id="pg-new">New pre-grade</button>
+        </div>
+      </div>
+    </section>
+    <div class="pg-wrap">
+      <!-- step 1 · photos & card -->
+      <div class="pg-step-v pg-s-photos" id="pg-photos-step">
+        <div class="pg-s-left">
           <div class="pg-photos">
-            <label class="pg-ph" id="pg-ph-front"><input type="file" id="pg-file-front" accept="image/*" hidden /><span class="pg-ph-in" id="pg-phin-front"></span></label>
-            <label class="pg-ph" id="pg-ph-back"><input type="file" id="pg-file-back" accept="image/*" hidden /><span class="pg-ph-in" id="pg-phin-back"></span></label>
+            <div class="pg-slot"><div class="pg-slot-h">Front</div><label class="pg-ph" id="pg-ph-front"><input type="file" id="pg-file-front" accept="image/*" hidden /><span class="pg-ph-in" id="pg-phin-front"></span></label></div>
+            <div class="pg-slot"><div class="pg-slot-h">Back <span>optional</span></div><label class="pg-ph" id="pg-ph-back"><input type="file" id="pg-file-back" accept="image/*" hidden /><span class="pg-ph-in" id="pg-phin-back"></span></label></div>
           </div>
           <div class="pg-msg" id="pg-ph-msg"></div>
           <div id="pg-check"></div>
-        </section>
+        </div>
+        <div class="pg-s-side">
+          <div id="pg-tips">
+            <div class="pg-s-title">Start with a photo of the front</div>
+            <div class="pg-sub" style="margin:4px 0 14px">The app reads the card from it, straightens it and checks it.</div>
+            <div class="pg-tip"><span>1</span><div><b>Out of the sleeve</b>Plastic hides whitening and adds glare.</div></div>
+            <div class="pg-tip"><span>2</span><div><b>Flat, on a dark plain surface</b>Leave a little space around the card.</div></div>
+            <div class="pg-tip"><span>3</span><div><b>Even light, straight down</b>No lamp reflections on the card.</div></div>
+            <div class="pg-sub pg-s-note">Nothing is uploaded until you save. You can also skip the photo and search for the card below.</div>
+          </div>
+          <div class="pg-s-title" id="pg-card-h">Which card is this?</div>
+          <div class="alr-lc-games" id="pg-games">
+            <button type="button" data-game="one-piece" class="on">One Piece</button><button type="button" data-game="pokemon">Pokémon</button><button type="button" data-game="yugioh">Yu-Gi-Oh!</button>
+          </div>
+          <div class="alr-lc-findrow"><input class="alr-lc-input" id="pg-q" type="search" placeholder="Name or card number" autocomplete="off" /><button type="button" class="alr-lc-qbtn" id="pg-qbtn">Search</button><button type="button" class="alr-lc-btn-ghost pg-tool" id="pg-identify">Read photo again</button></div>
+          <div id="pg-results"></div>
+          <div id="pg-picked"></div>
+        </div>
+      </div>
+      <div class="pg-foot" id="pg-foot-photos">
+        <span class="pg-foot-t" style="margin-left:auto">Next: corners, edges and centering</span>
+        <button type="button" class="alr-lc-btn-primary" data-pgview="measure">Continue</button>
+      </div>
+      <!-- step 3 · condition -->
+      <div class="pg-grid pg-cond" id="pg-measure" hidden>
         <section class="pg-col">
-          <div class="alr-lc-section-label">Centering</div>
-          <div class="pg-sub">Grey lines go on the card edge, orange lines on the inner border. Drag any line to adjust.</div>
-          <div class="pg-tools">
-            <div class="pg-seg" id="pg-sides"><button type="button" data-side="front" class="on">Front</button><button type="button" data-side="back">Back</button></div>
+          <div class="pg-colh"><div class="alr-lc-section-label">Centering</div>
+            <div class="pg-seg" id="pg-sides" style="margin-left:auto"><button type="button" data-side="front" class="on">Front</button><button type="button" data-side="back">Back</button></div>
+          </div>
+          <div class="pg-stage" id="pg-stage"></div>
+          <div class="pg-ratios" id="pg-ratios"></div>
+          <div class="pg-cap" id="pg-cap"></div>
+          <div class="pg-tools pg-cen-tools"><span class="pg-msg" id="pg-auto-msg"></span>
             <button type="button" class="alr-lc-btn-ghost pg-tool" id="pg-auto">Auto-detect</button>
             <button type="button" class="alr-lc-btn-ghost pg-tool" id="pg-loupe">Loupe</button>
           </div>
-          <div class="pg-stage" id="pg-stage"></div>
-          <div class="pg-legend"><span><i class="o"></i>card edge</span><span><i class="n"></i>inner border</span><span class="pg-msg" id="pg-auto-msg"></span></div>
-          <div class="pg-ratios" id="pg-ratios"></div>
-          <div class="pg-cap" id="pg-cap"></div>
         </section>
         <section class="pg-col">
-          <div class="alr-lc-section-label">Inspection</div>
+          <div class="pg-colh"><div class="alr-lc-section-label">Condition</div><button type="button" class="alr-lc-btn-ghost pg-tool" id="pg-to-cu">All close-ups</button></div>
+          <div class="pg-sub" style="margin:0">We looked for wear and marked anything worth a second look. You have the final say.</div>
+          <div id="pg-corners"></div>
+          <div id="pg-flags"></div>
           <div id="pg-inspect"></div>
-          <div class="alr-lc-section-label pg-gap">Estimate</div>
-          <div id="pg-result"></div>
-          <div class="pg-actions">
-            <button type="button" class="alr-lc-btn-primary" id="pg-save">Save Pre-grade</button>
-            <button type="button" class="alr-lc-btn-ghost" id="pg-report">Report</button>
-            <button type="button" class="alr-lc-btn-ghost" id="pg-labels">Labels</button>
-            <button type="button" class="alr-lc-btn-ghost" id="pg-editor">Send to Editor</button>
-          </div>
-          <div class="pg-msg" id="pg-status"></div>
-          <div class="pg-disc">Estimates only, based on each company’s published standards as we understand them. ALR Initiative is not affiliated with PSA, TAG, Beckett or CGC, and their grades can differ.</div>
         </section>
+      </div>
+      <div class="pg-foot" id="pg-foot-measure" hidden>
+        <button type="button" class="alr-lc-btn-ghost" data-pgview="photos">Back</button>
+        <span class="app-eb pg-foot-eb">SO FAR</span>
+        <span class="pg-foot-g" id="pg-sofar-g"></span>
+        <span class="pg-foot-t" id="pg-sofar-t"></span>
+        <button type="button" class="alr-lc-btn-primary pg-foot-go" id="pg-to-result">See result</button>
       </div>
       <div class="pg-grid pg-cu" id="pg-closeups" hidden>
         <section class="pg-col">
@@ -597,23 +803,73 @@ button,input{font:inherit}
           <div class="pg-disc">The close-ups and marks are added to the pre-grade report PDF.</div>
         </section>
       </div>
+      <div class="pg-foot" id="pg-foot-closeups" hidden>
+        <button type="button" class="alr-lc-btn-ghost" data-pgview="measure">Back to condition</button>
+        <span class="pg-foot-t" style="margin-left:auto">Set or ignore what the finder found, then see the result.</span>
+        <button type="button" class="alr-lc-btn-primary pg-foot-go" data-pgview="value">See result</button>
+      </div>
       <div class="pg-grid pg-val" id="pg-value" hidden>
+        <section class="pg-col"><div class="alr-lc-section-label">Sub-grades</div><div id="pg-result"></div></section>
         <section class="pg-col" id="pg-v-odds"></section>
-        <section class="pg-col"><div class="alr-lc-section-label">Worth grading?</div><div id="pg-v-worth" class="pg-vw"></div></section>
+        <section class="pg-col"><div class="alr-lc-section-label">Worth sending in?</div><div id="pg-v-worth" class="pg-vw"></div></section>
+      </div>
+      <div class="pg-foot" id="pg-foot-value" hidden>
+        <button type="button" class="alr-lc-btn-ghost" data-pgview="measure">Back</button>
+        <span class="pg-msg pg-foot-t" id="pg-status"></span>
+        <button type="button" class="alr-lc-btn-ghost" id="pg-report" style="margin-left:auto">Report PDF</button>
+        <button type="button" class="alr-lc-btn-ghost" id="pg-labels">Labels</button>
+        <button type="button" class="alr-lc-btn-ghost" id="pg-editor">Send to Editor</button>
+        <button type="button" class="alr-lc-btn-primary" id="pg-save">Save pre-grade</button>
       </div>
       <div class="pg-grid pg-bat" id="pg-batch" hidden>
         <section class="pg-col"><div class="alr-lc-section-label">Stack</div><div id="pg-b-stack" class="pg-vw"></div></section>
         <section class="pg-col" id="pg-b-card"></section>
-        <section class="pg-col"><div class="alr-lc-section-label">Worth submitting</div><div id="pg-b-worth" class="pg-vw"></div></section>
+        <section class="pg-col" id="pg-b-worthcol" hidden><div class="alr-lc-section-label">Worth submitting</div><div id="pg-b-worth" class="pg-vw"></div></section>
+      </div>
+      <div class="pg-foot" id="pg-foot-batch" hidden></div>
+    </div>
+  </main>
+  <main class="app-main" id="app-settings" hidden>
+    <section class="app-hero">
+      <div class="app-hero-main">
+        <div class="app-eb">ALR INITIATIVE — DESKTOP APP</div>
+        <h1>Settings</h1>
+        <p>Your account, where files go, and the defaults the app starts with.</p>
+      </div>
+      <div class="app-meta" id="st-version"></div>
+    </section>
+    <div class="st-grid">
+      <div class="st-col">
+        <div class="app-card"><div class="st-gh">ACCOUNT</div><div class="st-set" id="st-account"></div></div>
+        <div class="app-card"><div class="st-gh">FILES</div>
+          <div class="st-set"><div><b>Save labels and reports to</b><span class="d st-path" id="app-save-path">…</span></div><button type="button" class="app-b sec sm" id="app-save-change">Change folder</button></div>
+        </div>
+        <div class="app-card"><div class="st-gh">APPEARANCE</div>
+          <div class="st-set"><div><b>Theme</b><span class="d">Light matches alrinitiative.com. System follows your computer.</span></div><div class="app-pills" id="st-theme"><button type="button" data-theme="light">Light</button><button type="button" data-theme="dark">Dark</button><button type="button" data-theme="system">System</button></div></div>
+        </div>
+      </div>
+      <div class="app-card">
+        <div class="st-gh">PRE-GRADE DEFAULTS</div>
+        <div class="st-set"><div><b>Usual card game</b><span class="d">Tried first when recognising a card.</span></div><div class="app-pills" id="st-game"><button type="button" data-v="one-piece">One Piece</button><button type="button" data-v="pokemon">Pokémon</button><button type="button" data-v="yugioh">Yu-Gi-Oh!</button></div></div>
+        <div class="st-set"><div><b>Usual grading company</b><span class="d">Shown first in Worth it? and Batch.</span></div><div class="app-pills" id="st-co"><button type="button" data-v="psa">PSA</button><button type="button" data-v="tag">TAG</button><button type="button" data-v="bgs">BGS</button><button type="button" data-v="cgc">CGC</button></div></div>
+        <div class="st-set" style="border-bottom:0"><div><b>Grading cost per card</b><span class="d">Fee plus your share of shipping, for each company. Used to work out whether a card is worth sending.</span></div><span></span></div>
+        <div class="st-fees" id="st-fees"></div>
       </div>
     </div>
   </main>
-  <div class="app-modal pg-lb" id="pg-lb" hidden><div class="pg-lb-box"><div class="pg-lb-h"><b id="pg-lb-t"></b><button type="button" class="app-btn-ghost" id="pg-lb-x">Close</button></div><div class="pg-lb-img" id="pg-lb-img"></div></div></div>
   <main class="app-main app-cards" id="app-cards" hidden>
+    <section class="app-hero">
+      <div class="app-hero-main">
+        <div class="app-eb">ALR INITIATIVE — YOUR ACCOUNT</div>
+        <h1>My Cards</h1>
+        <p>Everything you've pre-graded or labelled. The same list as your Account page on alrinitiative.com.</p>
+      </div>
+      <div class="app-meta" id="cards-meta">SYNCED WITH ALRINITIATIVE.COM</div>
+    </section>
     <div class="app-cards-wrap">
       <div class="app-cards-head">
-        <div><div class="app-eb">YOUR ACCOUNT</div><h2 id="app-cards-title">My Graded Cards</h2></div>
-        <div class="pg-seg" id="app-cards-views"><button type="button" data-cv="all" class="on">All cards</button><button type="button" data-cv="real">Pre-grades vs real grades</button></div>
+        <div><h2 id="app-cards-title">All cards</h2></div>
+        <div class="app-pills" id="app-cards-views"><button type="button" data-cv="all" class="on">Cards</button><button type="button" data-cv="real">Real grades &amp; accuracy</button></div>
         <span class="app-cards-count" id="alr-account-graded-count"></span>
         <span class="app-cards-count" id="app-rg-count" hidden></span>
         <button type="button" class="app-btn-ghost" id="app-cards-refresh">Refresh</button>
@@ -622,6 +878,9 @@ button,input{font:inherit}
       <div class="app-rg" id="app-rg" hidden></div>
     </div>
   </main>
+  </div>
+  </div>
+  <div class="app-modal pg-lb" id="pg-lb" hidden><div class="pg-lb-box"><div class="pg-lb-h"><b id="pg-lb-t"></b><button type="button" class="app-btn-ghost" id="pg-lb-x">Close</button></div><div class="pg-lb-img" id="pg-lb-img"></div></div></div>
   <div class="app-modal" id="app-signin" hidden>
     <form class="app-modal-box" id="app-signin-form">
       <h2>Sign in to ALR</h2>
@@ -648,5 +907,6 @@ button,input{font:inherit}
   <script src="pregrade.js"></script>
   <script src="realgrade.js"></script>
   <script src="batch.js"></script>
+  <script src="home.js"></script>
 </body>
 </html>

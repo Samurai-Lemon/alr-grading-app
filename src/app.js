@@ -14,7 +14,7 @@
 
   function show() {
     var el = document.getElementById('app-save-path');
-    if (el) { el.textContent = '‎' + (dir || '…'); el.title = dir || ''; }
+    if (el) { el.textContent = dir || '…'; el.title = dir || ''; }
   }
   function setDir(d) { dir = d; try { localStorage.setItem(KEY, d); } catch (e) {} show(); }
   function folderName(d) { return String(d || '').split(/[\\/]/).filter(Boolean).pop() || d; }
@@ -64,15 +64,23 @@
   window.ALR_supabase = sb;
 
   function $(id) { return document.getElementById(id); }
+  // The account pill in the header (like the site's Log In button). Signed in: opens Settings.
+  var account = null;
+  window.ALR_account = function () { return account; };
+  window.ALR_signOut = function () { return sb().then(function (c) { return c.auth.signOut(); }); };
   function who(session) {
     var box = $('app-who');
-    if (!box) return;
-    if (!session) { box.innerHTML = ''; return; }
-    var u = session.user || {}, name = (u.user_metadata && u.user_metadata.display_name) || u.email || 'Signed in';
-    box.innerHTML = '<span class="app-av"></span><span class="app-name"></span><button type="button" id="app-signout">Sign out</button>';
-    box.querySelector('.app-av').textContent = String(name).charAt(0).toUpperCase();
-    box.querySelector('.app-name').textContent = name;
-    $('app-signout').addEventListener('click', function () { sb().then(function (c) { return c.auth.signOut(); }); });
+    account = session ? { name: (session.user.user_metadata && session.user.user_metadata.display_name) || session.user.email || 'Signed in', email: session.user.email } : null;
+    if (box) {
+      box.classList.toggle('out', !session);
+      if (!session) box.textContent = 'Sign in';
+      else {
+        box.innerHTML = '<span class="app-av"></span><span class="app-name"></span>';
+        box.querySelector('.app-av').textContent = String(account.name).charAt(0).toUpperCase();
+        box.querySelector('.app-name').textContent = account.name;
+      }
+    }
+    document.dispatchEvent(new CustomEvent('alr-account', { detail: account }));
   }
 
   window.ALR_signIn = function () {
@@ -97,8 +105,8 @@
     else if (a.target === '_blank' || /^\//.test(href)) { e.preventDefault(); }   // site-only links do nothing in the app
   }, true);
 
-  // ── Editor | My Cards ─────────────────────────────────────────────────
-  var view = 'editor';
+  // ── pages: Home, Pre-grade, Batch, Labels (editor), My Cards, Settings ──
+  var view = 'home';
   function loadCards() {
     var box = $('alr-account-graded');
     if (!box) return;
@@ -116,15 +124,23 @@
       });
     }).catch(function () { box.innerHTML = '<div class="alr-reg-empty">Couldn’t reach alrinitiative.com. Check your connection.</div>'; });
   }
+  // Batch is the Pre-grade page's batch view; the rail lights up whichever was asked for.
   function showView(v) {
-    view = v;
-    ['editor', 'pregrade', 'cards'].forEach(function (n) {
-      $('app-' + n).hidden = v !== n;
-      $('app-tab-' + n).classList.toggle('on', v === n);
-    });
-    if (v === 'cards') loadCards();
-    if (v === 'pregrade' && window.ALRPregrade) window.ALRPregrade.refresh();
+    var page = v === 'batch' ? 'pregrade' : v;
+    view = page;
+    ['home', 'editor', 'pregrade', 'cards', 'settings'].forEach(function (n) { var el = $('app-' + n); if (el) el.hidden = page !== n; });
+    Array.prototype.forEach.call(document.querySelectorAll('.app-rail [data-view]'), function (b) { b.classList.toggle('on', b.getAttribute('data-view') === v); });
+    if (page === 'cards') loadCards();
+    if (page === 'pregrade' && window.ALRPregrade) {
+      if (window.ALRPregrade.view) window.ALRPregrade.view(v === 'batch' ? 'batch' : 'auto');
+      window.ALRPregrade.refresh();
+    }
+    document.dispatchEvent(new CustomEvent('alr-view', { detail: v }));
   }
+  // the rail follows Pre-grade's own Batch switch
+  window.ALR_railMark = function (v) {
+    Array.prototype.forEach.call(document.querySelectorAll('.app-rail [data-view]'), function (b) { b.classList.toggle('on', b.getAttribute('data-view') === v); });
+  };
   window.ALR_showView = showView;
   // From My Cards: open a saved card in the editor, or a pre-grade in the Pre-grade tab.
   window.ALR_openEdit = function (id, kind) {
@@ -144,9 +160,13 @@
 
   function start() {
     show();
-    Array.prototype.forEach.call(document.querySelectorAll('.app-tabs [data-view]'), function (b) {
-      b.addEventListener('click', function () { showView(b.getAttribute('data-view')); });
+    // any button with data-view (rail, brand, Home's actions) changes page
+    document.addEventListener('click', function (e) {
+      var b = e.target && e.target.closest ? e.target.closest('[data-view]') : null;
+      if (b && (b.tagName === 'BUTTON' || b.tagName === 'A')) { e.preventDefault(); showView(b.getAttribute('data-view')); }
     });
+    $('app-who').addEventListener('click', function () { if (account) showView('settings'); else window.ALR_signIn(); });
+    showView('home');
     var rf = $('app-cards-refresh'); if (rf) rf.addEventListener('click', loadCards);
     var btn = $('app-save-change');
     if (btn) btn.addEventListener('click', function () { pick(); });

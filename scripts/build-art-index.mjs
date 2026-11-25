@@ -10,7 +10,8 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
-import { chromium } from 'playwright';
+import { createRequire } from 'node:module';
+const { chromium } = createRequire(process.env.PLAYWRIGHT_FROM ? process.env.PLAYWRIGHT_FROM + '/' : import.meta.url)('playwright');
 
 const SRC = path.resolve('src'), OUT = path.join(SRC, 'vendor', 'cardart');
 const PAGE = `<!doctype html><html><body><script src="alr-graded.js"></script><script src="recognize.js"></script></body></html>`;

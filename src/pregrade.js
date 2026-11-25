@@ -13,6 +13,8 @@
     });
   }
   function G() { return window.ALRGraded; }
+  // defaults chosen in Settings
+  function pref(k, d) { try { return localStorage.getItem(k) || d; } catch (e) { return d; } }
 
   // ── state ─────────────────────────────────────────────────────────────────
   function blankSide() { return { outer: { l: 0.03, r: 0.97, t: 0.025, b: 0.975 }, inner: { l: 0.075, r: 0.925, t: 0.06, b: 0.94 }, set: false }; }
@@ -28,11 +30,11 @@
       override: {},                                   // sub-grades typed in by hand
       ignored: {},                                    // finder suggestions waved off, 'front.tl'
       real: null,                                     // the real grade, entered in My Cards (kept on save)
-      value: { raw: null, rawSrc: null, co: 'psa', prices: { psa: {}, tag: {}, bgs: {}, cgc: {} } },
+      value: { raw: null, rawSrc: null, co: pref('alr-pg-co', 'psa'), prices: { psa: {}, tag: {}, bgs: {}, cgc: {} } },
       notes: ''
     };
   }
-  var S = blank(), lookup = { game: 'one-piece', items: [], busy: false };
+  var S = blank(), lookup = { game: pref('alr-pg-game', 'one-piece'), items: [], busy: false };
 
   // ── centering maths ──────────────────────────────────────────────────────
   function shares(gd) {
@@ -158,12 +160,14 @@
   }
 
   // ── rendering ─────────────────────────────────────────────────────────────
-  function touched() { S.dirty = true; renderResult(); renderCertBar(); renderCloseups(); renderValue(); }
-  function renderAll() { renderLookup(); renderPicked(); renderPhotos(); renderStage(); renderInspect(); renderResult(); renderCertBar(); renderCloseups(); renderValue(); }
+  function touched() { S.dirty = true; renderResult(); renderCertBar(); renderCloseups(); renderValue(); renderHero(); renderSoFar(); renderFlags(); }
+  function renderAll() { renderLookup(); renderPicked(); renderPhotos(); renderStage(); renderInspect(); renderResult(); renderCertBar(); renderCloseups(); renderValue(); renderHero(); renderSoFar(); renderFlags(); }
   function renderCertBar() {
     var el = $('pg-cert');
     if (!el) return;
-    el.textContent = S.cert ? (S.dirty ? S.cert + ' · unsaved changes' : S.cert + ' · saved') + (S.real ? ' · graded ' + (S.real.co === 'bgs' ? 'BGS' : String(S.real.co).toUpperCase()) + ' ' + S.real.g : '') : 'New pre-grade · not saved';
+    el.innerHTML = S.cert
+      ? esc(S.cert) + '<br>' + (S.dirty ? 'Unsaved changes' : 'Saved') + (S.real ? '<br>Graded ' + esc((S.real.co === 'bgs' ? 'BGS' : String(S.real.co).toUpperCase()) + ' ' + S.real.g) : '')
+      : 'Not saved yet';
     var gb = $('pg-gotback');
     if (gb) { gb.hidden = !S.id || !window.ALRRealGrade; gb.textContent = S.real ? 'Real grade' : 'Got it back?'; }
   }
@@ -258,6 +262,7 @@
         ? '<img src="' + esc(src) + '" alt="">' + (S.photos[side].check && S.photos[side].check.checks && S.photos[side].check.checks.length ? '<span class="pg-ph-badge' + (issues(S.photos[side]) ? ' bad' : '') + '">' + (issues(S.photos[side]) ? issues(S.photos[side]) + ' to check' : 'Checked') + '</span>' : '') + '<button type="button" class="pg-ph-rm" data-rm="' + side + '">Remove</button>'
         : '<span class="pg-ph-plus">+</span><span>' + (side === 'front' ? 'Front' : 'Back') + ' photo</span>';
       box.classList.toggle('has', !!src);
+      renderTips();
       var rm = box.querySelector('[data-rm]');
       if (rm) rm.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); S.photos[side] = null; S.guides[side] = blankSide(); clearIgnored(side); renderPhotos(); renderStage(); touched(); });
     });
@@ -475,32 +480,69 @@
       return '<button type="button" data-seg="' + group + '.' + key + '.' + k + '" class="' + (v === k ? 'on' : '') + '">' + l + '</button>';
     }).join('') + '</div>';
   }
+  // Condition: corner close-ups (from the finder) with a rating under each, edges in one row,
+  // surface chips, and a note only if you want one.
+  var noteOpen = false;
+  function rateSel(group, key, labels) {
+    var v = S[group][key] || 0;
+    return '<select class="pg-sel' + (v ? ' warn' : '') + '" data-rate="' + group + '.' + key + '" aria-label="' + key + '">' + labels.map(function (l, k) {
+      return '<option value="' + k + '"' + (v === k ? ' selected' : '') + '>' + l + '</option>';
+    }).join('') + '</select>';
+  }
   function renderInspect() {
-    var box = $('pg-inspect');
+    var box = $('pg-inspect'), cbox = $('pg-corners');
     if (!box) return;
     var CN = [['tl', 'Top left'], ['tr', 'Top right'], ['bl', 'Bottom left'], ['br', 'Bottom right']], EN = [['t', 'Top'], ['r', 'Right'], ['b', 'Bottom'], ['l', 'Left']];
-    function chips(side) {
-      return '<div class="pg-chips">' + SURF[side].map(function (f) {
-        return '<button type="button" data-surf="' + side + '.' + f[0] + '" class="' + (S.surface[side][f[0]] ? 'on' : '') + '">' + f[1] + '</button>';
+    var side = S.side === 'back' && S.photos.back ? 'back' : 'front', f = finder[side], res = f && f.key === scanKey(side) ? f.res : null;
+    if (res && res.ok && window.ALRDefects && !f.ctiles) {
+      f.ctiles = {};
+      ['tl', 'tr', 'bl', 'br'].forEach(function (k) { f.ctiles[k] = window.ALRDefects.tile(res, k, 260, false, res.areas[k].spots); });
+    }
+    if (cbox) cbox.innerHTML = '<div class="pg-sec" style="border-top:0;padding-top:0"><div class="pg-sech">Corners <small>' + (S.photos[side] ? (side === 'front' ? 'front photo' : 'back photo') : 'add a photo to see them up close') + '</small></div><div class="pg-cgrid">' + CN.map(function (c) {
+      var t = res && res.ok && f.ctiles ? f.ctiles[c[0]] : null, fl = res && res.ok && flagged(side, res, c[0]);
+      var pic = t ? '<img src="' + t.url + '" alt="' + c[1] + ' corner">' + (fl && t.rings.length ? '<svg viewBox="0 0 ' + t.w + ' ' + t.h + '" aria-hidden="true">' + rings(t.rings) + '</svg>' : '') : '<span class="pg-ct-ph">' + (S.photos[side] ? 'Checking…' : 'No photo') + '</span>';
+      return '<div class="pg-ct"><div class="pg-ct-img' + (fl ? ' flag' : '') + '">' + pic + '</div><b>' + c[1] + '</b>' + rateSel('corners', c[0], ['Sharp', 'Light wear', 'Worn']) + '</div>';
+    }).join('') + '</div></div>';
+    function chips(sd) {
+      return '<div class="pg-chips">' + SURF[sd].map(function (x) {
+        return '<button type="button" data-surf="' + sd + '.' + x[0] + '" class="' + (S.surface[sd][x[0]] ? 'on' : '') + '">' + x[1] + '</button>';
       }).join('') + '</div>';
     }
+    var showNote = noteOpen || !!(S.notes || '').trim();
     box.innerHTML =
-      '<div class="pg-st">Corners</div>' + CN.map(function (c) { return '<div class="pg-rw"><span>' + c[1] + '</span>' + seg('corners', c[0], ['Sharp', 'Light', 'Worn']) + '</div>'; }).join('') +
-      '<div class="pg-st">Edges</div>' + EN.map(function (c) { return '<div class="pg-rw"><span>' + c[1] + '</span>' + seg('edges', c[0], ['Clean', 'Minor', 'Chipped']) + '</div>'; }).join('') +
-      '<div class="pg-st">Surface · front</div>' + chips('front') +
-      '<div class="pg-st">Surface · back</div>' + chips('back') +
-      '<div class="pg-st">Notes</div><textarea class="alr-lc-input pg-notes" id="pg-notes" maxlength="2000" placeholder="Anything else worth noting">' + esc(S.notes) + '</textarea>';
-    Array.prototype.forEach.call(box.querySelectorAll('[data-seg]'), function (b) {
-      b.addEventListener('click', function () { var k = b.getAttribute('data-seg').split('.'); S[k[0]][k[1]] = Number(k[2]); renderInspect(); touched(); });
+      '<div class="pg-sec"><div class="pg-sech">Edges</div><div class="pg-egrid">' + EN.map(function (c) { return '<label>' + c[1] + rateSel('edges', c[0], ['Clean', 'Minor', 'Chipped']) + '</label>'; }).join('') + '</div></div>' +
+      '<div class="pg-sec"><div class="pg-sech">Surface <small>photos can’t show this well, so mark anything you can see</small></div>' +
+        '<div class="pg-st" style="margin:0">Front</div>' + chips('front') + '<div class="pg-st" style="margin:0">Back</div>' + chips('back') + '</div>' +
+      (showNote ? '<div class="pg-sec"><div class="pg-sech">Note</div><textarea class="alr-lc-input pg-notes" id="pg-notes" maxlength="2000" placeholder="Anything else worth noting">' + esc(S.notes) + '</textarea></div>'
+        : '<button type="button" class="pg-linkbtn" id="pg-addnote" style="align-self:flex-start;font-size:13px">Add a note</button>');
+    Array.prototype.forEach.call(document.querySelectorAll('#pg-measure [data-rate]'), function (sel) {
+      sel.addEventListener('change', function () { var k = sel.getAttribute('data-rate').split('.'); S[k[0]][k[1]] = Number(sel.value); renderInspect(); touched(); });
     });
     Array.prototype.forEach.call(box.querySelectorAll('[data-surf]'), function (b) {
       b.addEventListener('click', function () { var k = b.getAttribute('data-surf').split('.'); S.surface[k[0]][k[1]] = !S.surface[k[0]][k[1]]; renderInspect(); touched(); });
     });
-    $('pg-notes').addEventListener('input', function (e) { S.notes = e.target.value; S.dirty = true; renderCertBar(); });
+    var an = $('pg-addnote');
+    if (an) an.addEventListener('click', function () { noteOpen = true; renderInspect(); var t = $('pg-notes'); if (t) t.focus(); });
+    var nt = $('pg-notes');
+    if (nt) nt.addEventListener('input', function (e) { S.notes = e.target.value; S.dirty = true; renderCertBar(); });
+  }
+  // photo tips until there's a front photo; then the card match takes the space
+  function renderTips() {
+    var t = $('pg-tips'), h = $('pg-card-h');
+    if (!t) return;
+    t.hidden = !!S.photos.front;
+    if (h) h.textContent = S.photos.front ? 'Which card is this?' : 'Or find the card';
+  }
+  // the front photo beside the card search
+  function renderCardPhoto() {
+    var box = $('pg-card-photo');
+    if (!box) return;
+    var src = photoSrc('front');
+    box.innerHTML = '<figure class="pg-cphoto" style="margin:0">' + (src ? '<img src="' + esc(src) + '" alt="Your front photo">' : '<span class="pg-cph">Add a front photo and the app will read the card for you.</span>') + '<figcaption>Your photo</figcaption></figure>';
   }
 
   // ── close-ups + whitening finder (defects.js) ──────────────────────────────
-  var view = 'measure', finder = { front: null, back: null };
+  var view = 'photos', finder = { front: null, back: null };
   var LEVEL = { corner: ['Sharp', 'Light', 'Worn'], edge: ['Clean', 'Minor', 'Chipped'] };
   var SHORT = { tl: 'Top left', tr: 'Top right', bl: 'Bottom left', br: 'Bottom right', t: 'Top edge', r: 'Right edge', b: 'Bottom edge', l: 'Left edge' };
   function clearIgnored(side) { Object.keys(S.ignored).forEach(function (k) { if (k.indexOf(side + '.') === 0) delete S.ignored[k]; }); }
@@ -626,12 +668,18 @@
   function unzoom() { var lb = $('pg-lb'); if (lb) { lb.hidden = true; $('pg-lb-img').innerHTML = ''; } }
   function setView(v) {
     view = v;
+    if (window.ALR_railMark) window.ALR_railMark(v === 'batch' ? 'batch' : 'pregrade');
+    if (v === 'card') v = view = 'photos';
+    ['photos', 'measure', 'closeups', 'value', 'batch'].forEach(function (k) { var f = $('pg-foot-' + k); if (f) f.hidden = v !== k; });
+    $('pg-photos-step').hidden = v !== 'photos';
     $('pg-measure').hidden = v !== 'measure';
     $('pg-closeups').hidden = v !== 'closeups';
     $('pg-value').hidden = v !== 'value';
     $('pg-batch').hidden = v !== 'batch';
-    Array.prototype.forEach.call(document.querySelectorAll('#pg-views [data-pgview]'), function (b) { b.classList.toggle('on', b.getAttribute('data-pgview') === v); });
-    if (v === 'closeups') renderCloseups(); else if (v === 'value') renderValue(); else if (v === 'batch') { if (window.ALRBatch) window.ALRBatch.render(); } else renderStage();
+    if (v === 'photos') renderTips();
+    if (v === 'measure') { if (S.photos.front) S.side = 'front'; Array.prototype.forEach.call(document.querySelectorAll('#pg-sides [data-side]'), function (b) { b.classList.toggle('on', b.getAttribute('data-side') === S.side); }); renderInspect(); }
+    renderHero(); renderSoFar(); renderFlags();
+    if (v === 'closeups') renderCloseups(); else if (v === 'value') renderValue(); else if (v === 'batch') { if (window.ALRBatch) window.ALRBatch.render(); } else if (v === 'measure') renderStage();
   }
   // What needs a look on the card on screen: photo check problems and finder suggestions.
   function flags() {
@@ -676,6 +724,88 @@
     }).catch(function () { return null; });
   }
 
+  // ── hero, step chips, the "so far" bar and the finder summary ──────────────
+  var STEPS = [['photos', 'Photos & card'], ['condition', 'Condition'], ['result', 'Result']];
+  function renderHero() {
+    var title = $('pg-title'), steps = $('pg-steps'), eb = $('pg-eb'), hp = $('pg-hp');
+    if (!title || !steps) return;
+    var c = S.card, isBatch = view === 'batch', isResult = view === 'value';
+    if (isBatch) {
+      eb.textContent = 'ALR INITIATIVE — PRE-GRADE · BATCH';
+      title.textContent = 'Batch';
+      hp.hidden = false; hp.textContent = 'Drop a stack of photos. Each card is checked and identified on its own; you confirm it, fix anything flagged, and move on.';
+      steps.hidden = true;
+      document.querySelector('.pg-hbtns').hidden = true;
+      $('pg-cert').innerHTML = window.ALRBatch && window.ALRBatch.meta ? window.ALRBatch.meta() : '';
+      return;
+    }
+    hp.hidden = true; steps.hidden = false;
+    document.querySelector('.pg-hbtns').hidden = false;
+    renderCertBar();
+    if (isResult) {
+      var r = compute(), co = S.value.co || 'psa', e = r.est[co], ten = chance(e, 10);
+      eb.textContent = 'ALR INITIATIVE — PRE-GRADE · RESULT' + (c.name ? ' · ' + c.name.toUpperCase() : '');
+      title.innerHTML = esc(coName(co) + ' ' + fmt(e.g)) + ' <span class="pg-h1sub">most likely' + (e.g < 10 ? ' · ' + pct(ten) + ' chance of a 10' : '') + '</span>';
+    } else {
+      eb.textContent = 'ALR INITIATIVE — PRE-GRADE · ESTIMATE';
+      title.textContent = c.name || 'New pre-grade';
+    }
+    var done = { photos: !!(c.name || '').trim(), condition: !!S.photos.front && S.guides.front.set, result: false };
+    var cur = { photos: 'photos', measure: 'condition', closeups: 'condition', value: 'result' }[view] || 'photos';
+    var go = { photos: 'photos', condition: 'measure', result: 'value' };
+    steps.innerHTML = STEPS.map(function (st, i) {
+      var on = st[0] === cur, ok = done[st[0]] && !on;
+      return '<button type="button" class="pg-step' + (on ? ' on' : ok ? ' done' : '') + '" data-pgview="' + go[st[0]] + '"><i>' + (ok ? '✓' : i + 1) + '</i>' + st[1] + '</button>';
+    }).join('');
+  }
+  function renderSoFar() {
+    var g = $('pg-sofar-g'), t = $('pg-sofar-t');
+    if (!g || !t) return;
+    var r = compute(), co = S.value.co || 'psa', e = r.est[co], ten = chance(e, 10);
+    g.textContent = coName(co) + ' ' + fmt(e.g);
+    t.textContent = 'likely' + (e.g < 10 ? ' · ' + pct(ten) + ' chance of a 10' : '') + ' · ' + COS.filter(function (k) { return k[0] !== co; }).map(function (k) { return coName(k[0]) + ' ' + fmt(r.est[k[0]].g); }).join(' · ');
+  }
+  // what the finder spotted, right in the Condition column (scans quietly in the background)
+  function renderFlags() {
+    var box = $('pg-flags');
+    if (!box || view !== 'measure') return;
+    if (!window.ALRDefects) { box.innerHTML = ''; return; }
+    var sides = ['front', 'back'].filter(function (sd) { return scanKey(sd); });
+    if (!sides.length) { box.innerHTML = ''; return; }
+    var pending = sides.filter(function (sd) { var f = finder[sd]; return !(f && f.key === scanKey(sd) && f.res); });
+    if (pending.length) {
+      box.innerHTML = '<div class="pg-sub" style="margin:0">Checking corners and edges…</div>';
+      Promise.all(pending.map(scanSide)).then(function () { if (view === 'measure') { renderInspect(); renderFlags(); } });
+      return;
+    }
+    var list = [];
+    sides.forEach(function (sd) {
+      var res = finder[sd].res;
+      if (!res || !res.ok) return;
+      window.ALRDefects.AREAS.forEach(function (k) { if (flagged(sd, res, k) && rating(k) < res.areas[k].suggest) list.push({ side: sd, k: k, A: res.areas[k] }); });
+    });
+    if (!list.length) {
+      box.innerHTML = sides.some(sleeved) ? '<div class="pg-sub" style="margin:0">The finder is off for sleeved photos.</div>' : '<div class="pg-flagok">Nothing flagged on the corners or edges.</div>';
+      return;
+    }
+    box.innerHTML = list.slice(0, 3).map(function (x) {
+      var lv = LEVEL[x.A.kind][x.A.suggest];
+      var says = { Light: 'light wear', Worn: 'wear', Minor: 'minor wear', Chipped: 'chipping' }[lv] || lv.toLowerCase();
+      return '<div class="pg-flag"><span>' + esc(x.side === 'front' ? 'Front' : 'Back') + ' ' + esc(window.ALRDefects.NAMES[x.k].toLowerCase()) + ': possible <b>' + esc(says) + '</b>. Count it as ' + esc(lv.toLowerCase()) + '?</span>' +
+        '<button type="button" class="alr-lc-btn-primary" data-fl-set="' + x.side + '.' + x.k + '">Set ' + esc(lv) + '</button><button type="button" class="alr-lc-btn-ghost" data-fl-ign="' + x.side + '.' + x.k + '">No, it’s fine</button></div>';
+    }).join('') + (list.length > 3 ? '<div class="pg-sub" style="margin:0">' + (list.length - 3) + ' more in Close-ups.</div>' : '');
+    Array.prototype.forEach.call(box.querySelectorAll('[data-fl-set]'), function (b) {
+      b.addEventListener('click', function () {
+        var p = b.getAttribute('data-fl-set').split('.'), res = finder[p[0]].res;
+        S[p[1].length === 2 ? 'corners' : 'edges'][p[1]] = Math.max(rating(p[1]), res.areas[p[1]].suggest);
+        renderInspect(); touched();
+      });
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('[data-fl-ign]'), function (b) {
+      b.addEventListener('click', function () { S.ignored[b.getAttribute('data-fl-ign')] = true; S.dirty = true; renderCertBar(); renderFlags(); });
+    });
+  }
+
   // ── grade odds (shared by Measure and Worth it?) ───────────────────────────
   var COS = [['psa', 'PSA', '1–10'], ['tag', 'TAG', '1–10, halves'], ['bgs', 'Beckett', 'with sub-grades'], ['cgc', 'CGC', '1–10']];
   function oddsBox(c) {
@@ -683,9 +813,11 @@
       var e = c.est[k[0]], shown = e.odds.filter(function (o) { return o[1] >= 0.03; }), rest = 1 - shown.reduce(function (a, o) { return a + o[1]; }, 0);
       var segs = shown.map(function (o) {
         var cls = o[0] === e.g ? 'o1' : o[0] > e.g ? 'o2' : 'o3';
-        return '<i class="' + cls + '" style="flex:' + o[1] + '" title="' + k[1] + ' ' + fmt(o[0]) + ': ' + pct(o[1]) + '">' + (o[1] >= 0.12 ? fmt(o[0]) + ' · ' + pct(o[1]) : o[1] >= 0.06 ? fmt(o[0]) : '') + '</i>';
+        // just the grade inside the bar; the percentages go on the line underneath, so nothing is cut off
+        return '<i class="' + cls + '" style="flex:' + o[1] + '" title="' + k[1] + ' ' + fmt(o[0]) + ': ' + pct(o[1]) + '">' + (o[1] >= 0.1 ? fmt(o[0]) : '') + '</i>';
       }).join('') + (rest >= 0.01 ? '<i class="o4" style="flex:' + rest + '" title="Other grades: ' + pct(rest) + '"></i>' : '');
-      return '<div class="pg-er"><div class="pg-co">' + k[1] + '<small>' + k[2] + '</small></div><div class="pg-odds">' + segs + '</div>' +
+      var pcts = shown.map(function (o) { return '<b>' + fmt(o[0]) + '</b> ' + pct(o[1]); }).join(' · ');
+      return '<div class="pg-er"><div class="pg-co">' + k[1] + '<small>' + k[2] + '</small></div><div class="pg-oddw"><div class="pg-odds">' + segs + '</div><div class="pg-pcts">' + pcts + '</div></div>' +
         '<div class="pg-gv">' + fmt(e.g) + '<small>most likely</small></div></div>';
     }).join('') + '</div>';
   }
@@ -719,13 +851,9 @@
     var left = $('pg-v-odds'), right = $('pg-v-worth');
     if (!left || !right) return;
     var c = compute(), V = S.value, co = V.co, card = S.card;
-    left.innerHTML = '<div class="pg-subs">' + [['centering', 'Centering'], ['corners', 'Corners'], ['edges', 'Edges'], ['surface', 'Surface']].map(function (n) {
-      var lo = Math.min(c.sub.centering, c.sub.corners, c.sub.edges, c.sub.surface);
-      return '<div class="pg-sg' + (c.sub[n[0]] === lo && lo < 10 ? ' low' : '') + '"><span>' + n[1] + '</span><b>' + fmt(c.sub[n[0]]) + '</b></div>';
-    }).join('') + '</div>' +
-      '<div class="pg-cu-head"><div class="alr-lc-section-label">Grade odds</div><span class="pg-sub">How likely each grade is, not just one number</span></div>' +
-      oddsBox(c) + weakBox(c) +
-      '<div class="pg-sub">Odds allow for things a photo can miss: each sub-grade may really be a little lower (sometimes higher) than measured, and each company’s rules are applied to every case. Once real grades are logged they can be tuned against actual results.</div>';
+    left.innerHTML = '<div class="pg-cu-head"><div class="alr-lc-section-label">Grade odds by company</div><span class="pg-sub">How likely each grade is, not just one number</span></div>' +
+      oddsBox(c) +
+      '<div class="pg-sub">Odds allow for things a photo can miss: each sub-grade may really be a little lower (sometimes higher) than measured, and each company’s rules are applied to every case. Estimates only; ALR isn’t affiliated with PSA, TAG, Beckett or CGC, and their grades can differ.</div>';
 
     var img = card.official && G() ? G().shown(card.game, card.official, 200) : null, src = card.game && G() ? G().games[card.game].source : null;
     var rows = c.est[co].odds.filter(function (o) { return o[1] >= 0.03; }), pr = V.prices[co] || {};
@@ -781,7 +909,7 @@
         '<input type="number" min="1" max="10" step="0.5" value="' + fmt(c.sub[n[0]]) + '" data-sub="' + n[0] + '" title="Type to override"></label>';
     }).join('') + '</div>' +
       (Object.keys(S.override).length ? '<button type="button" class="alr-lc-linkbtn" id="pg-unoverride">Reset sub-grades to the measured values</button>' : '') +
-      oddsBox(c) + weakBox(c);
+      weakBox(c) + '<button type="button" class="pg-linkbtn" data-pgview="measure" style="align-self:flex-start;font-size:13px">Change the condition</button>';
     Array.prototype.forEach.call(box.querySelectorAll('[data-sub]'), function (inp) {
       inp.addEventListener('change', function () {
         var v = Number(inp.value);
@@ -850,6 +978,7 @@
           return uploadPhotos(sb, T);
         }).then(function () {
           T.dirty = false;
+          if (window.ALRHome) window.ALRHome.refresh();
           if (S === T) { renderCertBar(); renderPhotos(); }
           status('Saved as ' + T.cert + '. It’s on your Account page, and the report page is live.');
           return true;
@@ -929,10 +1058,10 @@
       if (pg.value) { S.value = { raw: pg.value.raw != null ? pg.value.raw : null, rawSrc: pg.value.rawSrc || null, co: pg.value.co || 'psa', prices: Object.assign({ psa: {}, tag: {}, bgs: {}, cgc: {} }, pg.value.prices || {}) }; }
       if (row.front_photo_path) S.photos.front = { url: G().photoUrl(row.front_photo_path) };
       if (row.back_photo_path) S.photos.back = { url: G().photoUrl(row.back_photo_path) };
-      S.dirty = false; renderAll(); status('Editing ' + row.cert + '.');
+      S.dirty = false; renderAll(); setView('measure'); status('Editing ' + row.cert + '.');
     }).catch(function () { status('Couldn’t open that pre-grade.'); });
   }
-  function reset() { S = blank(); lookup.items = []; var q = $('pg-q'); if (q) q.value = ''; renderAll(); status(''); }
+  function reset() { S = blank(); lookup.items = []; noteOpen = false; var q = $('pg-q'); if (q) q.value = ''; renderAll(); status(''); setView('photos'); }
 
   function init() {
     var root = $('app-pregrade');
@@ -952,11 +1081,17 @@
       drop.addEventListener('drop', function (e) { var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) takePhoto(side, f).catch(function () {}); });
     });
     Array.prototype.forEach.call(document.querySelectorAll('#pg-sides [data-side]'), function (b) {
-      b.addEventListener('click', function () { S.side = b.getAttribute('data-side'); renderStage(); });
+      b.addEventListener('click', function () { S.side = b.getAttribute('data-side'); renderStage(); renderInspect(); renderFlags(); });
     });
     Array.prototype.forEach.call(document.querySelectorAll('#pg-cu-sides [data-side]'), function (b) {
       b.addEventListener('click', function () { S.side = b.getAttribute('data-side'); renderCloseups(); });
     });
+    $('app-pregrade').addEventListener('click', function (e) {
+      var b = e.target && e.target.closest ? e.target.closest('[data-pgview]') : null;
+      if (b) setView(b.getAttribute('data-pgview'));
+    });
+    $('pg-to-result').addEventListener('click', function () { setView('value'); });
+    $('pg-to-cu').addEventListener('click', function () { setView('closeups'); });
     Array.prototype.forEach.call(document.querySelectorAll('#pg-views [data-pgview]'), function (b) {
       b.addEventListener('click', function () { setView(b.getAttribute('data-pgview')); });
     });
@@ -994,6 +1129,21 @@
     touched: touched
   };
   window.ALRPregrade = { load: load, reset: reset, _batch: batchApi,
+    // 'auto': stay where you were, or start at the first step that isn't done
+    view: function (v) {
+      if (!$('pg-measure')) return;
+      if (v === 'auto') v = view !== 'batch' ? view : !S.photos.front || !S.card.name ? 'photos' : 'measure';
+      if (v !== view) setView(v); else { renderHero(); }
+    },
+    game: function (g) { lookup.game = g; renderLookup(); },
+    // for Home: the card on screen if it has work that isn't saved yet
+    summary: function () {
+      var c = S.card, has = c.name || S.photos.front;
+      if (!has || (!S.dirty && S.id)) return null;
+      var step = !S.photos.front ? 'Photos' : !c.name ? 'Card' : 'Condition';
+      var img = c.official && G() ? G().shown(c.game, c.official, 200) : photoSrc('front');
+      return { name: c.name || 'Unnamed card', sub: [c.number, c.printing].filter(Boolean).join(' · '), img: img, step: step, cert: S.cert, saved: !!S.id };
+    },
     // My Cards saved or removed a real grade: keep the open pre-grade in step so its next save keeps it
     setReal: function (id, real) { if (S.id === id) { S.real = real || null; renderCertBar(); } }, refresh: function () { if (view === 'closeups') renderCloseups(); else if (view === 'value') renderValue(); else renderStage(); } };
   document.addEventListener('DOMContentLoaded', init);

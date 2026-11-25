@@ -217,7 +217,7 @@
     } else if (c.status === 'working' || c.status === 'waiting') {
       mid.innerHTML = '<div class="alr-lc-section-label">Card ' + (B.cur + 1) + '</div><div class="pg-b-work">' + thumb(c) + '<div><b>' + esc(c.step || 'Waiting…') + '</b><span>' + esc(c.label) + (c.files.back ? ' + ' + esc(c.files.back.name) : '') + '</span></div></div>';
     } else if (c.status === 'error') {
-      mid.innerHTML = '<div class="alr-lc-section-label">Card ' + (B.cur + 1) + '</div><div class="pg-warn">' + esc(c.msg) + '</div><div class="pg-b-btns"><button type="button" class="alr-lc-btn-ghost" id="pg-b-skip">Skip</button></div>';
+      mid.innerHTML = '<div class="alr-lc-section-label">Card ' + (B.cur + 1) + '</div><div class="pg-warn">' + esc(c.msg) + '</div>';
     } else {
       var st = c.st, cc = api.compute(st), e = cc.est[B.co], picked = !!(st.card && st.card.name);
       var best = c.matches[0], img = function (it) { return it && it.img ? G().shown(it.game, it.img, 200) : null; };
@@ -256,9 +256,7 @@
           priceRows +
           '<label class="pg-pr"><span>Fee + shipping, per card <small>remembered</small></span><input class="alr-lc-input" id="pg-b-fee" inputmode="decimal" placeholder="$" value="' + esc(fee != null ? fee : '') + '"></label></div>' +
         (c.msg ? '<div class="pg-msg">' + esc(c.msg) + '</div>' : '') +
-        '<div class="pg-b-btns"><button type="button" class="alr-lc-btn-ghost" id="pg-b-full">Open full pre-grade</button><button type="button" class="alr-lc-btn-ghost" id="pg-b-skip">' + (c.status === 'saved' ? 'Next' : 'Skip') + '</button>' +
-          '<button type="button" class="alr-lc-btn-primary" id="pg-b-save">' + (c.status === 'saved' ? 'Save changes & next' : 'Save & next card') + '</button></div>' +
-        '<div class="pg-sub" style="text-align:right">Shortcuts: <span class="pg-kbd">Enter</span> yes / save · <span class="pg-kbd">→</span> skip · <span class="pg-kbd">F</span> full view</div>';
+        '<button type="button" class="pg-linkbtn" id="pg-b-full" style="align-self:flex-start;font-size:13px">Open the full pre-grade for this card</button>';
     }
 
     // worth submitting
@@ -279,7 +277,25 @@
       '<button type="button" class="alr-lc-btn-primary" id="pg-b-pdf"' + (good.length && !B.running ? '' : ' disabled') + '>' + (good.length === 1 ? 'Save this card as a list (PDF)' : good.length ? 'Save these ' + good.length + ' as a list (PDF)' : 'Save a list (PDF)') + '</button>' +
       '<button type="button" class="alr-lc-btn-ghost" id="pg-b-rest"' + (unsaved && !B.running ? '' : ' disabled') + '>Save the rest as pre-grades' + (unsaved ? ' (' + unsaved + ')' : '') + '</button>' +
       (B.flash ? '<div class="pg-msg">' + esc(B.flash) + '</div>' : '');
+    // the card or the ranked stack, one at a time
+    var review = !!B.review && rk.length > 0;
+    mid.hidden = review; $('pg-b-worthcol').hidden = !review;
+    var foot = $('pg-foot-batch'), canAct = c && !B.running && (c.status === 'review' || c.status === 'saved' || c.status === 'skipped' || c.status === 'error');
+    if (foot) foot.innerHTML =
+      (review ? '<button type="button" class="alr-lc-btn-ghost" id="pg-b-rev">Back to the card</button>'
+        : '<button type="button" class="alr-lc-btn-ghost" id="pg-b-rev"' + (rk.length ? '' : ' disabled') + '>Review the stack' + (good.length ? ' · ' + good.length + ' worth sending' : '') + '</button>') +
+      '<span class="pg-foot-t" style="margin-left:auto">' + (review || !canAct ? '' : '<span class="pg-kbd">Enter</span> saves · <span class="pg-kbd">→</span> skips') + '</span>' +
+      (review ? '' : '<button type="button" class="alr-lc-btn-ghost" id="pg-b-skip"' + (canAct ? '' : ' disabled') + '>' + (c && c.status === 'saved' ? 'Next' : 'Skip') + '</button>' +
+        '<button type="button" class="alr-lc-btn-primary" id="pg-b-save"' + (canAct && c.status !== 'error' ? '' : ' disabled') + '>' + (c && c.status === 'saved' ? 'Save changes & next' : 'Save & next card') + '</button>');
+    var meta = $('pg-cert');
+    if (meta && $('app-pregrade') && !$('pg-batch').hidden) meta.innerHTML = metaText();
     wire(c);
+  }
+  function metaText() {
+    if (!B.cards.length) return 'NO PHOTOS YET';
+    var done = B.cards.filter(function (c) { return c.status === 'saved' || c.status === 'skipped'; }).length;
+    var good = ranked().filter(function (r) { return r.w.ready && r.w.gain > 0; });
+    return done + ' OF ' + B.cards.length + ' DONE' + (good.length ? '<br>' + good.length + ' WORTH SENDING · ABOUT +' + A().money(good.reduce(function (a, r) { return a + r.w.gain; }, 0)) : '');
   }
 
   function wire(c) {
@@ -309,6 +325,7 @@
       b.addEventListener('click', function () { B.co = b.getAttribute('data-bco'); render(); });
     });
     on('pg-b-pdf', 'click', listPdf);
+    on('pg-b-rev', 'click', function () { B.review = !B.review; render(); });
     on('pg-b-rest', 'click', saveRest);
     if (!c) return;
     on('pg-b-yes', 'click', function () { confirm(c.matches[0]); });
@@ -362,5 +379,5 @@
     else if (e.key === 'f' || e.key === 'F') { e.preventDefault(); full(); }
   });
 
-  window.ALRBatch = { render: render };
+  window.ALRBatch = { render: render, meta: metaText };
 })();
