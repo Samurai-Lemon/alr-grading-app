@@ -416,33 +416,79 @@ button,input{font:inherit}
 .app-rg-cmp b{color:var(--alr-text)}
 .app-rg-mono.alr-lc-input,.app-rg-fld .app-rg-mono{font-family:var(--codeFont)}
 /* home */
-.hm-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}
-.hm-stat{padding:16px 18px;display:flex;flex-direction:column;gap:4px}
-.hm-stat span{font-size:13px;color:var(--alr-text-2)}
-.hm-stat b{font:700 38px var(--codeFont);letter-spacing:-1px;line-height:1.1}
-.hm-stat b.ac{color:var(--alr-accent-text)}
-.hm-stat small{font-size:12px;color:var(--alr-muted)}
-.hm-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:14px;align-items:start}
-.hm-ch{display:flex;align-items:baseline;gap:10px;padding:16px 20px 12px}
-.hm-ch h2{margin:0;font-size:15px;font-weight:700}
-.hm-ch .r{margin-left:auto;font-size:13px;color:var(--alr-muted)}
-.hm-link{margin-left:auto;font-size:13px;color:var(--alr-accent-text);background:none;border:0;padding:0;cursor:pointer;font-weight:500}
-.hm-link:hover{text-decoration:underline}
-.hm-resume{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:14px;align-items:center;padding:0 20px 16px}
-.hm-resume img,.hm-ph{width:54px;aspect-ratio:63/88;border-radius:6px;display:block;object-fit:cover;background:var(--alr-surface-2)}
-.hm-resume b{display:block;font-size:14px}
-.hm-resume span{display:block;font-size:12.5px;color:var(--alr-muted);margin-top:3px}
-.hm-tiles{padding:0 20px 18px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
-.hm-tile{display:flex;flex-direction:column;gap:6px;min-width:0;background:none;border:0;padding:0;text-align:left;cursor:pointer;font:inherit;font-size:12px;color:var(--alr-text-2)}
-.hm-tile img,.hm-tile .hm-ph{width:100%;border-radius:8px}
-.hm-tile b{color:var(--alr-text);font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hm-tile:hover b{color:var(--alr-accent-text)}
-.hm-row{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 20px;border-top:1px solid var(--alr-border);font-size:13px;color:var(--alr-text-2)}
-.hm-row img,.hm-row .hm-ph{width:38px;border-radius:4px}
-.hm-row b{display:block;color:var(--alr-text);font-weight:600}
-.hm-mono{font:500 11.5px var(--codeFont);color:var(--alr-muted)}
-.hm-empty{padding:4px 20px 18px;font-size:13px;color:var(--alr-muted);line-height:1.5}
-.hm-ok{color:var(--alr-ok)}
+/* Home: the binder */
+.app-main.bd{padding:30px 36px}
+.bd-off{display:flex;align-items:center;gap:12px;flex:none;margin-bottom:20px;padding:10px 12px 10px 16px;border-radius:10px;background:rgba(138,95,12,.08);border:1px solid rgba(138,95,12,.3);font-size:13.5px;color:var(--alr-text-2)}
+.bd-off[hidden]{display:none}.bd-off b{color:var(--alr-gold)}.bd-off .app-b{margin-left:auto}
+.bd-grid{flex:1 0 auto;display:grid;grid-template-columns:440px minmax(0,1fr);gap:44px}
+.bd-left{display:flex;flex-direction:column;gap:22px;min-width:0}
+.bd-date{font-size:13px;color:var(--alr-muted);margin-bottom:-12px}
+.bd-h{margin:0;font-size:38px;font-weight:600;line-height:1.05;letter-spacing:-1px}
+.bd-h i{font-weight:400;color:var(--alr-accent)}
+.bd-intro{margin:-6px 0 0;font-size:15px;color:var(--alr-text-2);line-height:1.55}
+.bd-desk{display:grid;grid-template-columns:150px minmax(0,1fr);gap:20px;align-items:end;margin:0}
+.bd-desk img{width:150px;aspect-ratio:63/88;object-fit:cover;border-radius:6px;display:block;transform:rotate(-2deg);box-shadow:0 14px 30px rgba(80,60,30,.25)}
+.bd-desk figcaption{display:flex;flex-direction:column;gap:10px;min-width:0}
+.bd-desk figcaption b{font-size:22px;font-weight:600}
+.bd-desk figcaption span{font-size:13.5px;color:var(--alr-muted);line-height:1.5}
+.bd-desk .app-b{align-self:flex-start}
+.bd-empty{width:150px;aspect-ratio:63/88;box-sizing:border-box;border-radius:6px;border:2px dashed var(--alr-border-strong);background:var(--alr-surface-2);display:flex;align-items:center;justify-content:center;color:var(--alr-muted);transform:rotate(-2deg)}
+.bd-empty.first{border-color:var(--alr-accent);color:var(--alr-accent);background:var(--alr-accent-soft)}
+.bd-acts{display:flex;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid var(--alr-border)}
+.bd-acts:empty{display:none}
+.bd-notes{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:auto}
+.bd-note{display:block;text-align:left;font:inherit;color:inherit;padding:16px 18px;background:var(--alr-surface);border:1px solid var(--alr-border);border-radius:4px;box-shadow:0 1px 0 var(--alr-border),0 8px 20px rgba(80,60,30,.08)}
+button.bd-note{cursor:pointer}button.bd-note:hover{border-color:var(--alr-border-strong)}
+.bd-note b{display:block;font-size:30px;font-weight:600;line-height:1}
+.bd-note span{display:block;font-size:13px;color:var(--alr-muted);margin-top:6px;line-height:1.45}
+.bd-note.wide{grid-column:1/-1}.bd-note.txt b{font-size:16px;line-height:1.3}
+.bd-right{display:flex;flex-direction:column;gap:14px;min-width:0}
+.bd-bh{display:flex;align-items:baseline;gap:12px}
+.bd-bh h2{margin:0;font-size:22px;font-weight:600}
+.bd-bh #bd-count{font-size:13px;color:var(--alr-muted)}
+.bd-nav{margin-left:auto;display:flex;gap:14px}
+.bd-nav button{background:none;border:0;padding:0;cursor:pointer;font:600 13px var(--bodyFont);color:var(--alr-accent-text)}
+.bd-nav button:hover{color:var(--alr-text)}
+.bd-sleeves{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.bd-sl{position:relative;display:block;padding:8px;border-radius:6px;background:var(--alr-surface-2);border:1px solid var(--alr-border);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);font:inherit;text-align:left}
+button.bd-sl{cursor:pointer}button.bd-sl:hover{border-color:var(--alr-accent)}
+.bd-sl img,.bd-sl .bd-ph{width:100%;aspect-ratio:63/88;object-fit:cover;border-radius:4px;display:block;background:var(--alr-hover)}
+.bd-sl.none .bd-ph{background:none;border:1px dashed var(--alr-border-strong);box-sizing:border-box}
+.bd-tag{position:absolute;left:12px;bottom:12px;font:700 11px var(--bodyFont);letter-spacing:.4px;padding:3px 7px;border-radius:4px;background:var(--alr-pill);color:var(--alr-pill-text)}
+.bd-tag.pre{background:var(--alr-surface);color:var(--alr-accent-text);border:1px solid var(--alr-accent)}
+.bd-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:8px}
+.bd-step{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:var(--alr-surface);border:1px solid var(--alr-border);border-radius:4px;font-size:13px;color:var(--alr-muted);line-height:1.5}
+.bd-step i{font-style:normal;width:26px;height:26px;flex:none;border-radius:50%;background:var(--alr-accent-soft);color:var(--alr-accent-text);font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center}
+.bd-step b{display:block;color:var(--alr-text);font-size:14px}
+.bd-hl{font:600 11px var(--codeFont);letter-spacing:1.2px;color:var(--alr-muted);margin-top:8px}
+/* launch splash: the ALR mark fades in and out, then Home's cards deal out */
+.app-splash{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:var(--alr-bg);animation:sp-out .5s cubic-bezier(.4,0,.2,1) 1.6s forwards;will-change:opacity}
+.app-splash-in{display:flex;flex-direction:column;align-items:center;gap:26px;animation:sp-logo 1.7s cubic-bezier(.4,0,.2,1) both;will-change:transform,opacity}
+.app-splash-in b{font-size:44px;letter-spacing:-1px;font-weight:700;letter-spacing:-.4px;color:var(--alr-text)}
+.app-splash-in span{font:600 15px var(--codeFont);letter-spacing:4px;color:var(--alr-accent-text);margin-top:-14px}
+@keyframes sp-logo{0%{opacity:0;transform:scale(.96)}32%{opacity:1;transform:scale(1)}72%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.015)}}
+@keyframes sp-out{to{opacity:0;visibility:hidden}}
+@media (prefers-reduced-motion:reduce){.app-splash{display:none}}
+/* Home: opening animation (cards deal out of a stack into the sleeves) and page turns */
+.bd.wait .bd-grid{opacity:0}
+@keyframes bd-deal{from{opacity:0;transform:translate(var(--dx,0),var(--dy,0)) rotate(var(--r,0)) scale(.9)}to{opacity:1;transform:none}}
+@keyframes bd-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes bd-drop{from{opacity:0;transform:translateY(-22px) rotate(-10deg)}to{opacity:1;transform:rotate(-2deg)}}
+@keyframes bd-next{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+@keyframes bd-prev{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+.bd.intro .bd-sl{animation:bd-deal .8s cubic-bezier(.22,.9,.28,1) both;animation-delay:calc(var(--i,0)*65ms + 200ms)}
+.bd.intro .bd-sl,.bd.intro .bd-desk img,.bd.intro .bd-empty,.bd.intro .bd-left>*,.bd.intro .bd-bh,.bd.intro #bd-how{will-change:transform,opacity;backface-visibility:hidden}
+.bd.intro .bd-desk img,.bd.intro .bd-empty{animation:bd-drop .7s cubic-bezier(.2,.8,.2,1) .18s both}
+.bd.intro .bd-date,.bd.intro .bd-h{animation:bd-up .5s ease both}
+.bd.intro .bd-intro,.bd.intro .bd-desk figcaption{animation:bd-up .5s ease .3s both}
+.bd.intro .bd-bh{animation:bd-up .5s ease .12s both}
+.bd.intro .bd-acts{animation:bd-up .5s ease .5s both}
+.bd.intro .bd-notes{animation:bd-up .5s ease .62s both}
+.bd.intro #bd-how{animation:bd-up .5s ease .85s both}
+.bd-sleeves.turn-n .bd-sl{animation:bd-next .35s ease both;animation-delay:calc(var(--i,0)*25ms)}
+.bd-sleeves.turn-p .bd-sl{animation:bd-prev .35s ease both;animation-delay:calc(var(--i,0)*25ms)}
+@media (prefers-reduced-motion:reduce){.bd *{animation:none!important}}
+@media (max-width:1060px){.bd-grid{grid-template-columns:minmax(0,1fr)}.bd-notes{margin-top:0}}
 /* settings */
 .st-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
 .st-col{display:flex;flex-direction:column;gap:16px}
@@ -483,6 +529,17 @@ button,input{font:inherit}
 </style>
 </head>
 <body>
+  <div class="app-splash" id="app-splash" aria-hidden="true"><div class="app-splash-in"><svg width="190" height="163" viewBox="0 0 560 480"><path d="M 531.0 468.5 L 384.0 467.5 L 283.0 400.5 L 271.0 403.5 L 184.0 463.5 L 172.0 468.5 L 26.0 468.5 L 14.5 461.0 L 11.5 454.0 L 14.5 439.0 L 250.5 39.0 L 269.0 13.5 L 285.0 11.5 L 298.5 24.0 L 542.5 438.0 L 545.5 446.0 L 544.5 458.0 L 531.0 468.5 Z M 448.5 429.0 L 480.0 428.5 L 484.5 425.0 L 484.5 419.0 L 287.5 85.0 L 282.0 78.5 L 276.0 78.5 L 77.5 411.0 L 73.5 425.0 L 78.0 428.5 L 96.0 429.5 L 159.0 428.5 L 237.5 376.0 L 237.5 371.0 L 232.0 365.5 L 175.0 328.5 L 170.5 324.0 L 169.5 317.0 L 262.5 155.0 L 271.0 145.5 L 283.0 143.5 L 293.5 151.0 L 389.5 316.0 L 388.5 323.0 L 382.0 329.5 L 325.0 366.5 L 321.5 370.0 L 322.5 377.0 L 395.0 426.5 L 409.0 429.5 L 448.5 429.0 Z M 283.5 345.0 L 332.0 311.5 L 335.5 303.0 L 284.5 217.0 L 276.0 215.5 L 222.5 308.0 L 274.0 344.5 L 283.5 345.0 Z" fill="var(--alr-accent)" fill-rule="evenodd"/></svg><b>ALR Initiative</b><span>GRADING</span></div></div>
+  <script>
+  // remove the splash once it has faded, then tell Home to deal its cards
+  (function () {
+    var el = document.getElementById('app-splash'), done = false;
+    function end() { if (done) return; done = true; window.ALR_splashDone = true; if (el.parentNode) el.parentNode.removeChild(el); document.dispatchEvent(new Event('alr-splash-done')); }
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { end(); return; }
+    el.addEventListener('animationend', function (e) { if (e.target === el) end(); });
+    setTimeout(end, 2800);
+  })();
+  </script>
   <header class="app-head">
     <button type="button" class="app-brand" data-view="home"><svg width="28" height="28" viewBox="0 0 560 480" aria-hidden="true"><path d="M 531.0 468.5 L 384.0 467.5 L 283.0 400.5 L 271.0 403.5 L 184.0 463.5 L 172.0 468.5 L 26.0 468.5 L 14.5 461.0 L 11.5 454.0 L 14.5 439.0 L 250.5 39.0 L 269.0 13.5 L 285.0 11.5 L 298.5 24.0 L 542.5 438.0 L 545.5 446.0 L 544.5 458.0 L 531.0 468.5 Z M 448.5 429.0 L 480.0 428.5 L 484.5 425.0 L 484.5 419.0 L 287.5 85.0 L 282.0 78.5 L 276.0 78.5 L 77.5 411.0 L 73.5 425.0 L 78.0 428.5 L 96.0 429.5 L 159.0 428.5 L 237.5 376.0 L 237.5 371.0 L 232.0 365.5 L 175.0 328.5 L 170.5 324.0 L 169.5 317.0 L 262.5 155.0 L 271.0 145.5 L 283.0 143.5 L 293.5 151.0 L 389.5 316.0 L 388.5 323.0 L 382.0 329.5 L 325.0 366.5 L 321.5 370.0 L 322.5 377.0 L 395.0 426.5 L 409.0 429.5 L 448.5 429.0 Z M 283.5 345.0 L 332.0 311.5 L 335.5 303.0 L 284.5 217.0 L 276.0 215.5 L 222.5 308.0 L 274.0 344.5 L 283.5 345.0 Z" fill="#cc785c" fill-rule="evenodd"></path></svg>ALR Initiative — Grading</button>
     <span class="app-badge">DESKTOP APP</span>
@@ -495,32 +552,22 @@ button,input{font:inherit}
     <button type="button" id="app-theme-btn" aria-label="Switch light or dark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>Theme</button>
   </nav>
   <div class="app-views">
-  <main class="app-main" id="app-home">
-    <section class="app-hero big">
-      <div class="app-hero-main">
-        <div class="app-eb">ALR INITIATIVE — GRADING DESK</div>
-        <h1>Grading Desk</h1>
-        <p>Pre-grade cards from photos, keep track of what you send to PSA, TAG, Beckett and CGC, and print ALR slab labels.</p>
-        <div class="app-acts">
-          <button type="button" class="app-b pri" data-view="pregrade">Pre-grade a card</button>
-          <button type="button" class="app-b sec" data-view="batch">Pre-grade a stack</button>
-          <button type="button" class="app-b sec" data-view="editor">Make a label</button>
-        </div>
-      </div>
-      <div class="app-meta" id="hm-meta"></div>
-    </section>
-    <div class="hm-stats" id="hm-stats"></div>
-    <div class="hm-grid">
-      <div class="app-card">
-        <div class="hm-ch"><h2>Pick up where you left off</h2></div>
-        <div id="hm-resume"></div>
-        <div class="hm-ch" style="border-top:1px solid var(--alr-border)"><h2>Recent cards</h2><button type="button" class="hm-link" data-view="cards" id="hm-all">All cards</button></div>
-        <div id="hm-recent"></div>
-      </div>
-      <div class="app-card">
-        <div class="hm-ch"><h2>Waiting on a grade</h2><span class="r" id="hm-wait-n"></span></div>
-        <div id="hm-wait"></div>
-      </div>
+  <main class="app-main bd" id="app-home">
+    <div class="bd-off" id="bd-off" role="status" hidden><b>You're offline.</b><span>Your binder shows what was saved on this computer. New cards sync when the connection is back.</span><button type="button" class="app-b sec sm" id="bd-retry">Try again</button></div>
+    <div class="bd-grid">
+      <section class="bd-left">
+        <div class="bd-date" id="bd-date"></div>
+        <h1 class="bd-h" id="bd-h"></h1>
+        <p class="bd-intro" id="bd-intro" hidden></p>
+        <div id="bd-desk"></div>
+        <div class="bd-acts" id="bd-acts"></div>
+        <div class="bd-notes" id="bd-notes"></div>
+      </section>
+      <section class="bd-right" aria-label="The binder">
+        <div class="bd-bh"><h2>The binder</h2><span id="bd-count"></span><span class="bd-nav" id="bd-nav"></span></div>
+        <div class="bd-sleeves" id="bd-sleeves"></div>
+        <div id="bd-how"></div>
+      </section>
     </div>
   </main>
   <main class="app-main" id="app-editor" hidden>
